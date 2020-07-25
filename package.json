@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./index.js"
+    "urls": "node ./urls.js"
   },
   "author": "emerson@cloudfour.com",
   "license": "UNLICENSED",
