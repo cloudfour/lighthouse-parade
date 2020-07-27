@@ -12,9 +12,8 @@ const dir = path.dirname(filePath);
 const fileData = fs.readFileSync(filePath);
 const csvRows = parse(fileData, {columns: true, skip_empty_lines: true});
 const outputFormat = 'csv'; // html works too
-
-console.log('fileData', fileData);
-// console.log('csvRows', csvRows);
+const reportDirName = 'reports';
+fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 
 const runReport = async (url) => {
   const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
@@ -27,9 +26,11 @@ const runReport = async (url) => {
   const runnerResult = await lighthouse(url, options);
 
   // `.report` is the HTML report as a string
-  const reportHtml = runnerResult.report;
-  fs.writeFileSync(dir+'/'+sanitize(url)+'.'+outputFormat, reportHtml);
-  fs.writeFileSync(`${dir}/${sanitize(url)}.${outputFormat}`, reportHtml);
+  const reportData = runnerResult.report;
+  const reportFileName = url
+    .replace(/\./g, '_')
+    .replace(/\//g, '-');
+  fs.writeFileSync(`${dir}/${reportDirName}/${sanitize(reportFileName)}.${outputFormat}`, reportData);
 
   // `.lhr` is the Lighthouse Result as a JS object
   console.log('Report is done for', runnerResult.lhr.finalUrl);
@@ -40,11 +41,18 @@ const runReport = async (url) => {
 
 const reportsForRows = async (csvRows) => {
   // @TODO This should use a child process!
-  for (let i=1; i<csvRows.length; i++) {
+  for (let i=0; i<csvRows.length; i++) {
   	const row = csvRows[i];
-  	await runReport(row.URL)
-  		.catch( e => console.log(e) );
+    if (isHtml(row)) {
+      await runReport(row.URL)
+        .catch( e => console.log(e) );
+    }
   }
+}
+
+const isHtml = (rowObj) => {
+  const type = rowObj.content_type;
+  return (type.indexOf('html') !== -1);
 }
 
 reportsForRows(csvRows);

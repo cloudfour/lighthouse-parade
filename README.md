@@ -11,6 +11,4 @@
 ## @TODO
 
 - [ ] child process
-- [ ] handle non-html pages
-- [ ] write CSV version of reports
 - [ ] bundle final CSV with metrics
