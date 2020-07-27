@@ -10,7 +10,7 @@ const crawler = new Crawler(siteUrl);
 const dir = path.join(__dirname,'data', `${Date.now()}`);
 fs.mkdirSync(dir, {recursive: true});
 const file = `${dir}/urls.csv`;
-fs.writeFileSync(file, 'URL,content-type,bytes,response\n', {
+fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
      encoding: 'utf-8'
 });
 console.log("Created CSV file");
