@@ -2,8 +2,12 @@ const csvStringify = require('csv-stringify/lib/sync');
 const Crawler = require("simplecrawler");
 const fs = require('fs');
 const path = require('path');
+const { makeRow } = require('./csv_maker'); 
 
-const siteUrl = "https://baptistjaxqa.azurewebsites.net"; //@TODO handle trailing backslash
+// const siteUrl = "https://baptistjaxqa.azurewebsites.net"; //@TODO handle trailing backslash
+const siteUrl = process.argv[2];
+
+
 const respectRobots = false;
 const crawler = new Crawler(siteUrl);
 
@@ -19,7 +23,11 @@ const stream = fs.createWriteStream(file, {flags:'a'});
 // set up the crawler
 crawler.on("fetchcomplete", function(queueItem, responseBuffer, response) {
     console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
-    stream.write(`${queueItem.url},${response.headers['content-type']},${responseBuffer.length},${response.statusCode}\n`);
+    stream.write(makeRow(queueItem, responseBuffer, response));
+
+    console.log(queueItem);
+    console.log(responseBuffer);
+    console.log(response);
 });
 
 crawler.on("complete", function() {

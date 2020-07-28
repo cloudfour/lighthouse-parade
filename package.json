@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "urls": "node ./urls.js",
+    "urls": "node ./urls_task.js",
     "reports": "node ./lighthouse_task.js"
   },
   "author": "emerson@cloudfour.com",
