@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "urls": "node ./urls.js",
     "lighthouse": "node ./lighthouse.js"
   },
@@ -15,5 +15,8 @@
     "lighthouse": "^6.1.1",
     "sanitize-filename": "^1.6.3",
     "simplecrawler": "^1.1.9"
+  },
+  "devDependencies": {
+    "jest": "^26.1.0"
   }
 }
