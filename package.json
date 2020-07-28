@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "urls": "node ./urls.js",
-    "lighthouse": "node ./lighthouse.js"
+    "reports": "node ./lighthouse_task.js"
   },
   "author": "emerson@cloudfour.com",
   "license": "UNLICENSED",
