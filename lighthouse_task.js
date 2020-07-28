@@ -17,7 +17,7 @@ fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 const writeReportFile = (runnerResult) => {
   // `.report` is the HTML report as a string
   const reportData = runnerResult.report;
-  const reportFileName = url
+  const reportFileName = runnerResult.lhr.finalUrl
     .replace(/\./g, '_')
     .replace(/\//g, '-');
   fs.writeFileSync(`${dir}/${reportDirName}/${sanitize(reportFileName)}.${outputFormat}`, reportData);
