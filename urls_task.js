@@ -24,10 +24,6 @@ const stream = fs.createWriteStream(file, {flags:'a'});
 crawler.on("fetchcomplete", function(queueItem, responseBuffer, response) {
     console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
     stream.write(makeRow(queueItem, responseBuffer, response));
-
-    console.log(queueItem);
-    console.log(responseBuffer);
-    console.log(response);
 });
 
 crawler.on("complete", function() {

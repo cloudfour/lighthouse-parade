@@ -1,5 +1,6 @@
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+var sanitize = require("sanitize-filename");
 
 const runReport = async (url, outputFormat) => {
   const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
@@ -19,14 +20,22 @@ const runReport = async (url, outputFormat) => {
   return runnerResult;
 };
 
+const makeFileNameFromUrl = (url) => {
+  const newUrl = url
+    .replace(/\./g, '_')
+    .replace(/\//g, '-');
+  return sanitize(newUrl);
+}
+
 const reportsForRows = async (csvRows, outputFormat, reportDataCb) => {
   // @TODO This should use a child process!
   for (let i=0; i<csvRows.length; i++) {
   	const row = csvRows[i];
     if (isHtml(row)) {
+      const reportFileName = makeFileNameFromUrl(row.URL);
       const runnerResult = await runReport(row.URL, outputFormat)
         .catch( e => console.log(e) );
-      reportDataCb(runnerResult);
+      reportDataCb(runnerResult, reportFileName);
     }
   }
 };
@@ -37,5 +46,6 @@ const isHtml = (rowObj) => {
 };
 
 module.exports = { 
-  reportsForRows 
+  reportsForRows,
+  makeFileNameFromUrl
 };

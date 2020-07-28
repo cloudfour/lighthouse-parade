@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 // const {exec} = require('child_process');
-var sanitize = require("sanitize-filename");
 const parse = require('csv-parse/lib/sync');
-const {reportsForRows} = require('./lighthouse');
+const {
+  reportsForRows
+} = require('./lighthouse');
 
 //first two indexes of argv are node (0) and the path to the script (1)
 const filePath = process.argv[2];
@@ -14,13 +15,10 @@ const outputFormat = 'csv'; // html works too
 const reportDirName = 'reports';
 fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 
-const writeReportFile = (runnerResult) => {
+const writeReportFile = (runnerResult, reportFileName) => {
   // `.report` is the HTML report as a string
   const reportData = runnerResult.report;
-  const reportFileName = runnerResult.lhr.finalUrl
-    .replace(/\./g, '_')
-    .replace(/\//g, '-');
-  fs.writeFileSync(`${dir}/${reportDirName}/${sanitize(reportFileName)}.${outputFormat}`, reportData);
+  fs.writeFileSync(`${dir}/${reportDirName}/${reportFileName}.${outputFormat}`, reportData);
 };
 
 reportsForRows(csvRows, outputFormat, writeReportFile);

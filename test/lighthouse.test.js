@@ -1,4 +1,4 @@
-const { reportsForRows } = require('../lighthouse.js');
+const { reportsForRows, makeFileNameFromUrl } = require('../lighthouse.js');
 const fs = require('fs');
 const path = require('path');
 const parse = require('csv-parse/lib/sync');
@@ -15,4 +15,9 @@ test('reportForRows reports HTML files only', async () => {
 	};
 	await reportsForRows(csvRows1, 'csv', reportCb);
 	expect(reportCount).toBe(3);
+});
+
+test('makeFileNameFromUrl works as expected', () => {
+	expect(makeFileNameFromUrl('http://example.com/foo'))
+	.toBe('http--example_com-foo');
 });
