@@ -25,6 +25,5 @@ to a `reports/` directory in the same directory as the input CSV file.
 
 ## @TODO
 
-- [ ] Add support for resuming interrupted report run (probably: check for pre-existence of file before fetching)
 - [ ] Run lighthouse in child process to support concurrent runs
 - [ ] Bundle individual Lighthouse CSV reports into aggregated report (with metrics)

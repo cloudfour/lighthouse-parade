@@ -15,7 +15,7 @@ const runReport = async (url, outputFormat) => {
   const runnerResult = await lighthouse(url, options);
 
   // `.lhr` is the Lighthouse Result as a JS object
-  console.log('Report is done for', runnerResult.lhr.finalUrl);
+  console.log('Report is done for', runnerResult.lhr.requestedUrl);
   console.log('Performance score was', runnerResult.lhr.categories.performance.score * 100);
 
   await chrome.kill();
