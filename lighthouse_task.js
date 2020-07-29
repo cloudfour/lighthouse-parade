@@ -13,15 +13,16 @@ const fileData = fs.readFileSync(filePath);
 const csvRows = parse(fileData, {columns: true, skip_empty_lines: true});
 const outputFormat = 'csv'; // html works too
 const reportDirName = 'reports';
+const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 
 const writeReportFile = (runnerResult, reportFileName) => {
   // `.report` is the HTML report as a string
   const reportData = runnerResult.report;
-  fs.writeFileSync(`${dir}/${reportDirName}/${reportFileName}`, reportData);
+  fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
 };
 
-reportsForRows(csvRows, outputFormat, writeReportFile);
+reportsForRows(csvRows, outputFormat, writeReportFile, reportsDirPath);
 
 // exec('find . -type f | wc -l', (err, stdout, stderr) => {
 //   if (err) {
