@@ -25,7 +25,6 @@ to a `reports/` directory in the same directory as the input CSV file.
 
 ## @TODO
 
-- [ ] Run lighthouse in child process to support concurrent runs
 - [ ] Bundle individual Lighthouse CSV reports into aggregated report (with metrics)
 
 ## More docs
