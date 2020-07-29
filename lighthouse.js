@@ -1,25 +1,29 @@
-const lighthouse = require('lighthouse');
+const spawnSync = require('child_process').spawnSync;
+const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
 const chromeLauncher = require('chrome-launcher');
 var sanitize = require("sanitize-filename");
 const fs = require('fs');
 const path = require('path');
 
 const runReport = async (url, outputFormat) => {
-  const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
-  const options = {
-  	// logLevel: 'info', 
-  	output: outputFormat, 
-  	onlyCategories: ['performance'], 
-  	port: chrome.port
-  };
-  const runnerResult = await lighthouse(url, options);
 
-  // `.lhr` is the Lighthouse Result as a JS object
-  console.log('Report is done for', runnerResult.lhr.requestedUrl);
-  console.log('Performance score was', runnerResult.lhr.categories.performance.score * 100);
+  const {status = -1, stdout} = spawnSync('node', [
+    lighthouseCli,
+    url,
+    `--output=${outputFormat}`,
+    `--output-path=stdout`,
+    `--emulated-form-factor=mobile`,
+    `--only-categories=performance`,
+    `--chrome-flags="--headless"`
+  ]);
 
-  await chrome.kill();
-  return runnerResult;
+  if (status !== 0) {
+    console.error(`Lighthouse report failed for: ${url}`);
+    return false;
+  }
+
+  console.log('Report is done for', url);
+  return stdout;
 };
 
 const makeFileNameFromUrl = (url, extension) => {

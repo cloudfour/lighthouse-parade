@@ -16,9 +16,11 @@ const reportDirName = 'reports';
 const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 
-const writeReportFile = (runnerResult, reportFileName) => {
-  // `.report` is the HTML report as a string
-  const reportData = runnerResult.report;
+const writeReportFile = (reportData, reportFileName) => {
+  if (!reportData) {
+    console.log('No data to write');
+    return;
+  }
   fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
 };
 

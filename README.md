@@ -27,3 +27,12 @@ to a `reports/` directory in the same directory as the input CSV file.
 
 - [ ] Run lighthouse in child process to support concurrent runs
 - [ ] Bundle individual Lighthouse CSV reports into aggregated report (with metrics)
+
+## More docs
+
+* Lighthouse `lhr` object properties: https://github.com/GoogleChrome/lighthouse/blob/master/docs/understanding-results.md
+* Using Lighthouse programmatically: https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically
+* Lighthouse CLI options: https://github.com/GoogleChrome/lighthouse#using-the-node-cli
+* Lighthouse applies network throttling by defualt: https://github.com/GoogleChrome/lighthouse#how-does-lighthouse-use-network-throttling-and-how-can-i-make-it-better
+* Chrome flags/switches: https://peter.sh/experiments/chromium-command-line-switches/
+* Node CSV docs: https://csv.js.org/
