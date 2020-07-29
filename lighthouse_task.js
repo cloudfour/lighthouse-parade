@@ -18,7 +18,7 @@ fs.mkdirSync(`${dir}/${reportDirName}`, {recursive: true});
 const writeReportFile = (runnerResult, reportFileName) => {
   // `.report` is the HTML report as a string
   const reportData = runnerResult.report;
-  fs.writeFileSync(`${dir}/${reportDirName}/${reportFileName}.${outputFormat}`, reportData);
+  fs.writeFileSync(`${dir}/${reportDirName}/${reportFileName}`, reportData);
 };
 
 reportsForRows(csvRows, outputFormat, writeReportFile);

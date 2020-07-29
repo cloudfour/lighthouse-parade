@@ -1,0 +1,4 @@
+URL,content_type,bytes,response
+https://baptistjaxqa.azurewebsites.net/,text/html; charset=utf-8,282640,200
+https://baptistjaxqa.azurewebsites.net/immediate-care/carespot,text/html,305695,200
+https://example.com,text/html,123,200

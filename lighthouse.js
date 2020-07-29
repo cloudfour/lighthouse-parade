@@ -1,6 +1,8 @@
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 var sanitize = require("sanitize-filename");
+const fs = require('fs');
+const path = require('path');
 
 const runReport = async (url, outputFormat) => {
   const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
@@ -20,19 +22,32 @@ const runReport = async (url, outputFormat) => {
   return runnerResult;
 };
 
-const makeFileNameFromUrl = (url) => {
+const makeFileNameFromUrl = (url, extension) => {
   const newUrl = url
     .replace(/\./g, '_')
     .replace(/\//g, '-');
-  return sanitize(newUrl);
+  return `${sanitize(newUrl)}.${extension}`;
 }
 
-const reportsForRows = async (csvRows, outputFormat, reportDataCb) => {
+const repoortFileAlreadyExists = (path) => {
+  return fs.existsSync(path);
+}
+
+/**
+ * @param csvRows (array) : and array of row objects. must have `URL` property
+ * @param outputFormat (str) : output format of the lighthouse report. Ex: csv, html, json
+ * @param reportDataCb (fn) : a callback function that runs for each row
+ * @param targetReportDirectory (str) : optional path to where report files will be written. Dor checking if files already exist
+ */
+const reportsForRows = async (csvRows, outputFormat, reportDataCb, targetReportDirectory=false) => {
   // @TODO This should use a child process!
   for (let i=0; i<csvRows.length; i++) {
   	const row = csvRows[i];
-    if (isHtml(row)) {
-      const reportFileName = makeFileNameFromUrl(row.URL);
+    const reportFileName = makeFileNameFromUrl(row.URL, outputFormat);
+    const fileDoesntExist = (targetReportDirectory) ? 
+        () => !fs.existsSync(path.join(targetReportDirectory, reportFileName)) :
+        () => true;
+    if (isHtml(row) && fileDoesntExist()) {
       const runnerResult = await runReport(row.URL, outputFormat)
         .catch( e => console.log(e) );
       reportDataCb(runnerResult, reportFileName);
