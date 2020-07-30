@@ -23,6 +23,15 @@ Generates a Lighthouse report for each URL in the provided CSV file. Non-HTML co
 The default report format is CSV, but this flag can me manually changed at the top of `lighthouse_task.js`. Each report will be written
 to a `reports/` directory in the same directory as the input CSV file.
 
+### Generate Lighthouse reports 
+
+`npm run combine -- <path/to/reports/dir>`
+
+Ex: `npm run reports -- data/1595551804243/reports`  (substitute path with any directory with reports)
+
+Generates a single spreadsheet with rows for each individual Lighthouse report found in the directory
+
+
 ## @TODO
 
 - [ ] Bundle individual Lighthouse CSV reports into aggregated report (with metrics)
