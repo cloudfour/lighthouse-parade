@@ -31,11 +31,6 @@ Ex: `npm run reports -- data/1595551804243/reports`  (substitute path with any d
 
 Generates a single spreadsheet with rows for each individual Lighthouse report found in the directory
 
-
-## @TODO
-
-- [ ] Bundle individual Lighthouse CSV reports into aggregated report (with metrics)
-
 ## More docs
 
 * Lighthouse `lhr` object properties: https://github.com/GoogleChrome/lighthouse/blob/master/docs/understanding-results.md
