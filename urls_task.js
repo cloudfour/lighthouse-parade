@@ -30,6 +30,14 @@ crawler.on("complete", function() {
     console.log("Crawling complete");
 });
 
+crawler.on("fetcherror", errorLog);
+crawler.on("fetch404", errorLog);
+crawler.on("fetch410", errorLog);
+
+function errorLog(queueItem, response) {
+	console.log(`Error fetching (${response.statusCode}): ${queueItem.url}`);
+}
+
 if (!respectRobots) {
 	crawler.respectRobotsTxt = false;
 }
