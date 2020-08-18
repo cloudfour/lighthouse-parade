@@ -28,7 +28,7 @@ to a `reports/` directory in the same directory as the input CSV file.
 
 `npm run combine -- <path/to/reports/dir>`
 
-Ex: `npm run reports -- data/1595551804243/reports`  (substitute path with any directory with reports)
+Ex: `npm run combine -- data/1595551804243/reports`  (substitute path with any directory with reports)
 
 Generates a single spreadsheet with rows for each individual Lighthouse report found in the directory
 
