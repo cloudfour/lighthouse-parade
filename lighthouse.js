@@ -59,6 +59,8 @@ const reportsForRows = async (csvRows, outputFormat, reportDataCb, targetReportD
   }
 };
 
+
+
 const isHtml = (rowObj) => {
   const type = rowObj.content_type;
   return (type.indexOf('html') !== -1);
@@ -66,5 +68,6 @@ const isHtml = (rowObj) => {
 
 module.exports = { 
   reportsForRows,
-  makeFileNameFromUrl
+  makeFileNameFromUrl,
+  runReport
 };

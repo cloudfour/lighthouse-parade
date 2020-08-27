@@ -7,7 +7,8 @@
     "test": "jest",
     "urls": "node ./urls_task.js",
     "reports": "node ./lighthouse_task.js",
-    "combine": "node ./combine_task.js"
+    "combine": "node ./combine_task.js",
+    "scan" : "node ./scan_task.js"
   },
   "author": "emerson@cloudfour.com",
   "license": "UNLICENSED",
