@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { makeRow } = require('./csv_maker'); 
 const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
+const { aggregateCSVReports } = require('./combine');
 
 const siteUrl = process.argv[2];
 const dir = path.join(__dirname,'data', `${Date.now()}`);
@@ -38,7 +39,7 @@ fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
 console.log("Created CSV file");
 const stream = fs.createWriteStream(file, {flags:'a'});
 crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
-    console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
+    console.log("Crawled %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
     stream.write(makeRow(queueItem, responseBuffer, response));
     const reportFileName = makeFileNameFromUrl(queueItem.url, reportFormat);
     if (!fileDoesntExist(reportFileName, reportsDirPath)) {
@@ -54,6 +55,9 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
 });
 crawler.on("complete", function() {
     console.log("Scan complete");
+    console.log('Aggregating reports...');
+    aggregateCSVReports(reportsDirPath);
+    console.log('DONE!');
 });
 crawler.on("fetcherror", errorLog);
 crawler.on("fetch404", errorLog);
