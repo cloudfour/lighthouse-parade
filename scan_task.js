@@ -3,10 +3,11 @@ const Crawler = require("simplecrawler");
 const fs = require('fs');
 const path = require('path');
 const { makeRow } = require('./csv_maker'); 
-const { runReport, makeFileNameFromUrl } = require('./lighthouse');
+const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
 
-// const siteUrl = "https://baptistjaxqa.azurewebsites.net"; //@TODO handle trailing backslash
 const siteUrl = process.argv[2];
+const dir = path.join(__dirname,'data', `${Date.now()}`);
+
 
 // set up for lighthouse reports
 const reportFormat = 'csv'; // html works too
@@ -20,12 +21,15 @@ const writeReportFile = (reportData, reportFileName) => {
   }
   fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
 };
+const fileDoesntExist = (reportFileName, targetReportDirectory) => {
+	return  !fs.existsSync(path.join(targetReportDirectory, reportFileName));
+}
+const isContentTypeHtml = (contentType) => { return contentType.indexOf('html') !== -1; };
 
 
 // set up for crawler
 const respectRobots = false;
 const crawler = new Crawler(siteUrl);
-const dir = path.join(__dirname,'data', `${Date.now()}`);
 fs.mkdirSync(dir, {recursive: true});
 const file = `${dir}/urls.csv`;
 fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
@@ -37,6 +41,13 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
     console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
     stream.write(makeRow(queueItem, responseBuffer, response));
     const reportFileName = makeFileNameFromUrl(queueItem.url, reportFormat);
+    if (!fileDoesntExist(reportFileName, reportsDirPath)) {
+    	console.log('Skipping report because file already exists');
+    	return;
+    }
+    if (!isContentTypeHtml(response.headers['content-type'])){
+    	return;
+    }
     const reportData = await runReport(queueItem.url, reportFormat);
     writeReportFile(reportData, reportFileName);
     console.log(`Wrote report for ${queueItem.url}`);
@@ -53,5 +64,7 @@ function errorLog(queueItem, response) {
 if (!respectRobots) {
 	crawler.respectRobotsTxt = false;
 }
+
+
 console.log("Starting the crawl...");
 crawler.start();
