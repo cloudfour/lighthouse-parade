@@ -5,11 +5,19 @@
 
 ## Usage
 
+### Scan site: crawl + lighthouse + aggregate
+
+`npm run url -- <URL>`
+
+Ex: `npm run urls -- https://baptistjaxqa.azurewebsites.net` (substitute url with whatever site)
+
+Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric. The individual parts of this task can be run separately.... (see below)
+
 ### Discover site URLs
 
 `npm run urls -- <URL>`
 
-Ex: `npm run urls -- https://baptistjaxqa.azurewebsites.net` (substitute url with whatever site)
+Ex: `npm run url -- https://baptistjaxqa.azurewebsites.net` (substitute url with whatever site)
 
 Runs a crawler on the provided URL. Discovers all URLs and writes them to a CSV file located in `./data/<timestamp>/urls.csv` .
 By default, a `robots.txt` file will be ignored, but this flag can be manually changed at the top of `urls_task.js`.
