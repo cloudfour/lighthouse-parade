@@ -5,24 +5,22 @@ const { reportToRow, reportToRowHeaders } = require('./reportToRow');
 const csvStringify = require('csv-stringify/lib/sync');
 
 /**
- * @param {string} directoryPath
+ * @param {string} reportsDirectoryPath
  * @returns
  */
-const aggregateCSVReports = (directoryPath) => {
-    // const parsedDirectoryPath = path.parse(directoryPath);
-    // const timestamp = parsedDirectoryPath.base;
+const aggregateCSVReports = (reportsDirectoryPath, outputPath) => {
     let files;
     try {
-        files = fs.readdirSync(directoryPath);
+        files = fs.readdirSync(reportsDirectoryPath);
     } catch (e) {
         console.error(e);
         return false;
     }
 
     // const desktopAggregateReportName = timestamp + '_desktop_aggregateReport.csv';
-    const mobileAggregateReportName = 'aggregateReport.csv';
-    // let desktopAggregatePath = path.join(directoryPath, desktopAggregateReportName);
-    let mobileAggregatePath = path.join(directoryPath, mobileAggregateReportName);
+    const mobileAggregateReportName = 'aggregatedMobileReport.csv';
+    // let desktopAggregatePath = path.join(reportsDirectoryPath, desktopAggregateReportName);
+    let mobileAggregatePath = path.join(outputPath, mobileAggregateReportName);
     // let desktopWriteStream = fs.createWriteStream(desktopAggregatePath, { flags: 'a' });
     let mobileWriteStream = fs.createWriteStream(mobileAggregatePath, { flags: 'a' });
 
@@ -36,7 +34,7 @@ const aggregateCSVReports = (directoryPath) => {
     try {
         files.forEach(fileName => {
             if (fileName !== mobileAggregateReportName && fileName !== '.DS_Store') {
-                let filePath = path.join(directoryPath, fileName);
+                let filePath = path.join(reportsDirectoryPath, fileName);
                 let fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
                 console.log(`Bundling ${fileName} into aggregated report`);
                 const newRow = reportToRow(fileContents);

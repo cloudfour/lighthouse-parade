@@ -5,10 +5,8 @@ const path = require('path');
 const { makeRow } = require('./csv_maker'); 
 const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
 const { aggregateCSVReports } = require('./combine');
-
 const siteUrl = process.argv[2];
 const dir = path.join(__dirname,'data', `${Date.now()}`);
-
 
 // set up for lighthouse reports
 const reportFormat = 'csv'; // html works too
@@ -26,7 +24,6 @@ const fileDoesntExist = (reportFileName, targetReportDirectory) => {
 	return  !fs.existsSync(path.join(targetReportDirectory, reportFileName));
 }
 const isContentTypeHtml = (contentType) => { return contentType.indexOf('html') !== -1; };
-
 
 // set up for crawler
 const respectRobots = false;
@@ -56,7 +53,7 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
 crawler.on("complete", function() {
     console.log("Scan complete");
     console.log('Aggregating reports...');
-    aggregateCSVReports(reportsDirPath);
+    aggregateCSVReports(reportsDirPath, dir);
     console.log('DONE!');
 });
 crawler.on("fetcherror", errorLog);
@@ -68,7 +65,6 @@ function errorLog(queueItem, response) {
 if (!respectRobots) {
 	crawler.respectRobotsTxt = false;
 }
-
 
 console.log("Starting the crawl...");
 crawler.start();

@@ -44,7 +44,6 @@ const repoortFileAlreadyExists = (path) => {
  * @param targetReportDirectory (str) : optional path to where report files will be written. Dor checking if files already exist
  */
 const reportsForRows = async (csvRows, outputFormat, reportDataCb, targetReportDirectory=false) => {
-  // @TODO This should use a child process!
   for (let i=0; i<csvRows.length; i++) {
   	const row = csvRows[i];
     const reportFileName = makeFileNameFromUrl(row.URL, outputFormat);
@@ -58,8 +57,6 @@ const reportsForRows = async (csvRows, outputFormat, reportDataCb, targetReportD
     }
   }
 };
-
-
 
 const isHtml = (rowObj) => {
   const type = rowObj.content_type;
