@@ -1,4 +1,6 @@
-# Site Performance Scanner
+![Lighthouse Parade Hero Image](./assets/hero.svg)
+
+# Lighthouse Parade
 
 A Node.js command line tool that crawls a domain and gathers lighthouse performance data for every page.
 
