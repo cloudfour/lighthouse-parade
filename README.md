@@ -8,11 +8,14 @@ A Node.js command line tool that crawls a domain and gathers lighthouse performa
 
 There are great tools for doing performance analysis on a single web page. We use [Lighthouse](https://developers.google.com/web/tools/lighthouse) and [WebPageTest](https://webpagetest.org/) for this all the time. But what if you want to evaluate the performance characteristics of an entire site? It is tedious to manually run a report for each page and then the output is a jumble of individual reports that have to be analyzed one-by-one. This tool was created to solve this problem. 
 
-With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a speadsheet with the aggregated data. Each row in the spreadsheet is a page on the site, and each individual performance metric is a column. This makes it very easy to perform high-level analysis because you can sort the rows by any metric. This immediately shows the best and worst pages.
+
+## How?
+
+With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a speadsheet with the aggregated data. Each row in the spreadsheet is a page on the site, and each individual performance metric is a column. This makes it very easy to perform high-level analysis because you can sort the rows by whichever metric you are analyzing. This immediately shows the best and worst pages. In the following example, the rows are sorted by first contentful paint. 
 
 ![Lighthouse data from multiple reports aggregated into a single spreadsheet](./assets/dfwf_report.svg)
 
-It is also easy to graph data in this format.
+It is also easy to graph data in this format. The following example is a histogram showing a problematic distribution of largest contentful paint scores.
 
 ![Histogram showing LCP scores](./assets/lcp_histogram.svg)
 
