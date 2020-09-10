@@ -22,7 +22,7 @@ It is also easy to graph data in this format. The following example is a histogr
 
 ## Installation
 
-1. `nvm use`
+1. `nvm use` (if you use NVM)
 2. `npm install`
 
 ## Usage
