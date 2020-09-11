@@ -10,7 +10,7 @@ There are great tools for doing performance analysis on a single web page. We us
 
 ## How?
 
-With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a spreadsheet with the aggregated data. Each row in the spreadsheet is a page on the site, and each individual performance metric is a column. This makes it very easy to perform high-level analysis because you can sort the rows by whichever metric you are analyzing. This immediately shows the best and worst pages. In the following example, the rows are sorted by first contentful paint.
+With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a spreadsheet with the aggregated data. There is an [example of the generated spreadsheet](./examples/exampleAggregatedMobileReport.csv) in the `examples/` directory of this project. Each row in the spreadsheet is a page on the site, and each individual performance metric is a column. This makes it very easy to perform high-level analysis because you can sort the rows by whichever metric you are analyzing. This immediately shows the best and worst performing pages. In the following example, the rows are sorted by first contentful paint.
 
 ![Lighthouse data from multiple reports aggregated into a single spreadsheet](./assets/lighthouse-data-by-lcp.png)
 
