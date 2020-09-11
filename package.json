@@ -1,8 +1,7 @@
 {
-  "name": "c4-site-scan",
+  "name": "lighthouse-parade",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
   "scripts": {
     "test": "jest",
     "urls": "node ./urls_task.js",
@@ -11,7 +10,7 @@
     "scan" : "node ./scan_task.js"
   },
   "author": "emerson@cloudfour.com",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "csv": "^5.3.2",
     "lighthouse": "^6.1.1",

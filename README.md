@@ -2,7 +2,7 @@
 
 # Lighthouse Parade
 
-A Node.js command line tool that crawls a domain and gathers lighthouse performance data for every page.
+A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.
 
 ## Why?
 
