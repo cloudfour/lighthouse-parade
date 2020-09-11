@@ -63,7 +63,7 @@ Generates a single spreadsheet with rows for each individual Lighthouse report f
 
 ## Analysis spreadsheet template
 
-After running a scan, you can import your aggregated report data into this Google Sheet template, which will include the following features:
+After running a scan, you can import your aggregated report data into this [Google Sheet template](https://docs.google.com/spreadsheets/d/1n2VtFjLH5PzVQ-PCGCHc03ZFO79OT7CU_2lsMc6jFUI), which includes the following features:
 
 * Basic formatting 
 * The three [web core vitals](https://web.dev/vitals/) columns are highlighted
@@ -72,7 +72,7 @@ After running a scan, you can import your aggregated report data into this Googl
 
 ### Instructions
 
-To usee this template, it is important to follow these instructions very carefully when importing:
+To use this template, it is important to follow these instructions very carefully when importing:
 
 1. Visit the template and choose File > Make a copy. You will now have your own writable copy.
 1. Click cell A:1 in the top left corner.
