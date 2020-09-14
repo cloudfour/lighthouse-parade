@@ -1,12 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const {reportToRow, reportToRowHeaders} = require('../reportToRow');
-const testDesktopCsvPath = path.join(
+const testCsvPath = path.join(
   __dirname,
   'support',
-  'tgiles_report.csv'
+  'lombard.csv'
 );
-const fileContents = fs.readFileSync(testDesktopCsvPath, { encoding: 'utf-8' });
+const fileContents = fs.readFileSync(testCsvPath, { encoding: 'utf-8' });
 
 describe("reportToRow", () => {
 
@@ -14,19 +14,26 @@ describe("reportToRow", () => {
 
     const row = reportToRow(fileContents);
 
-    expect(row[0]).toBe('https://tgiles.github.io/web-resume.html');
-    expect(row[1]).toBe('https://tgiles.github.io/web-resume.html');
-    expect(row[2]).toBe('0.55');
-    expect(row[3]).toBe('0.45');
+    expect(row[0]).toBe('https://lombardstreettattoo.com/');
+    expect(row[1]).toBe('https://lombardstreettattoo.com/');
+    expect(row[2]).toBe('0.8');
+    expect(row[3]).toBe('1');
+    expect(row[4]).toBe('1');
+    expect(row[5]).toBe('0.98');
+    expect(row[6]).toBe('0.98');
+    expect(row[7]).toBe('0.23');
   });
 });
 
 describe("reportToRowHeaders", () => {
 
+  const headers = reportToRowHeaders(fileContents);
+
   it('is long list or metrics', () => {
-    expect(reportToRowHeaders[0]).toBe('Requested URL');
-    expect(reportToRowHeaders[1]).toBe('Final URL');
-    expect(reportToRowHeaders[2]).toBe("Performance: First Contentful Paint (numeric)");
-    expect(reportToRowHeaders.length).toBe(53);
+    expect(headers[0]).toBe('Requested URL');
+    expect(headers[1]).toBe('Final URL');
+    expect(headers[2]).toBe("Performance: Overall Performance Category Score (numeric)");    
+    expect(headers[3]).toBe("Performance: First Contentful Paint (numeric)");
+    expect(headers.length).toBe(59); //@TODO This will break
   });
 });

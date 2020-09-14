@@ -53,7 +53,17 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
 crawler.on("complete", function() {
     console.log("Scan complete");
     console.log('Aggregating reports...');
-    aggregateCSVReports(reportsDirPath, dir);
+    const aggregatedReportData = aggregateCSVReports(reportsDirPath, dir);
+    const writePath = path.join(dir, 'aggregatedMobileReport.csv');
+    fs.writeFile(
+        writePath, 
+        aggregatedReportData,
+        (e) => {
+            if (e) {
+                console.error(e);
+            }
+        }
+    );
     console.log('DONE!');
 });
 crawler.on("fetcherror", errorLog);

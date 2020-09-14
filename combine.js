@@ -8,7 +8,7 @@ const csvStringify = require('csv-stringify/lib/sync');
  * @param {string} reportsDirectoryPath
  * @returns
  */
-const aggregateCSVReports = (reportsDirectoryPath, outputPath) => {
+const aggregateCSVReports = (reportsDirectoryPath) => {
     let files;
     try {
         files = fs.readdirSync(reportsDirectoryPath);
@@ -17,25 +17,17 @@ const aggregateCSVReports = (reportsDirectoryPath, outputPath) => {
         return false;
     }
 
-    // const desktopAggregateReportName = timestamp + '_desktop_aggregateReport.csv';
-    const mobileAggregateReportName = 'aggregatedMobileReport.csv';
-    // let desktopAggregatePath = path.join(reportsDirectoryPath, desktopAggregateReportName);
-    let mobileAggregatePath = path.join(outputPath, mobileAggregateReportName);
-    // let desktopWriteStream = fs.createWriteStream(desktopAggregatePath, { flags: 'a' });
-    let mobileWriteStream = fs.createWriteStream(mobileAggregatePath, { flags: 'a' });
-
-    // let desktopRows = [
-    //     reportToRowHeaders
-    // ];
-    let mobileRows = [
-        reportToRowHeaders
-    ];
-
+    // let desktopRows = [];
+    let mobileRows = [];
+    let mobileHeaders = null;
+        
     try {
         files.forEach(fileName => {
-            if (fileName !== mobileAggregateReportName && fileName !== '.DS_Store') {
+            if (fileName !== '.DS_Store') {
                 let filePath = path.join(reportsDirectoryPath, fileName);
                 let fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
+                // if headers arent set yet, do it now
+                mobileHeaders = mobileHeaders || reportToRowHeaders(fileContents);
                 console.log(`Bundling ${fileName} into aggregated report`);
                 const newRow = reportToRow(fileContents);
                 // if (fileName.includes('.desktop')) {
@@ -45,10 +37,10 @@ const aggregateCSVReports = (reportsDirectoryPath, outputPath) => {
                 // }
             }
         });
-        // desktopWriteStream.write(csvStringify(desktopRows));
-        // console.log('Wrote desktop aggregate report');
-        mobileWriteStream.write(csvStringify(mobileRows));
-        console.log('Wrote mobile aggregate report');
+        mobileRows.unshift(mobileHeaders);
+        //desktopRows.unshift(desktopHeaders);
+
+        return csvStringify(mobileRows);
 
     }
     catch (e) {

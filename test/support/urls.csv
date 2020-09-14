@@ -1,7 +1,7 @@
 URL,content_type,bytes,response
-https://baptistjaxqa.azurewebsites.net/,text/html; charset=utf-8,282640,200
-https://baptistjaxqa.azurewebsites.net/manifest.json,application/json,79,200
-https://baptistjaxqa.azurewebsites.net/css/site.css,text/css,6829,200
-https://baptistjaxqa.azurewebsites.net/css/toolkit.min.css,text/css,1022354,200
-https://baptistjaxqa.azurewebsites.net/immediate-care/er,text/html; charset=utf-8,278413,200
-https://baptistjaxqa.azurewebsites.net/immediate-care/carespot,text/html,305695,200
+https://whatever.net/,text/html; charset=utf-8,282640,200
+https://whatever.net/manifest.json,application/json,79,200
+https://whatever.net/css/site.css,text/css,6829,200
+https://whatever.net/css/toolkit.min.css,text/css,1022354,200
+https://whatever.net/immediate-care/er,text/html; charset=utf-8,278413,200
+https://whatever.net/immediate-care/carespot,text/html,305695,200

@@ -4,10 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { makeRow } = require('./csv_maker'); 
 
-// const siteUrl = "https://baptistjaxqa.azurewebsites.net"; //@TODO handle trailing backslash
 const siteUrl = process.argv[2];
-
-
 const respectRobots = false;
 const crawler = new Crawler(siteUrl);
 
