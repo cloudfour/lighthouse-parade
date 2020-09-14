@@ -25,41 +25,11 @@ It is also easy to graph data in this format. The following example is a histogr
 
 ## Usage
 
-### Scan site: crawl + lighthouse + aggregate
-
 `npm run scan -- <URL>`
 
 Ex: `npm run scan -- http://www.dfwfreeways.com/`
 
-Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric. This is a combination of each of the commands below.
-
-### Discover site URLs
-
-`npm run urls -- <URL>`
-
-Ex: `npm run url -- http://www.dfwfreeways.com/`
-
-Runs a crawler on the provided URL. Discovers all URLs and writes them to a CSV file located in `./data/<timestamp>/urls.csv` .
-By default, a `robots.txt` file will be ignored, but this flag can be manually changed at the top of `urls_task.js`.
-
-### Generate Lighthouse reports 
-
-`npm run reports -- <path/to/urls.csv>`
-
-Ex: `npm run reports -- data/1595551804243/urls.csv`
-
-Generates a Lighthouse report for each URL in the provided CSV file. Non-HTML content-types will be ignored (Ex: CSS, PNG, JSON).
-The default report format is CSV, but this flag can me manually changed at the top of `lighthouse_task.js`. Each report will be written
-to a `reports/` directory in the same directory as the input CSV file.
-
-### Aggregate Lighthouse reports 
-
-`npm run combine -- <path/to/reports/dir>`
-
-Ex: `npm run combine -- data/1595551804243/reports`
-
-Generates a single spreadsheet with rows for each individual Lighthouse report found in the directory
-
+Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric.
 
 ## Analysis spreadsheet template
 
@@ -91,4 +61,3 @@ The follow links have documentation related to the libraries used by this tool.
 * [Lighthouse applies network throttling by defualt...](https://github.com/GoogleChrome/lighthouse#how-does-lighthouse-use-network-throttling-and-how-can-i-make-it-better)
 * [Chrome flags/switches](https://peter.sh/experiments/chromium-command-line-switches/)
 * [Node CSV docs](https://csv.js.org/)
-
