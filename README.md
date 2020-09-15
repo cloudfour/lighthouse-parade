@@ -51,13 +51,10 @@ To use this template, it is important to follow these instructions very carefull
 1. **Under Import Location, select Replace data at selected cell**.
 1. Click Import Data 
 
-## Additional docs
+## Shout-outs
 
-The follow links have documentation related to the libraries used by this tool.
+* [auto-light](https://github.com/TGiles/auto-lighthouse) is a similar project that provided early inspiration for this one.
+* [Lighthouse](https://github.com/GoogleChrome/lighthouse) is handling emulation and performance metrics. 
+* [Node CSV](https://csv.js.org/) is the library handling CSV logic.
+* [simplecrawler](https://github.com/simplecrawler/simplecrawler) is the library handling URL discovery.
 
-* [Lighthouse `lhr` object properties](https://github.com/GoogleChrome/lighthouse/blob/master/docs/understanding-results.md)
-* [Using Lighthouse programmatically](https://github.com/GoogleChrome/lighthouse/blob/master/docs/readme.md#using-programmatically)
-* [Lighthouse CLI options](https://github.com/GoogleChrome/lighthouse#using-the-node-cli)
-* [Lighthouse applies network throttling by defualt...](https://github.com/GoogleChrome/lighthouse#how-does-lighthouse-use-network-throttling-and-how-can-i-make-it-better)
-* [Chrome flags/switches](https://peter.sh/experiments/chromium-command-line-switches/)
-* [Node CSV docs](https://csv.js.org/)
