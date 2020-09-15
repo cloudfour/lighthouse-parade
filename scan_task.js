@@ -5,6 +5,11 @@ const path = require('path');
 const { makeUrlRow } = require('./url_csv_maker'); 
 const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
 const { aggregateCSVReports } = require('./combine');
+const {
+    writeReportFile,
+    fileDoesntExist,
+    isContentTypeHtml
+} = require('./utilities');
 const siteUrl = process.argv[2];
 const dir = path.join(__dirname,'data', `${Date.now()}`);
 
@@ -13,17 +18,6 @@ const reportFormat = 'csv'; // html works too
 const reportDirName = 'reports';
 const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(reportsDirPath, {recursive: true});
-const writeReportFile = (reportData, reportFileName) => {
-  if (!reportData) {
-    console.log('No data to write');
-    return;
-  }
-  fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
-};
-const fileDoesntExist = (reportFileName, targetReportDirectory) => {
-	return  !fs.existsSync(path.join(targetReportDirectory, reportFileName));
-}
-const isContentTypeHtml = (contentType) => { return contentType.indexOf('html') !== -1; };
 
 // set up for crawler
 const respectRobots = false;
