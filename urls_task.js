@@ -2,7 +2,7 @@ const csvStringify = require('csv-stringify/lib/sync');
 const Crawler = require("simplecrawler");
 const fs = require('fs');
 const path = require('path');
-const { makeRow } = require('./csv_maker'); 
+const { makeUrlRow } = require('./url_csv_maker'); 
 
 const siteUrl = process.argv[2];
 const respectRobots = false;
@@ -20,7 +20,7 @@ const stream = fs.createWriteStream(file, {flags:'a'});
 // set up the crawler
 crawler.on("fetchcomplete", function(queueItem, responseBuffer, response) {
     console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
-    stream.write(makeRow(queueItem, responseBuffer, response));
+    stream.write(makeUrlRow(queueItem, responseBuffer, response));
 });
 
 crawler.on("complete", function() {

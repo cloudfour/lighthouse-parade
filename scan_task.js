@@ -2,7 +2,7 @@ const csvStringify = require('csv-stringify/lib/sync');
 const Crawler = require("simplecrawler");
 const fs = require('fs');
 const path = require('path');
-const { makeRow } = require('./csv_maker'); 
+const { makeUrlRow } = require('./url_csv_maker'); 
 const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
 const { aggregateCSVReports } = require('./combine');
 const siteUrl = process.argv[2];
@@ -37,7 +37,7 @@ console.log("Created CSV file");
 const stream = fs.createWriteStream(file, {flags:'a'});
 crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
     console.log("Crawled %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
-    stream.write(makeRow(queueItem, responseBuffer, response));
+    stream.write(makeUrlRow(queueItem, responseBuffer, response));
     const reportFileName = makeFileNameFromUrl(queueItem.url, reportFormat);
     if (!fileDoesntExist(reportFileName, reportsDirPath)) {
     	console.log('Skipping report because file already exists');
