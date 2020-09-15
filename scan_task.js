@@ -6,12 +6,12 @@ const { makeUrlRow } = require('./url_csv_maker');
 const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
 const { aggregateCSVReports } = require('./combine');
 const {
-    writeReportFile,
     fileDoesntExist,
-    isContentTypeHtml
+    isContentTypeHtml,
+    usefulDirName
 } = require('./utilities');
 const siteUrl = process.argv[2];
-const dir = path.join(__dirname,'data', `${Date.now()}`);
+const dir = path.join(__dirname,'data', usefulDirName());
 
 // set up for lighthouse reports
 const reportFormat = 'csv'; // html works too
@@ -41,7 +41,7 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
     	return;
     }
     const reportData = await runReport(queueItem.url, reportFormat);
-    writeReportFile(reportData, reportFileName);
+    fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
     console.log(`Wrote report for ${queueItem.url}`);
 });
 crawler.on("complete", function() {

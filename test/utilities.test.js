@@ -1,17 +1,12 @@
 const path = require('path');
 const fs = require('fs');
+const tk = require('timekeeper');
 const {
   isContentTypeHtml,
   fileDoesntExist,
-  writeReportFile
+  usefulDirName
  
 } = require('../utilities.js');
-// const testCsvPath = path.join(
-//   __dirname,
-//   'support',
-//   'lombard.csv'
-// );
-// const fileContents = fs.readFileSync(testCsvPath, { encoding: 'utf-8' });
 
 describe("isContentTypeHtml", () => {
 
@@ -40,4 +35,12 @@ describe("fileDoesntExist", () => {
     expect(fileDoesntExist('https--whatever_net-.csv', __dirname+'/support/example1/reports')).toBe(false);
   });
 
+});
+
+describe('usefulDirName', () => {
+  it('returns what we expect', () => {
+    const time = new Date(1893448800000);// Mon Dec 31 2029 22:00:00 UTC
+    tk.freeze(time);
+    expect(usefulDirName()).toBe('2029-12-31T22_00_00');
+  });
 });

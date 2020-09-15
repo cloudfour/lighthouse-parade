@@ -1,13 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const writeReportFile = (reportData, reportFileName) => {
-  if (!reportData) {
-    console.log('No data to write');
-    return;
-  }
-  fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
-};
 const fileDoesntExist = (reportFileName, targetReportDirectory) => {
 	return  !fs.existsSync(path.join(targetReportDirectory, reportFileName));
 }
@@ -15,8 +8,16 @@ const isContentTypeHtml = (contentType) => {
 	return contentType.toLowerCase().indexOf('html') !== -1; 
 };
 
+const usefulDirName = () => {
+	const date = new Date();
+	const iso = date.toISOString();
+	const wo_colons = iso.replace(/:/g, '_');
+	const trimmed = wo_colons.split('.')[0];
+	return trimmed;
+}
+
 module.exports = {
     isContentTypeHtml,
     fileDoesntExist,
-    writeReportFile
+    usefulDirName
 }
