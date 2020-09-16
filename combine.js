@@ -30,15 +30,14 @@ const aggregateCSVReports = (reportsDirectoryPath) => {
                 mobileHeaders = mobileHeaders || reportToRowHeaders(fileContents);
                 console.log(`Bundling ${fileName} into aggregated report`);
                 const newRow = reportToRow(fileContents);
-                // if (fileName.includes('.desktop')) {
-                //     desktopRows.push(newRow);
-                // } else if (fileName.includes('.mobile')) {
+                if (!newRow) {
+                    console.log(`Failed to bundle: ${fileName}`);
+                } else {
                     mobileRows.push(newRow);
-                // }
+                }
             }
         });
         mobileRows.unshift(mobileHeaders);
-        //desktopRows.unshift(desktopHeaders);
 
         return csvStringify(mobileRows);
 

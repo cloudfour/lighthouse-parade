@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const {aggregateCSVReports} = require('../combine');
+const csvParse = require('csv-parse/lib/sync');
 
 const testReportsPath = path.join(
   __dirname,
@@ -15,6 +16,14 @@ const testOutputPath = path.join(
   'example2'
 );
 
+const testReportsPathWithBadFiles = path.join(
+  __dirname,
+  'support',
+  'example3',
+  'reports'
+);
+
+
 describe("aggregateCSVReports", () => {
 
   it('creates the expected csv', () => {
@@ -23,5 +32,12 @@ describe("aggregateCSVReports", () => {
     expect(data).toEqual(expected);
   });
 
+  it('skips erroneous files', () => {
+    const data = aggregateCSVReports(testReportsPathWithBadFiles);// this directory has bad files in it
+    const expected = fs.readFileSync(path.join(testOutputPath, 'expectedAggregatedMobileReport.csv'), { encoding: 'utf-8' });
+    const parsed = csvParse(data);
+    expect(parsed.length).toEqual(2); // expecting header + one real row
+
+  })
 });
 

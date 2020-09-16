@@ -25,6 +25,10 @@ const reportToRow = (csvFileContents) => {
         ltrim: true,
         relax: true //https://csv.js.org/parse/options/
     });
+    // sometimes reports come out half-baked...
+    if (!reportRows || !reportRows.length){
+        return false;
+    }
     let columns = [
     	reportRows[0].requestedUrl,
     	reportRows[0].finalUrl
