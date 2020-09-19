@@ -1,24 +1,21 @@
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
-const fileDoesntExist = (reportFileName, targetReportDirectory) => {
+export const fileDoesntExist = (
+  reportFileName: string,
+  targetReportDirectory: string
+) => {
   return !fs.existsSync(path.join(targetReportDirectory, reportFileName));
 };
 
-const isContentTypeHtml = (contentType) => {
+export const isContentTypeHtml = (contentType: string) => {
   return contentType.toLowerCase().includes('html');
 };
 
-const usefulDirName = () => {
+export const usefulDirName = () => {
   const date = new Date();
   const iso = date.toISOString();
-  const wo_colons = iso.replace(/:/g, '_');
-  const trimmed = wo_colons.split('.')[0];
+  const withoutColons = iso.replace(/:/g, '_');
+  const trimmed = withoutColons.split('.')[0];
   return trimmed;
-};
-
-module.exports = {
-  isContentTypeHtml,
-  fileDoesntExist,
-  usefulDirName,
 };
