@@ -4,15 +4,16 @@
   "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
   "scripts": {
     "test": "jest",
-    "urls": "node ./urls_task.js",
-    "reports": "node ./lighthouse_task.js",
-    "combine": "node ./combine_task.js",
-    "scan": "node ./scan_task.js",
+    "urls": "node dist/urls_task.js",
+    "reports": "node dist/lighthouse_task.js",
+    "combine": "node dist/combine_task.js",
+    "scan": "node dist/scan_task.js",
     "check-lint": "eslint . && prettier --check .",
     "lint": "eslint --fix . && prettier --write .",
-    "type": "tsc",
-    "type:watch": "tsc --watch",
-    "build": "esbuild"
+    "type": "tsc --noEmit",
+    "type:watch": "tsc --watch --noEmit",
+    "build": "tsc",
+    "build:watch": "tsc --watch"
   },
   "author": "emerson@cloudfour.com",
   "license": "MIT",
@@ -24,7 +25,6 @@
   },
   "devDependencies": {
     "@cloudfour/eslint-plugin": "^14.0.0",
-    "esbuild": "^0.7.1",
     "eslint": "^7.9.0",
     "jest": "^26.1.0",
     "prettier": "^2.1.2",
