@@ -25,7 +25,7 @@ describe('reportToRow', () => {
 describe('reportToRowHeaders', () => {
   const headers = reportToRowHeaders(fileContents);
 
-  it('is long list or metrics', () => {
+  it('is long list of metrics', () => {
     if (!Array.isArray(headers)) throw new Error('expected an array');
     expect(headers[0]).toBe('Requested URL');
     expect(headers[1]).toBe('Final URL');
