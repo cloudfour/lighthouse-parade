@@ -1,13 +1,12 @@
 const spawnSync = require('child_process').spawnSync;
 const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
 const chromeLauncher = require('chrome-launcher');
-var sanitize = require("sanitize-filename");
+const sanitize = require('sanitize-filename');
 const fs = require('fs');
 const path = require('path');
 
 const runReport = async (url, outputFormat, maxWait) => {
-
-  const {status = -1, stdout} = spawnSync('node', [
+  const { status = -1, stdout } = spawnSync('node', [
     lighthouseCli,
     url,
     `--output=${outputFormat}`,
@@ -15,7 +14,7 @@ const runReport = async (url, outputFormat, maxWait) => {
     `--emulated-form-factor=mobile`,
     `--only-categories=performance`,
     `--chrome-flags="--headless"`,
-    `--max-wait-for-load=${maxWait || 45000}`
+    `--max-wait-for-load=${maxWait || 45000}`,
   ]);
 
   if (status !== 0) {
@@ -28,13 +27,11 @@ const runReport = async (url, outputFormat, maxWait) => {
 };
 
 const makeFileNameFromUrl = (url, extension) => {
-  const newUrl = url
-    .replace(/\./g, '_')
-    .replace(/\//g, '-');
+  const newUrl = url.replace(/\./g, '_').replace(/\//g, '-');
   return `${sanitize(newUrl)}.${extension}`;
-}
+};
 
-// const repoortFileAlreadyExists = (path) => {
+// Const repoortFileAlreadyExists = (path) => {
 //   return fs.existsSync(path);
 // }
 
@@ -43,7 +40,7 @@ const makeFileNameFromUrl = (url, extension) => {
 //   return (type.indexOf('html') !== -1);
 // };
 
-module.exports = { 
+module.exports = {
   makeFileNameFromUrl,
-  runReport
+  runReport,
 };
