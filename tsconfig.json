@@ -7,8 +7,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["lighthouse/types/lhr", "jest"]
   },
   "include": ["**/*.ts"]
 }
