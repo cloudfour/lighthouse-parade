@@ -36,5 +36,11 @@
   },
   "prettier": {
     "singleQuote": true
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
   }
 }

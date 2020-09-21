@@ -6,7 +6,7 @@ const {
   fileDoesntExist,
   usefulDirName
  
-} = require('../utilities.js');
+} = require('../utilities');
 
 describe("isContentTypeHtml", () => {
 
