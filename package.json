@@ -4,6 +4,7 @@
   "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "urls": "node dist/urls_task.js",
     "reports": "node dist/lighthouse_task.js",
     "combine": "node dist/combine_task.js",
@@ -24,15 +25,23 @@
     "simplecrawler": "^1.1.9"
   },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
     "@cloudfour/eslint-plugin": "^14.0.0",
+    "@types/jest": "^26.0.14",
     "eslint": "^7.9.0",
+    "eslint-plugin-jest": "^24.0.2",
     "jest": "^26.1.0",
     "prettier": "^2.1.2",
     "timekeeper": "^2.2.0",
     "typescript": "^4.0.3"
   },
   "eslintConfig": {
-    "extends": "plugin:@cloudfour/recommended"
+    "extends": [
+      "plugin:@cloudfour/recommended",
+      "plugin:jest/recommended"
+    ]
   },
   "prettier": {
     "singleQuote": true

@@ -1,11 +1,10 @@
-const path = require('path');
-const fs = require('fs');
-const tk = require('timekeeper');
-const {
+// eslint-disable-next-line @cloudfour/node/no-unpublished-import
+import * as tk from 'timekeeper';
+import {
   isContentTypeHtml,
   fileDoesntExist,
   usefulDirName,
-} = require('../utilities');
+} from '../utilities';
 
 describe('isContentTypeHtml', () => {
   it('returns false when not HTML', () => {
