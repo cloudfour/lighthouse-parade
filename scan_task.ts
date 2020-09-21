@@ -13,13 +13,13 @@ const {
 const siteUrl = process.argv[2];
 const dir = path.join(__dirname,'data', usefulDirName());
 
-// set up for lighthouse reports
-const reportFormat = 'csv'; // html works too
+// Set up for lighthouse reports
+const reportFormat = 'csv'; // Html works too
 const reportDirName = 'reports';
 const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(reportsDirPath, {recursive: true});
 
-// set up for crawler
+// Set up for crawler
 const respectRobots = false;
 const crawler = new Crawler(siteUrl);
 fs.mkdirSync(dir, {recursive: true});
@@ -37,9 +37,11 @@ crawler.on("fetchcomplete", async (queueItem, responseBuffer, response) => {
     	console.log('Skipping report because file already exists');
     	return;
     }
+
     if (!isContentTypeHtml(response.headers['content-type'])){
     	return;
     }
+
     const reportData = await runReport(queueItem.url, reportFormat);
     fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
     console.log(`Wrote report for ${queueItem.url}`);
@@ -66,6 +68,7 @@ crawler.on("fetch410", errorLog);
 function errorLog(queueItem, response) {
 	console.log(`Error fetching (${response.statusCode}): ${queueItem.url}`);
 }
+
 if (!respectRobots) {
 	crawler.respectRobotsTxt = false;
 }

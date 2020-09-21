@@ -12,21 +12,21 @@ const aggregateCSVReports = (reportsDirectoryPath) => {
     let files;
     try {
         files = fs.readdirSync(reportsDirectoryPath);
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        console.error(error);
         return false;
     }
 
-    // let desktopRows = [];
-    let mobileRows = [];
+    // Let desktopRows = [];
+    const mobileRows = [];
     let mobileHeaders = null;
         
     try {
         files.forEach(fileName => {
             if (fileName !== '.DS_Store') {
-                let filePath = path.join(reportsDirectoryPath, fileName);
-                let fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
-                // if headers arent set yet, do it now
+                const filePath = path.join(reportsDirectoryPath, fileName);
+                const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
+                // If headers arent set yet, do it now
                 mobileHeaders = mobileHeaders || reportToRowHeaders(fileContents);
                 console.log(`Bundling ${fileName} into aggregated report`);
                 const newRow = reportToRow(fileContents);
@@ -42,10 +42,11 @@ const aggregateCSVReports = (reportsDirectoryPath) => {
         return csvStringify(mobileRows);
 
     }
-    catch (e) {
-        console.error(e);
+    catch (error) {
+        console.error(error);
         return false;
     }
+
     return true;
 }
 

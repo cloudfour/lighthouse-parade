@@ -9,12 +9,12 @@ const reportToRowHeaders = (csvFileContents) => {
         columns: true,
         skip_empty_lines: true,
         ltrim: true,
-        relax: true //https://csv.js.org/parse/options/
+        relax: true // https://csv.js.org/parse/options/
     });
-    for(let i=0; i<singleReportRows.length; i++) {
-    	const row = singleReportRows[i];
+    for(const row of singleReportRows) {
     	headers.push(`${row.category}: ${row.title} (${row.type})`);
     }
+
     return headers;
 }
 
@@ -23,13 +23,14 @@ const reportToRow = (csvFileContents) => {
         columns: true,
         skip_empty_lines: true,
         ltrim: true,
-        relax: true //https://csv.js.org/parse/options/
+        relax: true // https://csv.js.org/parse/options/
     });
-    // sometimes reports come out half-baked...
+    // Sometimes reports come out half-baked...
     if (!reportRows || !reportRows.length){
         return false;
     }
-    let columns = [
+
+    const columns = [
     	reportRows[0].requestedUrl,
     	reportRows[0].finalUrl
     ];

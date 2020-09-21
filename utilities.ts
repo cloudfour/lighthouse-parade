@@ -4,8 +4,9 @@ const path = require('path');
 const fileDoesntExist = (reportFileName, targetReportDirectory) => {
 	return  !fs.existsSync(path.join(targetReportDirectory, reportFileName));
 }
+
 const isContentTypeHtml = (contentType) => {
-	return contentType.toLowerCase().indexOf('html') !== -1; 
+	return contentType.toLowerCase().includes('html'); 
 };
 
 const usefulDirName = () => {

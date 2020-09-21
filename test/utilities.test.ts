@@ -28,11 +28,11 @@ describe("isContentTypeHtml", () => {
 describe("fileDoesntExist", () => {
 
   it('returns true when there is no file', () => {
-    expect(fileDoesntExist('not-here.json', __dirname+'/support/example1/reports')).toBe(true);
+    expect(fileDoesntExist('not-here.json', `${__dirname}/support/example1/reports`)).toBe(true);
   });
 
   it('returns false when there IS a file', () => {
-    expect(fileDoesntExist('https--whatever_net-.csv', __dirname+'/support/example1/reports')).toBe(false);
+    expect(fileDoesntExist('https--whatever_net-.csv', `${__dirname}/support/example1/reports`)).toBe(false);
   });
 
 });

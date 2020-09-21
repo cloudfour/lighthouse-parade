@@ -17,7 +17,7 @@ fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
 console.log("Created CSV file");
 const stream = fs.createWriteStream(file, {flags:'a'});
 
-// set up the crawler
+// Set up the crawler
 crawler.on("fetchcomplete", function(queueItem, responseBuffer, response) {
     console.log("Fetched %s [%s] (%d bytes)", queueItem.url, response.headers['content-type'], responseBuffer.length);
     stream.write(makeUrlRow(queueItem, responseBuffer, response));

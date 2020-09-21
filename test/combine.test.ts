@@ -33,10 +33,10 @@ describe("aggregateCSVReports", () => {
   });
 
   it('skips erroneous files', () => {
-    const data = aggregateCSVReports(testReportsPathWithBadFiles);// this directory has bad files in it
+    const data = aggregateCSVReports(testReportsPathWithBadFiles);// This directory has bad files in it
     const expected = fs.readFileSync(path.join(testOutputPath, 'expectedAggregatedMobileReport.csv'), { encoding: 'utf-8' });
     const parsed = csvParse(data);
-    expect(parsed.length).toEqual(2); // expecting header + one real row
+    expect(parsed.length).toEqual(2); // Expecting header + one real row
 
   })
 });

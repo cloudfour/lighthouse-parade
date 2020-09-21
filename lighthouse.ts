@@ -1,7 +1,7 @@
 const spawnSync = require('child_process').spawnSync;
 const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
 const chromeLauncher = require('chrome-launcher');
-var sanitize = require("sanitize-filename");
+const sanitize = require("sanitize-filename");
 const fs = require('fs');
 const path = require('path');
 
@@ -34,7 +34,7 @@ const makeFileNameFromUrl = (url, extension) => {
   return `${sanitize(newUrl)}.${extension}`;
 }
 
-// const repoortFileAlreadyExists = (path) => {
+// Const repoortFileAlreadyExists = (path) => {
 //   return fs.existsSync(path);
 // }
 
