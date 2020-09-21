@@ -11,7 +11,7 @@ describe('reportToRow', () => {
 
     if (!Array.isArray(row)) throw new Error('expected an array');
 
-    expect(row[0]).toBe('https://lombardstreettattoo.com');
+    expect(row[0]).toBe('https://lombardstreettattoo.com/');
     expect(row[1]).toBe('https://lombardstreettattoo.com/');
     expect(row[2]).toBe('0.8');
     expect(row[3]).toBe('1');
