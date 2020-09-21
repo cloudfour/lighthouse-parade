@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const parse = require('csv-parse/lib/sync');
-const { reportToRow, reportToRowHeaders } = require('./reportToRow');
+const { reportToRow, reportToRowHeaders } = require('./report-to-row');
 const csvStringify = require('csv-stringify/lib/sync');
 const { aggregateCSVReports } = require('./combine');
 
