@@ -15,7 +15,7 @@ export const aggregateCSVReports = (reportsDirectoryPath: string) => {
     return false;
   }
 
-  const mobileRows = [];
+  const rows = [];
   let headers: boolean | string[] | null = null;
 
   try {
@@ -28,15 +28,15 @@ export const aggregateCSVReports = (reportsDirectoryPath: string) => {
         console.log(`Bundling ${fileName} into aggregated report`);
         const newRow = reportToRow(fileContents);
         if (newRow) {
-          mobileRows.push(newRow);
+          rows.push(newRow);
         } else {
           console.log(`Failed to bundle: ${fileName}`);
         }
       }
     });
-    mobileRows.unshift(headers);
+    rows.unshift(headers);
 
-    return csvStringify(mobileRows);
+    return csvStringify(rows);
   } catch (error) {
     console.error(error);
     return false;
