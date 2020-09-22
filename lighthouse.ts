@@ -1,11 +1,11 @@
-const spawnSync = require('child_process').spawnSync;
-const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
-const chromeLauncher = require('chrome-launcher');
-const sanitize = require('sanitize-filename');
-const fs = require('fs');
-const path = require('path');
+import { spawnSync } from 'child_process';
+import sanitize from 'sanitize-filename';
 
-const runReport = async (url, outputFormat, maxWait) => {
+const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
+
+type OutputFormat = 'json' | 'html' | 'csv';
+
+export const runReport = (url: string, outputFormat: OutputFormat) => {
   const { status = -1, stdout } = spawnSync('node', [
     lighthouseCli,
     url,
@@ -14,7 +14,7 @@ const runReport = async (url, outputFormat, maxWait) => {
     `--emulated-form-factor=mobile`,
     `--only-categories=performance`,
     `--chrome-flags="--headless"`,
-    `--max-wait-for-load=${maxWait || 45000}`,
+    `--max-wait-for-load=45000`,
   ]);
 
   if (status !== 0) {
@@ -26,21 +26,7 @@ const runReport = async (url, outputFormat, maxWait) => {
   return stdout;
 };
 
-const makeFileNameFromUrl = (url, extension) => {
+export const makeFileNameFromUrl = (url: string, extension: OutputFormat) => {
   const newUrl = url.replace(/\./g, '_').replace(/\//g, '-');
   return `${sanitize(newUrl)}.${extension}`;
-};
-
-// Const repoortFileAlreadyExists = (path) => {
-//   return fs.existsSync(path);
-// }
-
-// const isHtml = (rowObj) => {
-//   const type = rowObj.content_type;
-//   return (type.indexOf('html') !== -1);
-// };
-
-module.exports = {
-  makeFileNameFromUrl,
-  runReport,
 };

@@ -1,7 +1,4 @@
-const { makeFileNameFromUrl } = require('../lighthouse');
-const fs = require('fs');
-const path = require('path');
-const parse = require('csv-parse/lib/sync');
+import { makeFileNameFromUrl } from '../lighthouse';
 
 test('makeFileNameFromUrl works as expected', () => {
   expect(makeFileNameFromUrl('http://example.com/foo', 'csv')).toBe(
