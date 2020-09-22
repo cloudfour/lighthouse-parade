@@ -11,7 +11,7 @@ const {
   makeUrlRow,
 } = require('./utilities');
 const siteUrl = process.argv[2];
-const dir = path.join(__dirname, 'data', usefulDirName());
+const dir = path.join(process.cwd(), 'data', usefulDirName());
 
 // Set up for lighthouse reports
 const reportFormat = 'csv'; // Html works too

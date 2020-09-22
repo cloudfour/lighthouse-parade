@@ -8,7 +8,7 @@ const siteUrl = process.argv[2];
 const respectRobots = false;
 const crawler = new Crawler(siteUrl);
 
-const dir = path.join(__dirname, 'data', `${Date.now()}`);
+const dir = path.join(process.cwd(), 'data', `${Date.now()}`);
 fs.mkdirSync(dir, { recursive: true });
 const file = `${dir}/urls.csv`;
 fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
