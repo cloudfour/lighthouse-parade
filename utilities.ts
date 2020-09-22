@@ -1,5 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import type { QueueItem } from 'simplecrawler/queue';
+import type { IncomingMessage } from 'http';
 
 export const fileDoesntExist = (
   reportFileName: string,
@@ -18,4 +20,12 @@ export const usefulDirName = () => {
   const withoutColons = iso.replace(/:/g, '_');
   const trimmed = withoutColons.split('.')[0];
   return trimmed;
+};
+
+export const makeUrlRow = (
+  queueItem: QueueItem,
+  responseBuffer: string | Buffer,
+  response: IncomingMessage
+) => {
+  return `"${queueItem.url}",${response.headers['content-type']},${responseBuffer.length},${response.statusCode}\n`;
 };
