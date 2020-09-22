@@ -2,7 +2,7 @@ const csvStringify = require('csv-stringify/lib/sync');
 const Crawler = require('simplecrawler');
 const fs = require('fs');
 const path = require('path');
-const { makeUrlRow } = require('./url_csv_maker');
+const { makeUrlRow } = require('./utilities');
 
 const siteUrl = process.argv[2];
 const respectRobots = false;

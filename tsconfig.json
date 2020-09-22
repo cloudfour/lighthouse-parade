@@ -10,7 +10,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["lighthouse/types/lhr", "jest"]
+    "types": ["lighthouse/types/lhr", "jest"],
+    "importsNotUsedAsValues": "error"
   },
   "include": ["**/*.ts"]
 }

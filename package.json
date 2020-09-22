@@ -32,6 +32,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@cloudfour/eslint-plugin": "^14.0.0",
     "@types/jest": "^26.0.14",
+    "@types/simplecrawler": "^1.1.1",
     "eslint": "^7.9.0",
     "eslint-plugin-jest": "^24.0.2",
     "jest": "^26.1.0",
