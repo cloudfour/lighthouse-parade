@@ -1,15 +1,16 @@
-const csvStringify = require('csv-stringify/lib/sync');
-const Crawler = require('simplecrawler');
-const fs = require('fs');
-const path = require('path');
-const { runReport, makeFileNameFromUrl, isHtml } = require('./lighthouse');
-const { aggregateCSVReports } = require('./combine');
-const {
+import Crawler from 'simplecrawler';
+import fs from 'fs';
+import path from 'path';
+import { runReport, makeFileNameFromUrl } from './lighthouse';
+import { aggregateCSVReports } from './combine';
+import {
   fileDoesntExist,
   isContentTypeHtml,
   usefulDirName,
   makeUrlRow,
-} = require('./utilities');
+} from './utilities';
+import type { QueueItem } from 'simplecrawler/queue';
+import type { IncomingMessage } from 'http';
 const siteUrl = process.argv[2];
 const dir = path.join(process.cwd(), 'data', usefulDirName());
 
@@ -20,8 +21,8 @@ const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(reportsDirPath, { recursive: true });
 
 // Set up for crawler
-const respectRobots = false;
 const crawler = new Crawler(siteUrl);
+crawler.respectRobotsTxt = false;
 fs.mkdirSync(dir, { recursive: true });
 const file = `${dir}/urls.csv`;
 fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
@@ -29,7 +30,7 @@ fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
 });
 console.log('Created CSV file');
 const stream = fs.createWriteStream(file, { flags: 'a' });
-crawler.on('fetchcomplete', async (queueItem, responseBuffer, response) => {
+crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
   console.log(
     'Crawled %s [%s] (%d bytes)',
     queueItem.url,
@@ -47,7 +48,8 @@ crawler.on('fetchcomplete', async (queueItem, responseBuffer, response) => {
     return;
   }
 
-  const reportData = await runReport(queueItem.url, reportFormat);
+  const reportData = runReport(queueItem.url, reportFormat);
+  if (!reportData) return;
   fs.writeFileSync(`${reportsDirPath}/${reportFileName}`, reportData);
   console.log(`Wrote report for ${queueItem.url}`);
 });
@@ -55,6 +57,10 @@ crawler.on('complete', function () {
   console.log('Scan complete');
   console.log('Aggregating reports...');
   const aggregatedReportData = aggregateCSVReports(reportsDirPath);
+  if (!aggregatedReportData) {
+    return;
+  }
+
   const writePath = path.join(dir, 'aggregatedMobileReport.csv');
   fs.writeFile(writePath, aggregatedReportData, (e) => {
     if (e) {
@@ -63,15 +69,11 @@ crawler.on('complete', function () {
   });
   console.log('DONE!');
 });
-crawler.on('fetcherror', errorLog);
-crawler.on('fetch404', errorLog);
-crawler.on('fetch410', errorLog);
-function errorLog(queueItem, response) {
+crawler.on('fetcherror', logError);
+crawler.on('fetch404', logError);
+crawler.on('fetch410', logError);
+function logError(queueItem: QueueItem, response: IncomingMessage) {
   console.log(`Error fetching (${response.statusCode}): ${queueItem.url}`);
-}
-
-if (!respectRobots) {
-  crawler.respectRobotsTxt = false;
 }
 
 console.log('Starting the crawl...');

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
+    "target": "ES2019",
+    "module": "CommonJS",
     "outDir": "dist",
     "strict": true,
     "noUnusedLocals": true,

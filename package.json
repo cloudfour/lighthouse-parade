@@ -8,7 +8,7 @@
     "urls": "node dist/urls-task.js",
     "reports": "node dist/lighthouse_task.js",
     "combine": "node dist/combine_task.js",
-    "scan": "node dist/scan_task.js",
+    "scan": "node dist/scan-task.js",
     "check-lint": "eslint . && prettier --check .",
     "lint": "eslint --fix . && prettier --write .",
     "type": "tsc --noEmit",
