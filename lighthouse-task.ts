@@ -1,8 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-// Const {exec} = require('child_process');
-const parse = require('csv-parse/lib/sync');
-const { reportsForRows } = require('./lighthouse');
+import fs from 'fs';
+import path from 'path';
+import parse from 'csv-parse/lib/sync';
+import { reportsForRows } from './lighthouse';
 
 // First two indexes of argv are node (0) and the path to the script (1)
 const filePath = process.argv[2];
@@ -14,7 +13,7 @@ const reportDirName = 'reports';
 const reportsDirPath = `${dir}/${reportDirName}`;
 fs.mkdirSync(`${dir}/${reportDirName}`, { recursive: true });
 
-const writeReportFile = (reportData, reportFileName) => {
+const writeReportFile = (reportData, reportFileName: string) => {
   if (!reportData) {
     console.log('No data to write');
     return;
@@ -24,12 +23,3 @@ const writeReportFile = (reportData, reportFileName) => {
 };
 
 reportsForRows(csvRows, outputFormat, writeReportFile, reportsDirPath);
-
-// Exec('find . -type f | wc -l', (err, stdout, stderr) => {
-//   if (err) {
-//     console.error(`exec error: ${err}`);
-//     return;
-//   }
-
-//   console.log(`Number of files ${stdout}`);
-// });
