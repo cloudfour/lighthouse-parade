@@ -57,9 +57,7 @@ crawler.on('complete', function () {
   console.log('Scan complete');
   console.log('Aggregating reports...');
   const aggregatedReportData = aggregateCSVReports(reportsDirPath);
-  if (!aggregatedReportData) {
-    return;
-  }
+  if (!aggregatedReportData) return;
 
   const writePath = path.join(dir, 'aggregatedMobileReport.csv');
   fs.writeFile(writePath, aggregatedReportData, (e) => {
