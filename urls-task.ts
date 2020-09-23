@@ -1,12 +1,13 @@
-const csvStringify = require('csv-stringify/lib/sync');
-const Crawler = require('simplecrawler');
-const fs = require('fs');
-const path = require('path');
-const { makeUrlRow } = require('./utilities');
+import Crawler from 'simplecrawler';
+import fs from 'fs';
+import path from 'path';
+import { makeUrlRow } from './utilities';
+import type { QueueItem } from 'simplecrawler/queue';
+import type { IncomingMessage } from 'http';
 
 const siteUrl = process.argv[2];
-const respectRobots = false;
 const crawler = new Crawler(siteUrl);
+crawler.respectRobotsTxt = false;
 
 const dir = path.join(process.cwd(), 'data', `${Date.now()}`);
 fs.mkdirSync(dir, { recursive: true });
@@ -32,16 +33,12 @@ crawler.on('complete', function () {
   console.log('Crawling complete');
 });
 
-crawler.on('fetcherror', errorLog);
-crawler.on('fetch404', errorLog);
-crawler.on('fetch410', errorLog);
+crawler.on('fetcherror', logError);
+crawler.on('fetch404', logError);
+crawler.on('fetch410', logError);
 
-function errorLog(queueItem, response) {
+function logError(queueItem: QueueItem, response: IncomingMessage) {
   console.log(`Error fetching (${response.statusCode}): ${queueItem.url}`);
-}
-
-if (!respectRobots) {
-  crawler.respectRobotsTxt = false;
 }
 
 console.log('Starting the crawl...');
