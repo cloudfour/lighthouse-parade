@@ -12,6 +12,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
       - name: Install Dependencies
         run: npm ci
       - name: Run tests
@@ -26,6 +32,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
       - name: Install Dependencies
         run: npm ci
       - name: Run Type Checker
@@ -40,6 +52,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
       - name: Install Dependencies
         run: npm ci
       - name: Run Linter
