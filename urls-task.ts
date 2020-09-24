@@ -7,7 +7,7 @@ import type { IncomingMessage } from 'http';
 
 const siteUrl = process.argv[2];
 const crawler = new Crawler(siteUrl);
-crawler.respectRobotsTxt = false;
+crawler.respectRobotsTxt = true;
 
 const dir = path.join(process.cwd(), 'data', `${Date.now()}`);
 fs.mkdirSync(dir, { recursive: true });
