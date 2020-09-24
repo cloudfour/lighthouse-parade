@@ -10,8 +10,8 @@ export const fileDoesntExist = (
   return !fs.existsSync(path.join(targetReportDirectory, reportFileName));
 };
 
-export const isContentTypeHtml = (contentType: string) => {
-  return contentType.toLowerCase().includes('html');
+export const isContentTypeHtml = (contentType?: string) => {
+  return contentType?.toLowerCase().includes('html');
 };
 
 export const usefulDirName = () => {
