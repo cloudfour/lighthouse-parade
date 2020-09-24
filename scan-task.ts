@@ -22,7 +22,7 @@ fs.mkdirSync(reportsDirPath, { recursive: true });
 
 // Set up for crawler
 const crawler = new Crawler(siteUrl);
-crawler.respectRobotsTxt = false;
+crawler.respectRobotsTxt = true;
 fs.mkdirSync(dir, { recursive: true });
 const file = `${dir}/urls.csv`;
 fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
