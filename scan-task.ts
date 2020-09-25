@@ -59,7 +59,9 @@ crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
 crawler.on('complete', function () {
   console.log('Scan complete');
   if (!hasFoundAnyPages) {
-    console.error('No pages were found while crawling site; exiting');
+    console.error(`No pages were found for this site. The two most likely reasons for this are:
+1) the URL is incorrect
+2) the crawler is being denied by a robots.txt file`);
     return;
   }
 
