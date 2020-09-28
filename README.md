@@ -23,12 +23,13 @@ It is also easy to graph data in this format. The following example is a histogr
 1. `nvm use` (if you use NVM)
 2. `npm install`
 3. `npm run build`
+4. `npm link`
 
 ## Usage
 
-`npm run scan -- <URL>`
+`lighthouse-parade scan <URL>`
 
-Ex: `npm run scan -- http://www.dfwfreeways.com/`
+Ex: `lighthouse-parade scan http://www.dfwfreeways.com/`
 
 Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric.
 

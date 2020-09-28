@@ -2,12 +2,12 @@
   "name": "lighthouse-parade",
   "version": "1.0.0",
   "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
+  "bin": "dist/cli.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "urls": "node dist/urls-task.js",
     "combine": "node dist/combine-task.js",
-    "scan": "node dist/scan-task.js",
     "check-lint": "eslint . && prettier --check .",
     "lint": "eslint --fix . && prettier --write .",
     "type": "tsc --noEmit",
@@ -22,8 +22,12 @@
     "csv-parse": "^4.12.0",
     "csv-stringify": "^5.5.1",
     "lighthouse": "github:GoogleChrome/lighthouse#a1571ba4bc5b7713248ea53e01db085389e634f8",
+    "sade": "^1.7.3",
     "sanitize-filename": "^1.6.3",
     "simplecrawler": "^1.1.9"
+  },
+  "engines": {
+    "node": ">12.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -31,6 +35,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@cloudfour/eslint-plugin": "^14.0.0",
     "@types/jest": "^26.0.14",
+    "@types/sade": "^1.7.2",
     "@types/simplecrawler": "^1.1.1",
     "eslint": "^7.9.0",
     "eslint-plugin-jest": "^24.0.2",
