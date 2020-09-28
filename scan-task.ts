@@ -28,9 +28,12 @@ const file = `${dir}/urls.csv`;
 fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
   encoding: 'utf-8',
 });
+/** Used so we can display an error if no pages are found while crawling */
+let hasFoundAnyPages = false;
 console.log('Created CSV file');
 const stream = fs.createWriteStream(file, { flags: 'a' });
 crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
+  hasFoundAnyPages = true;
   console.log(
     'Crawled %s [%s] (%d bytes)',
     queueItem.url,
@@ -55,6 +58,13 @@ crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
 });
 crawler.on('complete', function () {
   console.log('Scan complete');
+  if (!hasFoundAnyPages) {
+    console.error(`No pages were found for this site. The two most likely reasons for this are:
+1) the URL is incorrect
+2) the crawler is being denied by a robots.txt file`);
+    return;
+  }
+
   console.log('Aggregating reports...');
   const aggregatedReportData = aggregateCSVReports(reportsDirPath);
   if (!aggregatedReportData) return;
