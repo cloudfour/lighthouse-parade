@@ -4,10 +4,11 @@ import sade from 'sade';
 import { scan } from './scan-task';
 import { usefulDirName } from './utilities';
 import * as path from 'path';
+import { version } from './package.json';
 
 const program = sade('lighthouse-parade');
 
-program.version('0.0.0');
+program.version(version);
 
 program
   .command(

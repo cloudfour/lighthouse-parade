@@ -1,6 +1,6 @@
 {
   "name": "lighthouse-parade",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
   "bin": "dist/cli.js",
   "scripts": {
