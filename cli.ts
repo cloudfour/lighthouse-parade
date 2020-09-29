@@ -9,7 +9,7 @@ import { version } from './package.json';
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .describe(
-    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults ./data/YYYY-MM-DDTTZ_HH_MM'
+    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
   )
   .option(
     '--ignore-robots',
