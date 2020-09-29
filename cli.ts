@@ -13,7 +13,8 @@ program.version(version);
 program
   .command(
     'scan <url> [dataDirectory]',
-    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults ./data/YYYY-MM-DDTTZ_HH_MM'
+    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults ./data/YYYY-MM-DDTTZ_HH_MM',
+    { default: true }
   )
   .alias('s')
   .option(
