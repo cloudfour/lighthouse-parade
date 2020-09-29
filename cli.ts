@@ -6,17 +6,11 @@ import { usefulDirName } from './utilities';
 import * as path from 'path';
 import { version } from './package.json';
 
-const program = sade('lighthouse-parade');
-
-program.version(version);
-
-program
-  .command(
-    'scan <url> [dataDirectory]',
-    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults ./data/YYYY-MM-DDTTZ_HH_MM',
-    { default: true }
+sade('lighthouse-parade <url> [dataDirectory]', true)
+  .version(version)
+  .describe(
+    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults ./data/YYYY-MM-DDTTZ_HH_MM'
   )
-  .alias('s')
   .option(
     '--ignore-robots',
     "Crawl pages even if they are listed in the site's robots.txt",
@@ -36,6 +30,5 @@ program
       const ignoreRobotsTxt: boolean = opts['ignore-robots'];
       scan(url, { ignoreRobotsTxt, dataDirectory });
     }
-  );
-
-program.parse(process.argv);
+  )
+  .parse(process.argv);
