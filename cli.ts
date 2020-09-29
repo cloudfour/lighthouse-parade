@@ -17,7 +17,7 @@ program
   )
   .alias('s')
   .option(
-    '--ignore-robots-txt',
+    '--ignore-robots',
     "Crawl pages even if they are listed in the site's robots.txt",
     false
   )
@@ -32,7 +32,7 @@ program
       // the prorgam will exit here instead of continuing (which would lead to a more confusing error)
       // eslint-disable-next-line no-new
       new URL(url);
-      const ignoreRobotsTxt: boolean = opts['ignore-robots-txt'];
+      const ignoreRobotsTxt: boolean = opts['ignore-robots'];
       scan(url, { ignoreRobotsTxt, dataDirectory });
     }
   );
