@@ -19,7 +19,7 @@ It is also easy to graph data in this format. The following example is a histogr
 ![Histogram showing LCP scores](./assets/lcp_histogram.svg)
 
 ## Installation
-
+(Tested on Node 12)
 1. `nvm use` (if you use NVM)
 2. `npm ci`
 3. `npm run build`
