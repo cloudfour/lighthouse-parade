@@ -20,6 +20,8 @@ It is also easy to graph data in this format. The following example is a histogr
 
 ## Installation
 
+(Tested on Node 12)
+
 `npm i -g lighthouse-parade`
 
 ## Usage
