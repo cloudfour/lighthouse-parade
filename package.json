@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "description": "A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.",
   "bin": "dist/cli.js",
+  "files": [
+    "dist/*.js",
+    "!dist/*.test.js"
+  ],
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
