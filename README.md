@@ -19,11 +19,10 @@ It is also easy to graph data in this format. The following example is a histogr
 ![Histogram showing LCP scores](./assets/lcp_histogram.svg)
 
 ## Installation
+
 (Tested on Node 12)
-1. `nvm use` (if you use NVM)
-2. `npm ci`
-3. `npm run build`
-4. `npm link`
+
+`npm i -g lighthouse-parade`
 
 ## Usage
 
@@ -32,6 +31,10 @@ It is also easy to graph data in this format. The following example is a histogr
 Ex: `lighthouse-parade http://www.dfwfreeways.com/`
 
 Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric.
+
+## Versioning Notice
+
+`lighthouse-parade` is currently **pre-1.0**. In order to move quickly, we may release breaking change as minor version bumps.
 
 ## Analysis spreadsheet template
 
