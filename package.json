@@ -13,7 +13,10 @@
     "type": "tsc --noEmit",
     "type:watch": "tsc --watch --noEmit",
     "build": "tsc",
-    "build:watch": "tsc --watch"
+    "build:watch": "tsc --watch",
+    "changeset": "changeset",
+    "version": "changeset version && prettier --write .",
+    "release": "npm run build && changeset publish"
   },
   "author": "emerson@cloudfour.com",
   "license": "MIT",
@@ -33,6 +36,8 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
+    "@changesets/changelog-github": "^0.2.7",
+    "@changesets/cli": "^2.10.3",
     "@cloudfour/eslint-plugin": "^14.0.0",
     "@types/jest": "^26.0.14",
     "@types/sade": "^1.7.2",
