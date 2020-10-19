@@ -12,6 +12,7 @@ interface ScanOptions {
   ignoreRobotsTxt: boolean;
   /** Where to store the newly-generated reports */
   dataDirectory: string;
+  userAgent?: string;
 }
 export const scan = (siteUrl: string, opts: ScanOptions) => {
   const dir = opts.dataDirectory;
@@ -23,6 +24,7 @@ export const scan = (siteUrl: string, opts: ScanOptions) => {
 
   // Set up for crawler
   const crawler = new Crawler(siteUrl);
+  if (opts.userAgent) crawler.userAgent = opts.userAgent;
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
   fs.mkdirSync(dir, { recursive: true });
   const file = `${dir}/urls.csv`;

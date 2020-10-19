@@ -16,6 +16,10 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     "Crawl pages even if they are listed in the site's robots.txt",
     false
   )
+  .option(
+    '--user-agent',
+    'Pass a user agent string to be used by the crawler (not by Lighthouse)'
+  )
   .action(
     (
       url,
@@ -28,7 +32,12 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       // eslint-disable-next-line no-new
       new URL(url);
       const ignoreRobotsTxt: boolean = opts['ignore-robots'];
-      scan(url, { ignoreRobotsTxt, dataDirectory });
+      const userAgent: unknown = opts['user-agent'];
+      if (userAgent !== undefined && typeof userAgent !== 'string') {
+        throw new Error('--user-agent flag must be a string');
+      }
+
+      scan(url, { ignoreRobotsTxt, dataDirectory, userAgent });
     }
   )
   .parse(process.argv);

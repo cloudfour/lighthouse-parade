@@ -26,11 +26,22 @@ It is also easy to graph data in this format. The following example is a histogr
 
 ## Usage
 
-`lighthouse-parade <URL>`
+```
+$ lighthouse-parade <url> [dataDirectory] [options]
+```
 
 Ex: `lighthouse-parade http://www.dfwfreeways.com/`
 
 Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse report on each HTML page, then writes them to a CSV file located in `./data/<timestamp>/urls.csv`. The individual reports are written to `./data/<timestamp>/reports/`. At the end, each report file is bundled into one aggregated report CSV with each row representing a URL and each column is a metric.
+
+### Options
+
+```
+--ignore-robots    Crawl pages even if they are listed in the site's robots.txt  (default false)
+--user-agent       Pass a user agent string to be used by the crawler (not by Lighthouse)
+-v, --version      Displays current version
+-h, --help         Displays help text
+```
 
 ## Versioning Notice
 
