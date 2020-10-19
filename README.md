@@ -37,10 +37,10 @@ Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse rep
 ### Options
 
 ```
---ignore-robots    Crawl pages even if they are listed in the site's robots.txt  (default false)
---user-agent       Pass a user agent string to be used by the crawler (not by Lighthouse)
--v, --version      Displays current version
--h, --help         Displays help text
+--ignore-robots         Crawl pages even if they are listed in the site's robots.txt  (default false)
+--crawler-user-agent    Pass a user agent string to be used by the crawler (not by Lighthouse)
+-v, --version           Displays current version
+-h, --help              Displays help text
 ```
 
 ## Versioning Notice
