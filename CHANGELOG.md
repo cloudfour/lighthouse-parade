@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 0.2.0
+
+### Minor Changes
+
+- [`997b89a`](https://github.com/cloudfour/lighthouse-parade/commit/997b89aa9cbaf7fd5e5edf4df6875636b1ea2c03) [#38](https://github.com/cloudfour/lighthouse-parade/pull/38) Thanks [@calebeby](https://github.com/calebeby)! - Add optional --crawler-user-agent flag to override user agent
+
 ## 0.1.0
 
 ### Minor Changes
