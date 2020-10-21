@@ -19,8 +19,7 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
   };
 
   const on = <E extends keyof Events>(eventName: E, handler: Events[E]) => {
-    // @ts-expect-error
-    eventHandlers[eventName] = (eventHandlers[eventName] || []).concat(handler);
+    (eventHandlers[eventName] ??= [] as Events[E][]).push(handler);
   };
 
   const promise = new Promise<Resolve>((resolve, reject) => {
