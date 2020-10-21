@@ -1,9 +1,9 @@
-// eslint-disable-next-line @cloudfour/node/no-unpublished-import
-import * as tk from 'timekeeper';
+import tk from 'timekeeper';
 import {
   isContentTypeHtml,
   fileDoesntExist,
   usefulDirName,
+  makeFileNameFromUrl,
 } from '../utilities';
 
 describe('isContentTypeHtml', () => {
@@ -42,5 +42,15 @@ describe('usefulDirName', () => {
     const time = new Date(1893448800000); // Mon Dec 31 2029 22:00:00 UTC
     tk.freeze(time);
     expect(usefulDirName()).toBe('2029-12-31T22_00_00');
+    tk.reset();
   });
+});
+
+test('makeFileNameFromUrl works as expected', () => {
+  expect(makeFileNameFromUrl('http://example.com/foo', 'csv')).toBe(
+    'http--example_com-foo.csv'
+  );
+  expect(makeFileNameFromUrl('http://example.com/bar/', 'html')).toBe(
+    'http--example_com-bar-.html'
+  );
 });

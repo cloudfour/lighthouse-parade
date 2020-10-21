@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
+import * as fs from 'fs';
+import * as path from 'path';
 import sade from 'sade';
 import { scan } from './scan-task';
-import { usefulDirName } from './utilities';
-import * as path from 'path';
+import {
+  fileDoesntExist,
+  makeFileNameFromUrl,
+  usefulDirName,
+} from './utilities';
 /*
 This is a require because if it was an import, TS would copy package.json to `dist`
 If TS copied package.json to `dist`, npm would not publish the JS files in `dist`
@@ -41,12 +46,53 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       // eslint-disable-next-line no-new
       new URL(url);
       const ignoreRobotsTxt: boolean = opts['ignore-robots'];
+      const reportsDirPath = path.join(dataDirectory, 'reports');
+      fs.mkdirSync(reportsDirPath, { recursive: true });
+
       const userAgent: unknown = opts['crawler-user-agent'];
       if (userAgent !== undefined && typeof userAgent !== 'string') {
         throw new Error('--crawler-user-agent flag must be a string');
       }
 
-      scan(url, { ignoreRobotsTxt, dataDirectory, userAgent });
+      const scanner = scan(url, {
+        ignoreRobotsTxt,
+        dataDirectory,
+        shouldRunLighthouseOnURL(url) {
+          if (
+            !fileDoesntExist(makeFileNameFromUrl(url, 'csv'), reportsDirPath)
+          ) {
+            console.log('Skipping report because file already exists');
+            return false;
+          }
+
+          return true;
+        },
+      });
+
+      const urlsFile = path.join(dataDirectory, 'urls.csv');
+      fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
+      const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
+
+      scanner.on('urlFound', (url, contentType, bytes, statusCode) => {
+        const csvLine = [
+          JSON.stringify(url),
+          contentType,
+          bytes,
+          statusCode,
+        ].join(',');
+        urlsStream.write(`${csvLine}\n`);
+      });
+      scanner.on('reportComplete', (url, reportData) => {
+        console.log('Report is done for', url);
+        const reportFileName = makeFileNameFromUrl(url, 'csv');
+
+        fs.writeFileSync(path.join(reportsDirPath, reportFileName), reportData);
+        console.log(`Wrote report for ${url}`);
+      });
+
+      scanner.on('info', (message) => {
+        console.log(message);
+      });
     }
   )
   .parse(process.argv);

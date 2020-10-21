@@ -1,7 +1,6 @@
 import Crawler from 'simplecrawler';
 import fs from 'fs';
 import path from 'path';
-import { makeUrlRow } from './utilities';
 import type { QueueItem } from 'simplecrawler/queue';
 import type { IncomingMessage } from 'http';
 
@@ -17,6 +16,14 @@ fs.writeFileSync(file, 'URL,content_type,bytes,response\n', {
 });
 console.log('Created CSV file');
 const stream = fs.createWriteStream(file, { flags: 'a' });
+
+const makeUrlRow = (
+  queueItem: QueueItem,
+  responseBuffer: string | Buffer,
+  response: IncomingMessage
+) => {
+  return `"${queueItem.url}",${response.headers['content-type']},${responseBuffer.length},${response.statusCode}\n`;
+};
 
 // Set up the crawler
 crawler.on('fetchcomplete', function (queueItem, responseBuffer, response) {
