@@ -4,7 +4,16 @@ import sade from 'sade';
 import { scan } from './scan-task';
 import { usefulDirName } from './utilities';
 import * as path from 'path';
-import { version } from './package.json';
+/*
+This is a require because if it was an import, TS would copy package.json to `dist`
+If TS copied package.json to `dist`, npm would not publish the JS files in `dist`
+Since it is a require, TS leaves it as-is, which means that the require path
+has to be relative to the built version of this file in the dist folder
+It may in the future make sense to use a bundler to combine all the dist/ files into one file,
+(including package.json) which would eliminate this problem
+*/
+// eslint-disable-next-line @cloudfour/typescript-eslint/no-var-requires
+const { version } = require('../package.json');
 
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
