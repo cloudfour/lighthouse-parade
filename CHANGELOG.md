@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 0.2.1
+
+### Patch Changes
+
+- [`be3c8cb`](https://github.com/cloudfour/lighthouse-parade/commit/be3c8cb46e65b575c4e3e3e2de43dc1170b7ffda) [#41](https://github.com/cloudfour/lighthouse-parade/pull/41) Thanks [@calebeby](https://github.com/calebeby)! - Fix published files
+
 ## 0.2.0
 
 ### Minor Changes
