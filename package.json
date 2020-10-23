@@ -5,7 +5,8 @@
   "bin": "dist/cli.js",
   "files": [
     "dist/*.js",
-    "!dist/*.test.js"
+    "!dist/*.test.js",
+    "!dist/*.mock.js"
   ],
   "scripts": {
     "test": "jest",

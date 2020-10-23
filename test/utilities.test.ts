@@ -1,9 +1,8 @@
-// eslint-disable-next-line @cloudfour/node/no-unpublished-import
-import * as tk from 'timekeeper';
+import tk from 'timekeeper';
 import {
   isContentTypeHtml,
-  fileDoesntExist,
   usefulDirName,
+  makeFileNameFromUrl,
 } from '../utilities';
 
 describe('isContentTypeHtml', () => {
@@ -20,27 +19,20 @@ describe('isContentTypeHtml', () => {
   });
 });
 
-describe('fileDoesntExist', () => {
-  it('returns true when there is no file', () => {
-    expect(
-      fileDoesntExist('not-here.json', `${__dirname}/support/example1/reports`)
-    ).toBe(true);
-  });
-
-  it('returns false when there IS a file', () => {
-    expect(
-      fileDoesntExist(
-        'https--whatever_net-.csv',
-        `${__dirname}/support/example1/reports`
-      )
-    ).toBe(false);
-  });
-});
-
 describe('usefulDirName', () => {
   it('returns what we expect', () => {
     const time = new Date(1893448800000); // Mon Dec 31 2029 22:00:00 UTC
     tk.freeze(time);
     expect(usefulDirName()).toBe('2029-12-31T22_00_00');
+    tk.reset();
   });
+});
+
+test('makeFileNameFromUrl works as expected', () => {
+  expect(makeFileNameFromUrl('http://example.com/foo', 'csv')).toBe(
+    'http--example_com-foo.csv'
+  );
+  expect(makeFileNameFromUrl('http://example.com/bar/', 'html')).toBe(
+    'http--example_com-bar-.html'
+  );
 });
