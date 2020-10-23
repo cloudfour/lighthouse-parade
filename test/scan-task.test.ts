@@ -9,7 +9,6 @@ test('Displays useful error if no pages are found while crawling', async () => {
     ignoreRobotsTxt: false,
     dataDirectory: 'foo',
     crawler: fakeCrawler,
-    shouldRunLighthouseOnURL: () => false,
   });
 
   const warningListener = jest.fn();

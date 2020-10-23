@@ -1,13 +1,4 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import sanitize from 'sanitize-filename';
-
-export const fileDoesntExist = (
-  reportFileName: string,
-  targetReportDirectory: string
-) => {
-  return !fs.existsSync(path.join(targetReportDirectory, reportFileName));
-};
 
 export const isContentTypeHtml = (contentType?: string) => {
   return contentType?.toLowerCase().includes('html');

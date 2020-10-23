@@ -2,6 +2,7 @@ import Crawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue';
 import type { IncomingMessage } from 'http';
 import { createEmitter } from './emitter';
+import { isContentTypeHtml } from './utilities';
 
 export interface CrawlOptions {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
@@ -36,6 +37,7 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
     const url = queueItem.url;
     const contentType = response.headers['content-type'];
+    if (!isContentTypeHtml(contentType)) return;
     const statusCode = response.statusCode;
     if (!contentType || !statusCode) return;
     emit('urlFound', url, contentType, responseBuffer.length, statusCode);

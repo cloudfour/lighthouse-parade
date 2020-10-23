@@ -1,7 +1,6 @@
 import tk from 'timekeeper';
 import {
   isContentTypeHtml,
-  fileDoesntExist,
   usefulDirName,
   makeFileNameFromUrl,
 } from '../utilities';
@@ -17,23 +16,6 @@ describe('isContentTypeHtml', () => {
     expect(isContentTypeHtml('HTML')).toBe(true);
     expect(isContentTypeHtml('text/html; charset=utf-8')).toBe(true);
     expect(isContentTypeHtml('html')).toBe(true);
-  });
-});
-
-describe('fileDoesntExist', () => {
-  it('returns true when there is no file', () => {
-    expect(
-      fileDoesntExist('not-here.json', `${__dirname}/support/example1/reports`)
-    ).toBe(true);
-  });
-
-  it('returns false when there IS a file', () => {
-    expect(
-      fileDoesntExist(
-        'https--whatever_net-.csv',
-        `${__dirname}/support/example1/reports`
-      )
-    ).toBe(false);
   });
 });
 

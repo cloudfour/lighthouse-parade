@@ -4,11 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import sade from 'sade';
 import { scan } from './scan-task';
-import {
-  fileDoesntExist,
-  makeFileNameFromUrl,
-  usefulDirName,
-} from './utilities';
+import { makeFileNameFromUrl, usefulDirName } from './utilities';
 /*
 This is a require because if it was an import, TS would copy package.json to `dist`
 If TS copied package.json to `dist`, npm would not publish the JS files in `dist`
@@ -54,26 +50,14 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         throw new Error('--crawler-user-agent flag must be a string');
       }
 
-      const scanner = scan(url, {
-        ignoreRobotsTxt,
-        dataDirectory,
-        shouldRunLighthouseOnURL(url) {
-          if (
-            !fileDoesntExist(makeFileNameFromUrl(url, 'csv'), reportsDirPath)
-          ) {
-            console.log('Skipping report because file already exists');
-            return false;
-          }
-
-          return true;
-        },
-      });
+      const scanner = scan(url, { ignoreRobotsTxt, dataDirectory });
 
       const urlsFile = path.join(dataDirectory, 'urls.csv');
       fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
       const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
 
       scanner.on('urlFound', (url, contentType, bytes, statusCode) => {
+        console.log('Crawled %s [%s] (%d bytes)', url, contentType, bytes);
         const csvLine = [
           JSON.stringify(url),
           contentType,

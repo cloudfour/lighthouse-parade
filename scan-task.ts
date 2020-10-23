@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { runLighthouseReport } from './lighthouse';
 import { aggregateCSVReports } from './combine';
-import { isContentTypeHtml } from './utilities';
 import type { CrawlOptions } from './crawl';
 import { crawl as defaultCrawler } from './crawl';
 import { createEmitter } from './emitter';
@@ -14,7 +13,6 @@ interface ScanOptions extends CrawlOptions {
    * Function to determine whether to run lighthouse on a given URL
    * The intended use case for this is to skip URL's where there are already reports saved from previous runs.
    */
-  shouldRunLighthouseOnURL: (url: string) => boolean;
   crawler?: typeof defaultCrawler;
   lighthouse?: typeof runLighthouseReport;
 }
@@ -37,7 +35,6 @@ export const scan = (
     crawler = defaultCrawler,
     lighthouse = runLighthouseReport,
     dataDirectory,
-    shouldRunLighthouseOnURL,
     ...opts
   }: ScanOptions
 ) => {
@@ -56,13 +53,7 @@ export const scan = (
 
   crawlerEmitter.on('urlFound', (url, contentType, bytes, statusCode) => {
     hasFoundAnyPages = true;
-    // TODO in code review: move this console.log up to cli
-    console.log('Crawled %s [%s] (%d bytes)', url, contentType, bytes);
-    if (!isContentTypeHtml(contentType)) return;
     emit('urlFound', url, contentType, bytes, statusCode);
-    // TODO in code review: should non-HTML URL's be written to the urls.csv and logged or not?
-    // TODO in code review: How common is the use case where it does "skipping report because file already exists"? If it is uncommon, can we remove it?
-    if (!shouldRunLighthouseOnURL(url)) return;
     lighthouse(url)
       .then((reportData) => {
         emit('reportComplete', url, reportData);
