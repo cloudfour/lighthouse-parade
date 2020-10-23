@@ -87,7 +87,6 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         const reportFileName = makeFileNameFromUrl(url, 'csv');
 
         fs.writeFileSync(path.join(reportsDirPath, reportFileName), reportData);
-        console.log(`Wrote report for ${url}`);
       });
 
       scanner.on('info', (message) => {
