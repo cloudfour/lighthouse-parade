@@ -34,7 +34,11 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     (
       url,
       // eslint-disable-next-line default-param-last
-      dataDirectory = path.join(process.cwd(), 'data', usefulDirName()),
+      dataDirectory = path.join(
+        process.cwd(),
+        'lighthouse-parade-data',
+        usefulDirName()
+      ),
       opts
     ) => {
       // We are attempting to parse the URL here, so that if the user passes an invalid URL,
