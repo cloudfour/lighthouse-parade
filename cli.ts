@@ -36,7 +36,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       // eslint-disable-next-line default-param-last
       dataDirectory = path.join(
         process.cwd(),
-        'lighthouse-data',
+        'lighthouse-parade-data',
         usefulDirName()
       ),
       opts
