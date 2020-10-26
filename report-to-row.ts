@@ -25,10 +25,10 @@ export const reportToRow = (csvFileContents: string) => {
   const reportRows: LighthouseCSVReportRow[] | undefined = csvParse(
     csvFileContents,
     {
+      // https://csv.js.org/parse/options/
       columns: true,
       skip_empty_lines: true,
       ltrim: true,
-      relax: true, // https://csv.js.org/parse/options/
     }
   );
   // Sometimes reports come out half-baked...

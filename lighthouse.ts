@@ -21,5 +21,5 @@ export const runLighthouseReport = async (url: string) => {
     throw new Error(`Lighthouse report failed for: ${url}`);
   }
 
-  return stdout;
+  return String(stdout).replace(/\r\n/g, '\n');
 };
