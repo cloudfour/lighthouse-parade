@@ -77,6 +77,7 @@ export const scan = (
     }
 
     emit('info', 'Aggregating reports...');
+    // TODO: Make aggregateCSVReports work without filesystem, for testing
     const aggregatedReportData = aggregateCSVReports(reportsDirPath);
     if (!aggregatedReportData) return;
 
