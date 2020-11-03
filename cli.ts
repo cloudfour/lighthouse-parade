@@ -150,8 +150,6 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
       const log = (...messages: string[]) =>
         printAboveLogUpdate(() => console.log(...messages));
-      const error = (...messages: string[]) =>
-        printAboveLogUpdate(() => console.error(...messages));
 
       const urlsFile = path.join(dataDirectory, 'urls.csv');
       fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
