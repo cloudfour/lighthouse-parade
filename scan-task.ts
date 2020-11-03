@@ -15,12 +15,16 @@ interface ScanOptions extends CrawlOptions {
    */
   crawler?: typeof defaultCrawler;
   lighthouse?: typeof runLighthouseReport;
+  lighthouseConcurrency: number;
 }
 
 type ScanEvents = {
   warning: (message: string | Error) => void;
   info: (message: string) => void;
+  reportBegin: (url: string) => void;
+  reportFail: (url: string, error: string | Error) => void;
   reportComplete: (url: string, reportData: string) => void;
+  resolve: () => void;
   urlFound: (
     url: string,
     contentType: string,
@@ -35,6 +39,7 @@ export const scan = (
     crawler = defaultCrawler,
     lighthouse = runLighthouseReport,
     dataDirectory,
+    lighthouseConcurrency,
     ...opts
   }: ScanOptions
 ) => {
@@ -51,19 +56,32 @@ export const scan = (
 
   const crawlerEmitter = crawler(siteUrl, opts);
 
+  const lighthousePromises: Promise<void>[] = [];
+
   crawlerEmitter.on('urlFound', (url, contentType, bytes, statusCode) => {
     hasFoundAnyPages = true;
     emit('urlFound', url, contentType, bytes, statusCode);
-    lighthouse(url)
-      .then((reportData) => {
-        emit('reportComplete', url, reportData);
+    lighthousePromises.push(
+      new Promise((resolve) => {
+        lighthouse(url, lighthouseConcurrency)
+          .on('begin', () => emit('reportBegin', url))
+          .on('complete', (reportData) => {
+            emit('reportComplete', url, reportData);
+            resolve();
+          })
+          .on('error', (error) => {
+            emit('reportFail', url, error);
+            // Resolves instead of rejects because we want to continue with the other lighthouses even if one fails
+            resolve();
+          });
       })
-      .catch((error) => emit('warning', error));
+    );
   });
 
   crawlerEmitter.on('warning', (message) => emit('warning', message));
 
-  crawlerEmitter.promise.then(() => {
+  crawlerEmitter.promise.then(async () => {
+    await Promise.all(lighthousePromises);
     emit('info', 'Scan complete');
 
     if (!hasFoundAnyPages) {
@@ -85,7 +103,7 @@ export const scan = (
     fs.writeFile(writePath, aggregatedReportData, (e) => {
       if (e) emit('warning', e);
     });
-    emit('info', 'DONE!');
+    emit('resolve');
   });
   return { promise, on };
 };

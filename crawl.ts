@@ -34,6 +34,8 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
     );
   };
 
+  emit('urlFound', 'https://google.com/asdff', 'text/html', 100, 200);
+
   crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
     const url = queueItem.url;
     const contentType = response.headers['content-type'];
