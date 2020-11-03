@@ -40,7 +40,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
   )
   .option(
     '--lighthouse-concurrency',
-    'Control the maximum number of ligthhouse reports to run concurrency',
+    'Control the maximum number of ligthhouse reports to run concurrently',
     os.cpus().length - 1
   )
   .action(
