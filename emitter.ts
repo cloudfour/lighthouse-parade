@@ -20,6 +20,7 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
 
   const on = <E extends keyof Events>(eventName: E, handler: Events[E]) => {
     (eventHandlers[eventName] ??= [] as Events[E][]).push(handler);
+    return emitter; // Allow chaining
   };
 
   const promise = new Promise<Resolve>((resolve, reject) => {
@@ -28,13 +29,14 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
   });
   const eventHandlers: { [E in keyof Events]?: Events[E][] } = {};
   interface Emit {
-    (eventName: 'resolve', value?: Resolve): void;
-    (eventName: 'reject', value?: unknown): void;
     <E extends keyof Events>(
       eventName: E,
       ...args: Parameters<Events[E]>
     ): void;
+    (eventName: 'resolve', value?: Resolve): void;
+    (eventName: 'reject', value?: unknown): void;
   }
 
-  return { promise, on, emit };
+  const emitter = { promise, on, emit };
+  return emitter;
 };

@@ -8,6 +8,7 @@ test('Displays useful error if no pages are found while crawling', async () => {
   const emitter = scan('https://nonexistent-website.com', {
     ignoreRobotsTxt: false,
     dataDirectory: 'foo',
+    lighthouseConcurrency: 1,
     crawler: fakeCrawler,
   });
 

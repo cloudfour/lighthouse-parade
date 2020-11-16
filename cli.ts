@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs';
+import * as os from 'os';
+import * as kleur from 'kleur/colors';
+import logUpdate from 'log-update';
 import * as path from 'path';
 import sade from 'sade';
 import { scan } from './scan-task';
@@ -16,6 +19,11 @@ It may in the future make sense to use a bundler to combine all the dist/ files 
 // eslint-disable-next-line @cloudfour/typescript-eslint/no-var-requires
 const { version } = require('../package.json');
 
+const symbols = {
+  error: kleur.red('✖'),
+  success: kleur.green('✔'),
+};
+
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .describe(
@@ -29,6 +37,11 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
   .option(
     '--crawler-user-agent',
     'Pass a user agent string to be used by the crawler (not by Lighthouse)'
+  )
+  .option(
+    '--lighthouse-concurrency',
+    'Control the maximum number of ligthhouse reports to run concurrently',
+    os.cpus().length - 1
   )
   .action(
     (
@@ -54,14 +67,96 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         throw new Error('--crawler-user-agent flag must be a string');
       }
 
-      const scanner = scan(url, { ignoreRobotsTxt, dataDirectory });
+      const lighthouseConcurrency = opts['lighthouse-concurrency'];
+
+      const scanner = scan(url, {
+        ignoreRobotsTxt,
+        dataDirectory,
+        lighthouseConcurrency,
+      });
+
+      const enum State {
+        Pending,
+        ReportInProgress,
+        ReportComplete,
+      }
+      const urlStates = new Map<
+        string,
+        { state: State; error?: Error | string }
+      >();
+
+      const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+      let i = 0;
+
+      const printLine = (url: string, state: State, error?: Error | string) => {
+        const frame = kleur.blue(frames[i]);
+        const statusIcon = error
+          ? symbols.error
+          : state === State.Pending
+          ? ' '
+          : state === State.ReportInProgress
+          ? frame
+          : symbols.success;
+        let output = `${statusIcon} ${url}`;
+        if (error) {
+          output += `\n  ${kleur.gray(error.toString())}`;
+        }
+
+        return output;
+      };
+
+      const render = () => {
+        const pendingUrls: string[] = [];
+        const currentUrls: string[] = [];
+        urlStates.forEach(({ state, error }, url) => {
+          if (state === State.ReportComplete) return;
+          const line = `${printLine(url, state, error)}\n`;
+          if (state === State.Pending) pendingUrls.push(line);
+          else currentUrls.push(line);
+        });
+        const numPendingToDisplay = Math.min(
+          Math.max(process.stdout.rows - currentUrls.length - 3, 1),
+          pendingUrls.length
+        );
+        const numHiddenUrls =
+          numPendingToDisplay === pendingUrls.length
+            ? ''
+            : kleur.dim(
+                `\n...And ${
+                  pendingUrls.length - numPendingToDisplay
+                } more pending`
+              );
+        logUpdate(
+          currentUrls.join('') +
+            pendingUrls.slice(0, numPendingToDisplay).join('') +
+            numHiddenUrls
+        );
+      };
+
+      const intervalId = setInterval(() => {
+        i = (i + 1) % frames.length;
+        render();
+      }, 80);
+
+      /**
+       * Allows you to run a console.log that will output _above_ the persistent logUpdate log
+       * Pass a callback where you run your console.log or console.error
+       */
+      const printAboveLogUpdate = (cb: () => void) => {
+        logUpdate.clear();
+        cb();
+        render();
+      };
+
+      const log = (...messages: string[]) =>
+        printAboveLogUpdate(() => console.log(...messages));
 
       const urlsFile = path.join(dataDirectory, 'urls.csv');
       fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
       const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
 
       scanner.on('urlFound', (url, contentType, bytes, statusCode) => {
-        console.log('Crawled %s [%s] (%d bytes)', url, contentType, bytes);
+        urlStates.set(url, { state: State.Pending });
         const csvLine = [
           JSON.stringify(url),
           contentType,
@@ -70,15 +165,28 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         ].join(',');
         urlsStream.write(`${csvLine}\n`);
       });
+      scanner.on('reportBegin', (url) => {
+        urlStates.set(url, { state: State.ReportInProgress });
+      });
+      scanner.on('reportFail', (url, error) => {
+        urlStates.set(url, { state: State.ReportComplete, error });
+        log(printLine(url, State.ReportComplete, error));
+      });
       scanner.on('reportComplete', (url, reportData) => {
-        console.log('Report is done for', url);
+        urlStates.set(url, { state: State.ReportComplete });
+        log(printLine(url, State.ReportComplete));
         const reportFileName = makeFileNameFromUrl(url, 'csv');
 
         fs.writeFileSync(path.join(reportsDirPath, reportFileName), reportData);
       });
 
       scanner.on('info', (message) => {
-        console.log(message);
+        log(message);
+      });
+
+      scanner.promise.then(() => {
+        clearInterval(intervalId);
+        console.log('DONE!');
       });
     }
   )
