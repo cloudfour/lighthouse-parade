@@ -1,16 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { aggregateCSVReports } from './combine';
+import { aggregateCSVReports } from './aggregate';
 
-const reportsDirPath = process.argv[2];
-const outputDir = process.argv[3] || process.argv[2];
-const aggregatedReportData = aggregateCSVReports(reportsDirPath);
-const writePath = path.join(outputDir, 'aggregatedMobileReport.csv');
-if (aggregatedReportData) {
-  fs.writeFile(writePath, aggregatedReportData, (e) => {
-    if (e) {
-      console.error(e);
-    }
-  });
+const main = async () => {
+  const reportsDirPath = process.argv[2];
+  await aggregateCSVReports(reportsDirPath);
   console.log('DONE!');
-}
+};
+
+main();

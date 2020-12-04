@@ -10,7 +10,8 @@ export const reportToRowHeaders = (csvFileContents: string) => {
       relax: true, // https://csv.js.org/parse/options/
     }
   );
-  if (!singleReportRows || singleReportRows.length === 0) return false;
+  if (!singleReportRows || singleReportRows.length === 0)
+    throw new Error('Unable to find report headers');
   const headers = [
     'Requested URL',
     'Final URL',
