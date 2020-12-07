@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 0.4.0
+
+### Minor Changes
+
+- [`150057a`](https://github.com/cloudfour/lighthouse-parade/commit/150057a85f0dedd6aabbe00924e0ecf56713d694) [#53](https://github.com/cloudfour/lighthouse-parade/pull/53) Thanks [@calebeby](https://github.com/calebeby)! - Run lighthouse instances concurrently, and change CLI output
+
 ## 0.3.0
 
 ### Minor Changes
