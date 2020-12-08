@@ -8,6 +8,7 @@ import * as path from 'path';
 import sade from 'sade';
 import { scan } from './scan-task';
 import { makeFileNameFromUrl, usefulDirName } from './utilities';
+import { aggregateCSVReports } from './aggregate';
 /*
 This is a require because if it was an import, TS would copy package.json to `dist`
 If TS copied package.json to `dist`, npm would not publish the JS files in `dist`
@@ -47,7 +48,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     (
       url,
       // eslint-disable-next-line default-param-last
-      dataDirectory = path.join(
+      dataDirPath = path.join(
         process.cwd(),
         'lighthouse-parade-data',
         usefulDirName()
@@ -59,7 +60,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       // eslint-disable-next-line no-new
       new URL(url);
       const ignoreRobotsTxt: boolean = opts['ignore-robots'];
-      const reportsDirPath = path.join(dataDirectory, 'reports');
+      const reportsDirPath = path.join(dataDirPath, 'reports');
       fs.mkdirSync(reportsDirPath, { recursive: true });
 
       const userAgent: unknown = opts['crawler-user-agent'];
@@ -71,7 +72,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
       const scanner = scan(url, {
         ignoreRobotsTxt,
-        dataDirectory,
+        dataDirectory: dataDirPath,
         lighthouseConcurrency,
       });
 
@@ -151,7 +152,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       const log = (...messages: string[]) =>
         printAboveLogUpdate(() => console.log(...messages));
 
-      const urlsFile = path.join(dataDirectory, 'urls.csv');
+      const urlsFile = path.join(dataDirPath, 'urls.csv');
       fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
       const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
 
@@ -184,8 +185,13 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         log(message);
       });
 
-      scanner.promise.then(() => {
+      scanner.promise.then(async () => {
         clearInterval(intervalId);
+
+        console.log('Aggregating reports...');
+
+        await aggregateCSVReports(dataDirPath);
+
         console.log('DONE!');
       });
     }

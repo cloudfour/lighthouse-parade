@@ -1,7 +1,5 @@
 import fs from 'fs';
-import path from 'path';
 import { runLighthouseReport } from './lighthouse';
-import { aggregateCSVReports } from './combine';
 import type { CrawlOptions } from './crawl';
 import { crawl as defaultCrawler } from './crawl';
 import { createEmitter } from './emitter';
@@ -44,10 +42,6 @@ export const scan = (
   }: ScanOptions
 ) => {
   const { promise, on, emit } = createEmitter<ScanEvents>();
-  // Set up for lighthouse reports
-  const reportDirName = 'reports';
-  const reportsDirPath = `${dataDirectory}/${reportDirName}`;
-
   fs.mkdirSync(dataDirectory, { recursive: true });
   /** Used so we can display an error if no pages are found while crawling */
   let hasFoundAnyPages = false;
@@ -80,30 +74,23 @@ export const scan = (
 
   crawlerEmitter.on('warning', (message) => emit('warning', message));
 
-  crawlerEmitter.promise.then(async () => {
-    await Promise.all(lighthousePromises);
-    emit('info', 'Scan complete');
+  crawlerEmitter.promise
+    .then(async () => {
+      await Promise.all(lighthousePromises);
+      emit('info', 'Scan complete');
 
-    if (!hasFoundAnyPages) {
-      emit(
-        'warning',
-        `No pages were found for this site. The two most likely reasons for this are:
+      if (!hasFoundAnyPages) {
+        emit(
+          'warning',
+          `No pages were found for this site. The two most likely reasons for this are:
 1) the URL is incorrect
 2) the crawler is being denied by a robots.txt file`
-      );
-      return;
-    }
+        );
+        return;
+      }
 
-    emit('info', 'Aggregating reports...');
-    // TODO: Make aggregateCSVReports work without filesystem, for testing
-    const aggregatedReportData = aggregateCSVReports(reportsDirPath);
-    if (!aggregatedReportData) return;
-
-    const writePath = path.join(dataDirectory, 'aggregatedMobileReport.csv');
-    fs.writeFile(writePath, aggregatedReportData, (e) => {
-      if (e) emit('warning', e);
-    });
-    emit('resolve');
-  });
+      emit('resolve');
+    })
+    .catch((error) => emit('reject', error));
   return { promise, on };
 };

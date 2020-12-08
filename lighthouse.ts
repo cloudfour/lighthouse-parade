@@ -18,7 +18,7 @@ const runLighthouseQueue = () => {
   }
 };
 
-type LighthouseEvents = {
+export type LighthouseEvents = {
   begin: () => void;
   complete: (reportData: string) => void;
   error: (message: Error) => void;
