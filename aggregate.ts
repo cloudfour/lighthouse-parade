@@ -19,7 +19,6 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
       const fileContents = fs.readFileSync(filePath, 'utf8');
       // If headers aren't set yet, do it now
       if (!headers) headers = reportToRowHeaders(fileContents);
-      console.log(`Bundling ${fileName} into aggregated report`);
       const newRow = reportToRow(fileContents);
       if (newRow) {
         rows.push(newRow);
