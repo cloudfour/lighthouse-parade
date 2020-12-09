@@ -40,10 +40,6 @@ Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse rep
 -h, --help                  Displays help text
 ```
 
-## Versioning Notice
-
-`lighthouse-parade` is currently **pre-1.0**. In order to move quickly, we may release breaking change as minor version bumps.
-
 ## Analysis spreadsheet template
 
 After running a scan, you can import your aggregated report data into this [Google Sheet template](https://docs.google.com/spreadsheets/d/1n2VtFjLH5PzVQ-PCGCHc03ZFO79OT7CU_2lsMc6jFUI), which includes the following features:
