@@ -1,6 +1,6 @@
 ![Lighthouse Parade Hero Image](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/master/assets/hero.svg)
 
-# Lighthouse Parade ![CI](https://github.com/cloudfour/lighthouse-parade/workflows/CI/badge.svg)
+# Lighthouse Parade [![CI](https://github.com/cloudfour/lighthouse-parade/workflows/CI/badge.svg)](https://github.com/cloudfour/lighthouse-parade/actions?query=workflow%3ACI) [![npm](https://img.shields.io/npm/v/lighthouse-parade)](https://www.npmjs.com/package/lighthouse-parade)
 
 A Node.js command line tool that crawls a domain and compiles a report with lighthouse performance data for every page.
 
