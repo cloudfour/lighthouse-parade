@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 1.0.0
+
+### Major Changes
+
+- [`aae5305`](https://github.com/cloudfour/lighthouse-parade/commit/aae530573b7c2bdf1bc365cc37dc968f03183baa) [#60](https://github.com/cloudfour/lighthouse-parade/pull/60) Thanks [@calebeby](https://github.com/calebeby)! - First major release
+
 ## 0.4.0
 
 ### Minor Changes
