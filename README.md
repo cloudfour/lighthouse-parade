@@ -1,4 +1,4 @@
-![Lighthouse Parade Hero Image](./assets/hero.svg)
+![Lighthouse Parade Hero Image](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/master/assets/hero.svg)
 
 # Lighthouse Parade ![CI](https://github.com/cloudfour/lighthouse-parade/workflows/CI/badge.svg)
 
