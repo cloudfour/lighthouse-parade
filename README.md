@@ -33,11 +33,14 @@ Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse rep
 ### Options
 
 ```
---ignore-robots             Crawl pages even if they are listed in the site's robots.txt  (default: false)
+--ignore-robots             Crawl pages even if they are listed in the site's robots.txt  (default false)
 --crawler-user-agent        Pass a user agent string to be used by the crawler (not by Lighthouse)
 --lighthouse-concurrency    Control the maximum number of ligthhouse reports to run concurrently  (default: number of CPU cores minus one)
+--max-depth                 Control the maximum depth of crawled links
+--path-must-match           Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. This flag can be specified multiple times to allow multiple paths
+--path-must-not-match       Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. This flag can be specified multiple times to exclude multiple paths
 -v, --version               Displays current version
--h, --help                  Displays help text
+-h, --help                  Displays this message
 ```
 
 ## Analysis spreadsheet template
