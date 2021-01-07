@@ -42,7 +42,7 @@ const isFullURL = (path: string) => {
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .example(
-    '"https://www.thebluealliance.com/team/2733/2010" --max-depth 2 --path-must-match "/team/*/2010" --path-must-match "/event/*"'
+    'https://cloudfour.com --path-must-not-match "/thinks/*" --max-depth 2'
   )
   .describe(
     'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
