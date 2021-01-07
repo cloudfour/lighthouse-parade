@@ -28,6 +28,17 @@ const symbols = {
 const toArray = <T extends unknown>(input: T) =>
   Array.isArray(input) ? input : [input];
 
+/** Returns whether the given path is a full URL (with protocol, domain, etc.) */
+const isFullURL = (path: string) => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(path);
+    return true;
+  } catch {}
+
+  return false;
+};
+
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .example(
@@ -97,12 +108,22 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         throw new Error('--path-must-match must be string(s)');
       }
 
+      if ((pathMustMatch as string[]).some(isFullURL)) {
+        throw new Error('--path-must-match must be path(s), not full URL(s)');
+      }
+
       const pathMustNotMatch: unknown[] = toArray(
         opts['path-must-not-match'] as unknown
       ).filter((glob) => glob !== undefined);
 
       if (pathMustNotMatch.some((glob) => typeof glob !== 'string')) {
         throw new Error('--path-must-not-match must be string(s)');
+      }
+
+      if ((pathMustNotMatch as string[]).some(isFullURL)) {
+        throw new Error(
+          '--path-must-not-match must be path(s), not full URL(s)'
+        );
       }
 
       const lighthouseConcurrency = opts['lighthouse-concurrency'];
