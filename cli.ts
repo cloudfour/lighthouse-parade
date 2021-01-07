@@ -64,11 +64,11 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
   .option('--max-crawl-depth', 'Control the maximum depth of crawled links')
   .option(
     '--path-must-match',
-    'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. This flag can be specified multiple times to allow multiple paths'
+    'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. This flag can be specified multiple times to allow multiple paths. Trailing slashes are ignored.'
   )
   .option(
     '--path-must-not-match',
-    'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. This flag can be specified multiple times to exclude multiple paths'
+    'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. This flag can be specified multiple times to exclude multiple paths. Trailing slashes are ignored.'
   )
   .action(
     (
