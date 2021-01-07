@@ -34,6 +34,14 @@ test('allow items from multiple include globs', () => {
   expect(filter({ path: '/asdf' })).toBeFalsy();
 });
 
+test('glob with star in the middle', () => {
+  const filter = createUrlFilter(['/foo/*/bar'], []);
+  expect(filter({ path: '/foo/asdf/bar' })).toBeTruthy();
+  expect(filter({ path: '/foo/asdf/bar/' })).toBeTruthy();
+  expect(filter({ path: '/foo/bar' })).toBeFalsy();
+  expect(filter({ path: '/foo/asdf/1234' })).toBeFalsy();
+});
+
 test('exclude has higher precedence than include', () => {
   const filter = createUrlFilter(['/foo/*'], ['/foo/asdf']);
   expect(filter({ path: '/foo/bar' })).toBeTruthy();
