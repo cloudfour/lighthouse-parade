@@ -42,7 +42,7 @@ const isFullURL = (path: string) => {
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .example(
-    'https://cloudfour.com --path-must-not-match "/thinks/*" --max-depth 2'
+    'https://cloudfour.com --path-must-not-match "/thinks/*" --max-crawl-depth 2'
   )
   .describe(
     'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
@@ -61,7 +61,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     'Control the maximum number of ligthhouse reports to run concurrently',
     os.cpus().length - 1
   )
-  .option('--max-depth', 'Control the maximum depth of crawled links')
+  .option('--max-crawl-depth', 'Control the maximum depth of crawled links')
   .option(
     '--path-must-match',
     'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. This flag can be specified multiple times to allow multiple paths'
@@ -94,10 +94,10 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         throw new Error('--crawler-user-agent must be a string');
       }
 
-      const maxDepth: unknown = opts['max-depth'];
+      const maxCrawlDepth: unknown = opts['max-crawl-depth'];
 
-      if (maxDepth !== undefined && typeof maxDepth !== 'number') {
-        throw new Error('--max-depth must be a number');
+      if (maxCrawlDepth !== undefined && typeof maxCrawlDepth !== 'number') {
+        throw new Error('--max-crawl-depth must be a number');
       }
 
       const pathMustMatch: unknown[] = toArray(
@@ -132,7 +132,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         ignoreRobotsTxt,
         dataDirectory: dataDirPath,
         lighthouseConcurrency,
-        maxDepth,
+        maxCrawlDepth,
         pathMustMatch: pathMustMatch as string[],
         pathMustNotMatch: pathMustNotMatch as string[],
       });

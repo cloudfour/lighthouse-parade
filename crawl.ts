@@ -10,7 +10,7 @@ export interface CrawlOptions {
   ignoreRobotsTxt: boolean;
   userAgent?: string;
   /** Maximum depth of fetched links */
-  maxDepth?: number;
+  maxCrawlDepth?: number;
   /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
   pathMustMatch: string[];
   /** Any path that matches these globs will not be crawled. */
@@ -33,7 +33,7 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   const crawler = new Crawler(siteUrl);
   if (opts.userAgent) crawler.userAgent = opts.userAgent;
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
-  if (opts.maxDepth !== undefined) crawler.maxDepth = opts.maxDepth;
+  if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
 
   crawler.addFetchCondition(
     createUrlFilter(opts.pathMustMatch, opts.pathMustNotMatch)
