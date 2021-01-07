@@ -71,10 +71,10 @@ export const createUrlFilter = (
   excludeGlob: string[]
 ) => {
   const pathIncludeRegexes = includeGlob.map(
-    (glob) => globrex(glob, globOpts).regex
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
   );
   const pathExcludeRegexes = excludeGlob.map(
-    (glob) => globrex(glob, globOpts).regex
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
   );
   return ({ path }: { path: string }) => {
     const withoutTrailingSlash = path.replace(/\/$/, '');

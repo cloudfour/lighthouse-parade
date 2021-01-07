@@ -42,6 +42,13 @@ test('glob with star in the middle', () => {
   expect(filter({ path: '/foo/asdf/1234' })).toBeFalsy();
 });
 
+test('removes trailing slash from glob', () => {
+  const filter = createUrlFilter(['/foo/'], []);
+  expect(filter({ path: '/foo/' })).toBeTruthy();
+  expect(filter({ path: '/foo' })).toBeTruthy();
+  expect(filter({ path: '/foo/bar' })).toBeFalsy();
+});
+
 test('exclude has higher precedence than include', () => {
   const filter = createUrlFilter(['/foo/*'], ['/foo/asdf']);
   expect(filter({ path: '/foo/bar' })).toBeTruthy();
