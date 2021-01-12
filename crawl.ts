@@ -12,9 +12,9 @@ export interface CrawlOptions {
   /** Maximum depth of fetched links */
   maxCrawlDepth?: number;
   /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
-  pathMustMatch: string[];
+  includePathGlob: string[];
   /** Any path that matches these globs will not be crawled. */
-  pathMustNotMatch: string[];
+  excludePathGlob: string[];
 }
 
 export type CrawlerEvents = {
@@ -36,7 +36,7 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
 
   crawler.addFetchCondition(
-    createUrlFilter(opts.pathMustMatch, opts.pathMustNotMatch)
+    createUrlFilter(opts.includePathGlob, opts.excludePathGlob)
   );
 
   const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {

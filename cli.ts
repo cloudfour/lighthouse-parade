@@ -42,7 +42,7 @@ const isFullURL = (path: string) => {
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .example(
-    'https://cloudfour.com --path-must-not-match "/thinks/*" --max-crawl-depth 2'
+    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2'
   )
   .describe(
     'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
@@ -63,11 +63,11 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
   )
   .option('--max-crawl-depth', 'Control the maximum depth of crawled links')
   .option(
-    '--path-must-match',
+    '--include-path-glob',
     'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
   )
   .option(
-    '--path-must-not-match',
+    '--exclude-path-glob',
     'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
   )
   .action(
@@ -100,30 +100,28 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         throw new Error('--max-crawl-depth must be a number');
       }
 
-      const pathMustMatch: unknown[] = toArray(
-        opts['path-must-match'] as unknown
+      const includePathGlob: unknown[] = toArray(
+        opts['include-path-glob'] as unknown
       ).filter((glob) => glob !== undefined);
 
-      if (pathMustMatch.some((glob) => typeof glob !== 'string')) {
-        throw new Error('--path-must-match must be string(s)');
+      if (includePathGlob.some((glob) => typeof glob !== 'string')) {
+        throw new Error('--include-path-glob must be string(s)');
       }
 
-      if ((pathMustMatch as string[]).some(isFullURL)) {
-        throw new Error('--path-must-match must be path(s), not full URL(s)');
+      if ((includePathGlob as string[]).some(isFullURL)) {
+        throw new Error('--include-path-glob must be path(s), not full URL(s)');
       }
 
-      const pathMustNotMatch: unknown[] = toArray(
-        opts['path-must-not-match'] as unknown
+      const excludePathGlob: unknown[] = toArray(
+        opts['exclude-path-glob'] as unknown
       ).filter((glob) => glob !== undefined);
 
-      if (pathMustNotMatch.some((glob) => typeof glob !== 'string')) {
-        throw new Error('--path-must-not-match must be string(s)');
+      if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
+        throw new Error('--exclude-path-glob must be string(s)');
       }
 
-      if ((pathMustNotMatch as string[]).some(isFullURL)) {
-        throw new Error(
-          '--path-must-not-match must be path(s), not full URL(s)'
-        );
+      if ((excludePathGlob as string[]).some(isFullURL)) {
+        throw new Error('--exclude-path-glob must be path(s), not full URL(s)');
       }
 
       const lighthouseConcurrency = opts['lighthouse-concurrency'];
@@ -133,8 +131,8 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         dataDirectory: dataDirPath,
         lighthouseConcurrency,
         maxCrawlDepth,
-        pathMustMatch: pathMustMatch as string[],
-        pathMustNotMatch: pathMustNotMatch as string[],
+        includePathGlob: includePathGlob as string[],
+        excludePathGlob: excludePathGlob as string[],
       });
 
       const enum State {
