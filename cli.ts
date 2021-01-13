@@ -25,8 +25,25 @@ const symbols = {
   success: kleur.green('✔'),
 };
 
+const toArray = <T extends unknown>(input: T) =>
+  Array.isArray(input) ? input : [input];
+
+/** Returns whether the given path is a full URL (with protocol, domain, etc.) */
+const isFullURL = (path: string) => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(path);
+    return true;
+  } catch {}
+
+  return false;
+};
+
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
+  .example(
+    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2'
+  )
   .describe(
     'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
   )
@@ -43,6 +60,18 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     '--lighthouse-concurrency',
     'Control the maximum number of ligthhouse reports to run concurrently',
     os.cpus().length - 1
+  )
+  .option(
+    '--max-crawl-depth',
+    'Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.'
+  )
+  .option(
+    '--include-path-glob',
+    'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
+  )
+  .option(
+    '--exclude-path-glob',
+    'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
   )
   .action(
     (
@@ -65,7 +94,37 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
       const userAgent: unknown = opts['crawler-user-agent'];
       if (userAgent !== undefined && typeof userAgent !== 'string') {
-        throw new Error('--crawler-user-agent flag must be a string');
+        throw new Error('--crawler-user-agent must be a string');
+      }
+
+      const maxCrawlDepth: unknown = opts['max-crawl-depth'];
+
+      if (maxCrawlDepth !== undefined && typeof maxCrawlDepth !== 'number') {
+        throw new Error('--max-crawl-depth must be a number');
+      }
+
+      const includePathGlob: unknown[] = toArray(
+        opts['include-path-glob'] as unknown
+      ).filter((glob) => glob !== undefined);
+
+      if (includePathGlob.some((glob) => typeof glob !== 'string')) {
+        throw new Error('--include-path-glob must be string(s)');
+      }
+
+      if ((includePathGlob as string[]).some(isFullURL)) {
+        throw new Error('--include-path-glob must be path(s), not full URL(s)');
+      }
+
+      const excludePathGlob: unknown[] = toArray(
+        opts['exclude-path-glob'] as unknown
+      ).filter((glob) => glob !== undefined);
+
+      if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
+        throw new Error('--exclude-path-glob must be string(s)');
+      }
+
+      if ((excludePathGlob as string[]).some(isFullURL)) {
+        throw new Error('--exclude-path-glob must be path(s), not full URL(s)');
       }
 
       const lighthouseConcurrency = opts['lighthouse-concurrency'];
@@ -74,6 +133,9 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         ignoreRobotsTxt,
         dataDirectory: dataDirPath,
         lighthouseConcurrency,
+        maxCrawlDepth,
+        includePathGlob: includePathGlob as string[],
+        excludePathGlob: excludePathGlob as string[],
       });
 
       const enum State {

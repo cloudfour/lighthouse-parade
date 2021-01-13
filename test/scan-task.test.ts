@@ -9,6 +9,8 @@ test('Displays useful error if no pages are found while crawling', async () => {
   const { fakeCrawler, emit: scanEmit } = createFakeCrawler();
   const emitter = scan('https://nonexistent-website.com', {
     ignoreRobotsTxt: false,
+    includePathGlob: [],
+    excludePathGlob: [],
     dataDirectory: 'foo',
     lighthouseConcurrency: 1,
     crawler: fakeCrawler,
@@ -60,6 +62,8 @@ test('Fires correct lighthouse events as pages are found', async () => {
 
   const emitter = scan('https://google.com', {
     ignoreRobotsTxt: false,
+    includePathGlob: [],
+    excludePathGlob: [],
     dataDirectory: 'foo',
     lighthouseConcurrency: 1,
     lighthouse: (url) => {

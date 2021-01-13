@@ -3,11 +3,18 @@ import type { QueueItem } from 'simplecrawler/queue';
 import type { IncomingMessage } from 'http';
 import { createEmitter } from './emitter';
 import { isContentTypeHtml } from './utilities';
+import globrex from 'globrex';
 
 export interface CrawlOptions {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
   ignoreRobotsTxt: boolean;
   userAgent?: string;
+  /** Maximum depth of fetched links */
+  maxCrawlDepth?: number;
+  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
+  includePathGlob: string[];
+  /** Any path that matches these globs will not be crawled. */
+  excludePathGlob: string[];
 }
 
 export type CrawlerEvents = {
@@ -26,6 +33,11 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   const crawler = new Crawler(siteUrl);
   if (opts.userAgent) crawler.userAgent = opts.userAgent;
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
+  if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
+
+  crawler.addFetchCondition(
+    createUrlFilter(opts.includePathGlob, opts.excludePathGlob)
+  );
 
   const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {
     emit(
@@ -53,3 +65,25 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
 
   return { on, promise };
 };
+
+export const createUrlFilter = (
+  includeGlob: string[],
+  excludeGlob: string[]
+) => {
+  const pathIncludeRegexes = includeGlob.map(
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
+  );
+  const pathExcludeRegexes = excludeGlob.map(
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
+  );
+  return ({ path }: { path: string }) => {
+    const withoutTrailingSlash = path.replace(/\/$/, '');
+    return (
+      (pathIncludeRegexes.length === 0 ||
+        pathIncludeRegexes.some((regex) => regex.test(withoutTrailingSlash))) &&
+      !pathExcludeRegexes.some((regex) => regex.test(withoutTrailingSlash))
+    );
+  };
+};
+
+const globOpts: globrex.Options = { globstar: true, extended: true };
