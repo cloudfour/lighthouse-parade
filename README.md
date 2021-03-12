@@ -65,7 +65,7 @@ To use this template, it is important to follow these instructions very carefull
 
 ## Shout-outs
 
-- [auto-light](https://github.com/TGiles/auto-lighthouse) is a similar project that provided early inspiration for this one.
+- [auto-lighthouse](https://github.com/TGiles/auto-lighthouse) is a similar project that provided early inspiration for this one.
 - [Lighthouse](https://github.com/GoogleChrome/lighthouse) is handling emulation and performance metrics.
 - [Node CSV](https://csv.js.org/) is the library handling CSV logic.
 - [simplecrawler](https://github.com/simplecrawler/simplecrawler) is the library handling URL discovery.
