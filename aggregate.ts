@@ -13,7 +13,7 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
   const rows = [];
   let headers: string[] | null = null;
 
-  files.forEach((fileName) => {
+  for (const fileName of files) {
     if (fileName !== '.DS_Store') {
       const filePath = path.join(reportsDirPath, fileName);
       const fileContents = fs.readFileSync(filePath, 'utf8');
@@ -26,7 +26,8 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
         console.log(`Failed to bundle: ${fileName}`);
       }
     }
-  });
+  }
+
   rows.unshift(headers);
 
   const aggregatedReportData = csvStringify(rows);

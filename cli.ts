@@ -171,6 +171,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       const render = () => {
         const pendingUrls: string[] = [];
         const currentUrls: string[] = [];
+        // eslint-disable-next-line @cloudfour/unicorn/no-array-for-each
         urlStates.forEach(({ state, error }, url) => {
           if (state === State.ReportComplete) return;
           const line = `${printLine(url, state, error)}\n`;
