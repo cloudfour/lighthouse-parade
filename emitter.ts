@@ -14,7 +14,7 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
     // the new event listeners are fired
     Promise.resolve().then(() => {
       const handlers: Events[keyof Events][] = eventHandlers[eventName] || [];
-      for (const handler of handlers)  handler(...args);
+      for (const handler of handlers) handler(...args);
     });
   };
 
