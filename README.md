@@ -45,7 +45,7 @@ Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse rep
 
 ## Analysis spreadsheet template
 
-After running a scan, you can import your aggregated report data into this [Google Sheet template](https://docs.google.com/spreadsheets/d/1n2VtFjLH5PzVQ-PCGCHc03ZFO79OT7CU_2lsMc6jFUI), which includes the following features:
+After running a scan, you can import your aggregated report data into this [Google Sheet template](https://docs.google.com/spreadsheets/d/1EaxdaYncpWqou5pmi8GN7dMJRwC-oy0s2Z03LvAsHF4), which includes the following features:
 
 - Basic formatting
 - The three [web core vitals](https://web.dev/vitals/) columns are highlighted
