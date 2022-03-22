@@ -45,8 +45,9 @@ export const reportToRow = (csvFileContents: string) => {
   return csvRow;
 };
 
-interface LighthouseCSVReportRow
-  extends Pick<LH.Result, 'requestedUrl' | 'finalUrl'> {
+interface LighthouseCSVReportRow {
+  requestedUrl: string;
+  finalUrl: string;
   category: string;
   name: string;
   title: string;

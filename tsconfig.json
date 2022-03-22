@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["lighthouse/types/lhr", "jest"],
+    "types": ["jest"],
     "importsNotUsedAsValues": "error"
   },
   "include": ["**/*.ts"]
