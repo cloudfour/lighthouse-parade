@@ -1,5 +1,15 @@
 # lighthouse-parade
 
+## 2.0.0
+
+### Major Changes
+
+- [#92](https://github.com/cloudfour/lighthouse-parade/pull/92) [`d0b1d12`](https://github.com/cloudfour/lighthouse-parade/commit/d0b1d12704a4b846daf506953ef78df10ed87c2e) Thanks [@calebeby](https://github.com/calebeby)! - Drop support for node 12 and add support for node 16
+
+* [#77](https://github.com/cloudfour/lighthouse-parade/pull/77) [`4d21edc`](https://github.com/cloudfour/lighthouse-parade/commit/4d21edccdacb91732d041d43d109da05ed1c1323) Thanks [@calebeby](https://github.com/calebeby)! - Update Dependencies
+
+  The most significant change is that Lighthouse has been updated from `^6.4.0` to `^9.5.0`. For most people, the changes will be non-breaking, but throughout the versions the [scores have been changed](https://github.com/GoogleChrome/lighthouse/releases)
+
 ## 1.1.0
 
 ### Minor Changes
