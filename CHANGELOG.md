@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 2.0.1
+
+### Patch Changes
+
+- [#99](https://github.com/cloudfour/lighthouse-parade/pull/99) [`fe12bc2`](https://github.com/cloudfour/lighthouse-parade/commit/fe12bc21f59e21663d35cf606df8d90bfdf715ba) Thanks [@calebeby](https://github.com/calebeby)! - Force the initial path to be included in the crawling regardless of include/exclude flags
+
 ## 2.0.0
 
 ### Major Changes
