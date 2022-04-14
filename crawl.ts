@@ -35,8 +35,13 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
   if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
 
+  const initialPath = new URL(siteUrl).pathname;
+
   crawler.addFetchCondition(
-    createUrlFilter(opts.includePathGlob, opts.excludePathGlob)
+    createUrlFilter(
+      [...opts.includePathGlob, initialPath],
+      opts.excludePathGlob
+    )
   );
 
   const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {
