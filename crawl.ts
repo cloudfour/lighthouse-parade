@@ -39,7 +39,9 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
 
   crawler.addFetchCondition(
     createUrlFilter(
-      [...opts.includePathGlob, initialPath],
+      opts.includePathGlob.length > 0
+        ? [...opts.includePathGlob, initialPath]
+        : [],
       opts.excludePathGlob
     )
   );
