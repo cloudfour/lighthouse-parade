@@ -212,7 +212,9 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         render();
       };
 
-      const log = (...messages: string[]) =>
+      const log = (...messages: any[]) =>
+        printAboveLogUpdate(() => console.log(...messages));
+      const warn = (...messages: any[]) =>
         printAboveLogUpdate(() => console.log(...messages));
 
       const urlsFile = path.join(dataDirPath, 'urls.csv');
@@ -246,6 +248,10 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
       scanner.on('info', (message) => {
         log(message);
+      });
+
+      scanner.on('warning', (message) => {
+        warn(message);
       });
 
       scanner.promise.then(async () => {
