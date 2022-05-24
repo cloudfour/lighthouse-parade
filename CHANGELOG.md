@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 2.0.2
+
+### Patch Changes
+
+- [#103](https://github.com/cloudfour/lighthouse-parade/pull/103) [`ac23bdb`](https://github.com/cloudfour/lighthouse-parade/commit/ac23bdb8ee02a11b88f0d7c313d3cd6e3eae6c9f) Thanks [@calebeby](https://github.com/calebeby)! - Fix crawling when --include-path-glob is not passed
+
 ## 2.0.1
 
 ### Patch Changes
