@@ -1,3 +1,4 @@
+import { test, expect, vi } from 'vitest';
 import { scan } from '../scan-task.js';
 import { createFakeCrawler } from '../crawl.mock.js';
 import type { LighthouseEvents } from '../lighthouse.js';
@@ -16,17 +17,17 @@ test('Displays useful error if no pages are found while crawling', async () => {
     crawler: fakeCrawler,
   });
 
-  const onWarning = jest.fn();
+  const onWarning = vi.fn();
   emitter.on('warning', onWarning);
-  const onInfo = jest.fn();
+  const onInfo = vi.fn();
   emitter.on('info', onInfo);
-  const onUrlFound = jest.fn();
+  const onUrlFound = vi.fn();
   emitter.on('urlFound', onUrlFound);
-  const onReportComplete = jest.fn();
+  const onReportComplete = vi.fn();
   emitter.on('reportComplete', onReportComplete);
-  const onReportFail = jest.fn();
+  const onReportFail = vi.fn();
   emitter.on('reportFail', onReportFail);
-  const onReportBegin = jest.fn();
+  const onReportBegin = vi.fn();
   emitter.on('reportBegin', onReportBegin);
 
   // Wait for next event loop tick to run assertions, because event handlers are executed in microtasks
@@ -74,17 +75,17 @@ test('Fires correct lighthouse events as pages are found', async () => {
     crawler: fakeCrawler,
   });
 
-  const onWarning = jest.fn();
+  const onWarning = vi.fn();
   emitter.on('warning', onWarning);
-  const onInfo = jest.fn();
+  const onInfo = vi.fn();
   emitter.on('info', onInfo);
-  const onUrlFound = jest.fn();
+  const onUrlFound = vi.fn();
   emitter.on('urlFound', onUrlFound);
-  const onReportComplete = jest.fn();
+  const onReportComplete = vi.fn();
   emitter.on('reportComplete', onReportComplete);
-  const onReportFail = jest.fn();
+  const onReportFail = vi.fn();
   emitter.on('reportFail', onReportFail);
-  const onReportBegin = jest.fn();
+  const onReportBegin = vi.fn();
   emitter.on('reportBegin', onReportBegin);
 
   // Wait for next event loop tick to run assertions, because event handlers are executed in microtasks

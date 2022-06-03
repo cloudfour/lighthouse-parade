@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { createUrlFilter } from '../crawl.js';
 
 test('if the include array is empty allow any path', () => {

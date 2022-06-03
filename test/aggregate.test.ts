@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { aggregateCSVReports } from '../aggregate.js';
 import csvParse from 'csv-parse/lib/sync.js';
+import { describe, it, expect } from 'vitest';
 
 describe('aggregateCSVReports', () => {
   it('creates the expected csv', async () => {
