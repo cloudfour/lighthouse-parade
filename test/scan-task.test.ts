@@ -1,7 +1,7 @@
-import { scan } from '../scan-task';
-import { createFakeCrawler } from '../crawl.mock';
-import type { LighthouseEvents } from '../lighthouse';
-import { createEmitter } from '../emitter';
+import { scan } from '../scan-task.js';
+import { createFakeCrawler } from '../crawl.mock.js';
+import type { LighthouseEvents } from '../lighthouse.js';
+import { createEmitter } from '../emitter.js';
 
 const nextTick = () => new Promise((resolve) => process.nextTick(resolve));
 

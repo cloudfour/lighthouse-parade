@@ -12,8 +12,6 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "urls": "node dist/urls-task.js",
-    "combine": "node dist/combine-task.js",
     "check-lint": "eslint . && prettier --check .",
     "lint": "eslint --fix . && prettier --write .",
     "type": "tsc --noEmit",
@@ -39,7 +37,7 @@
     "simplecrawler": "^1.1.9"
   },
   "engines": {
-    "node": "^14.0.0 || ^16.0.0"
+    "node": "^14.0.0 || ^16.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -57,7 +55,7 @@
     "jest": "^27.0.1",
     "prettier": "^2.3.0",
     "timekeeper": "^2.2.0",
-    "typescript": "^4.3.2"
+    "typescript": "~4.7.2"
   },
   "eslintConfig": {
     "extends": [
@@ -73,5 +71,6 @@
       "/node_modules/",
       "/dist/"
     ]
-  }
+  },
+  "type": "module"
 }

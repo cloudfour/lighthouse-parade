@@ -1,4 +1,4 @@
-import { createUrlFilter } from '../crawl';
+import { createUrlFilter } from '../crawl.js';
 
 test('if the include array is empty allow any path', () => {
   const filter = createUrlFilter([], []);

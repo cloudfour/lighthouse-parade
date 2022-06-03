@@ -3,7 +3,7 @@ import {
   isContentTypeHtml,
   usefulDirName,
   makeFileNameFromUrl,
-} from '../utilities';
+} from '../utilities.js';
 
 describe('isContentTypeHtml', () => {
   it('returns false when not HTML', () => {

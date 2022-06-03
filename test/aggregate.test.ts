@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import { aggregateCSVReports } from '../aggregate';
-import csvParse from 'csv-parse/lib/sync';
+import { aggregateCSVReports } from '../aggregate.js';
+import csvParse from 'csv-parse/lib/sync.js';
 
 describe('aggregateCSVReports', () => {
   it('creates the expected csv', async () => {

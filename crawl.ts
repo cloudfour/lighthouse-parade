@@ -1,8 +1,8 @@
 import Crawler from 'simplecrawler';
-import type { QueueItem } from 'simplecrawler/queue';
+import type { QueueItem } from 'simplecrawler/queue.js';
 import type { IncomingMessage } from 'http';
-import { createEmitter } from './emitter';
-import { isContentTypeHtml } from './utilities';
+import { createEmitter } from './emitter.js';
+import { isContentTypeHtml } from './utilities.js';
 import globrex from 'globrex';
 
 export interface CrawlOptions {

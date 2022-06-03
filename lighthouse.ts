@@ -1,6 +1,8 @@
 import { spawn } from 'child_process';
-import { createEmitter } from './emitter';
+import { createEmitter } from './emitter.js';
+import { createRequire } from 'module';
 
+const require = createRequire(import.meta.url);
 const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
 
 let lighthouseLimit = 2;
@@ -24,9 +26,6 @@ export type LighthouseEvents = {
   error: (message: Error) => void;
 };
 
-// This function is marked as async to wrap it with a promise to make error handling easier
-// Even though the underlying process is spawned synchronously
-// eslint-disable-next-line @cloudfour/typescript-eslint/require-await
 export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
   if (maxConcurrency) lighthouseLimit = maxConcurrency;
   const { on, emit } = createEmitter<LighthouseEvents>();

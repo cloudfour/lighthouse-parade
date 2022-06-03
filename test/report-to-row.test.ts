@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { reportToRow, reportToRowHeaders } from '../report-to-row';
+import { reportToRow, reportToRowHeaders } from '../report-to-row.js';
 
 const testCsvPath = path.join(__dirname, 'support', 'lombard.csv');
 const fileContents = fs.readFileSync(testCsvPath, { encoding: 'utf-8' });
