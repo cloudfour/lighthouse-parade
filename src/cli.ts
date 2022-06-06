@@ -22,7 +22,7 @@ It may in the future make sense to use a bundler to combine all the dist/ files 
 (including package.json) which would eliminate this problem
 */
 // eslint-disable-next-line @cloudfour/typescript-eslint/no-var-requires
-const { version } = require('../package.json');
+const { version } = require('../../package.json');
 
 const symbols = {
   error: kleur.red('✖'),
