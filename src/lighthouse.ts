@@ -127,4 +127,7 @@ process.on('SIGINT', cleanup);
 // SIGTERM is fired when program is killed with kill
 process.on('SIGTERM', cleanup);
 // Fired when something is thrown that exits the program
-process.on('uncaughtException', cleanup);
+process.on('uncaughtException', (error) => {
+  console.error(error);
+  cleanup(1);
+});
