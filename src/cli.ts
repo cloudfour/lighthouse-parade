@@ -7,6 +7,7 @@ import sade from 'sade';
 import { createRequire } from 'module';
 import type { URLState, URLStates } from './main.js';
 import { main, State } from './main.js';
+import tinydate from 'tinydate';
 
 const require = createRequire(import.meta.url);
 
@@ -85,9 +86,9 @@ sade('lighthouse-parade <url>', true)
 
     const outputs: string[] = toArray(opts.output).filter(Boolean);
     if (outputs.length === 0) {
-      throw new Error(
-        '--output or -o is required (example: `-o cloudfour-a.csv`)'
-      );
+      const siteName = new URL(url).hostname.replace(/[^\da-z]+/gi, '-');
+      const date = tinydate('{YYYY}-{MM}-{DD}-{HH}:{mm}')(new Date());
+      outputs.push(`lighthouse-${siteName}-${date}.csv`);
     }
 
     const crawlerUserAgent: unknown = opts['crawler-user-agent'];
