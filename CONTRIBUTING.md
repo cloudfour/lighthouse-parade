@@ -10,4 +10,4 @@ While this project is pre-1.0, we are releasing breaking changes and backwards-c
 
 ## Publishing a new version
 
-Any time there are unpublished changesets on `master`, [changeset-action](https://github.com/changesets/action) will create a PR called "Publish Next Version". When you merge this PR into `master`, the unreleased changesets will be consolidated into `CHANGELOG.md`, a git tag for the new version will be created, and linked to a GitHub release, and the new version will be published to npm.
+Any time there are unpublished changesets on `main`, [changeset-action](https://github.com/changesets/action) will create a PR called "Publish Next Version". When you merge this PR into `main`, the unreleased changesets will be consolidated into `CHANGELOG.md`, a git tag for the new version will be created, and linked to a GitHub release, and the new version will be published to npm.
