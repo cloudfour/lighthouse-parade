@@ -19,7 +19,7 @@ has to be relative to the built version of this file in the dist folder
 It may in the future make sense to use a bundler to combine all the dist/ files into one file,
 (including package.json) which would eliminate this problem
 */
-const { version } = require('../../package.json');
+const { version } = require('../package.json');
 
 const symbols = {
   error: kleur.red('✖'),
