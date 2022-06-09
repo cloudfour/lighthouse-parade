@@ -1,14 +1,16 @@
+import * as kleur from 'kleur/colors';
 import Crawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue.js';
 import type { IncomingMessage } from 'http';
-import { createEmitter } from './emitter.js';
-import { isContentTypeHtml } from './utilities.js';
 import globrex from 'globrex';
+import type { ModifiedConsole } from './cli.js';
+import type { ReadonlyAsyncIteratorQueue } from './async-iterator-queue.js';
+import { asyncIteratorQueue } from './async-iterator-queue.js';
 
 export interface CrawlOptions {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
   ignoreRobotsTxt: boolean;
-  userAgent?: string;
+  crawlerUserAgent?: string;
   /** Maximum depth of fetched links */
   maxCrawlDepth?: number;
   /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
@@ -17,72 +19,66 @@ export interface CrawlOptions {
   excludePathGlob: string[];
 }
 
-export type CrawlerEvents = {
-  urlFound: (
-    url: string,
-    contentType: string,
-    bytes: number,
-    statusCode: number
-  ) => void;
-  warning: (message: string | Error) => void;
-};
-
-export const crawl = (siteUrl: string, opts: CrawlOptions) => {
-  const { on, emit, promise } = createEmitter<CrawlerEvents>();
-
-  const crawler = new Crawler(siteUrl);
-  if (opts.userAgent) crawler.userAgent = opts.userAgent;
+export function crawl(
+  initialUrl: string,
+  opts: CrawlOptions,
+  console: ModifiedConsole,
+): ReadonlyAsyncIteratorQueue<string> {
+  const crawler = new Crawler(initialUrl);
+  if (opts.crawlerUserAgent) crawler.userAgent = opts.crawlerUserAgent;
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
   if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
 
-  const initialPath = new URL(siteUrl).pathname;
+  const initialPath = new URL(initialUrl).pathname;
 
+  const resultsQueue = asyncIteratorQueue<string>();
   crawler.addFetchCondition(
     createUrlFilter(
       opts.includePathGlob.length > 0
         ? [...opts.includePathGlob, initialPath]
         : [],
-      opts.excludePathGlob
-    )
+      opts.excludePathGlob,
+    ),
   );
 
-  const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {
-    emit(
-      'warning',
-      `Error fetching (${response.statusCode}): ${queueItem.url}`
-    );
-  };
-
-  crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
+  crawler.on('fetchcomplete', (queueItem, _responseBuffer, response) => {
     const url = queueItem.url;
     const contentType = response.headers['content-type'];
-    if (!isContentTypeHtml(contentType)) return;
+    if (!contentType || !/html/i.test(contentType)) return;
     const statusCode = response.statusCode;
     if (!contentType || !statusCode) return;
-    emit('urlFound', url, contentType, responseBuffer.length, statusCode);
+    resultsQueue.push(url);
   });
 
-  crawler.on('complete', () => emit('resolve'));
+  crawler.on('complete', () => {
+    resultsQueue.finish();
+  });
 
-  crawler.on('fetcherror', emitWarning);
-  crawler.on('fetch404', emitWarning);
-  crawler.on('fetch410', emitWarning);
+  const logWarning = (queueItem: QueueItem, response: IncomingMessage) => {
+    console.warn(
+      `${kleur.yellow('⚠')} Error fetching (${response.statusCode}): ${
+        queueItem.url
+      }`,
+    );
+  };
+  crawler.on('fetcherror', logWarning);
+  crawler.on('fetch404', logWarning);
+  crawler.on('fetch410', logWarning);
 
   crawler.start();
 
-  return { on, promise };
-};
+  return resultsQueue;
+}
+
+const globToRegex = (glob: string) =>
+  globrex(glob.replace(/\/$/, ''), globOpts).regex;
 
 export const createUrlFilter = (
   includeGlob: string[],
-  excludeGlob: string[]
+  excludeGlob: string[],
 ) => {
-  const pathIncludeRegexes = includeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
-  );
-  const pathExcludeRegexes = excludeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
-  );
+  const pathIncludeRegexes = includeGlob.map(globToRegex);
+  const pathExcludeRegexes = excludeGlob.map(globToRegex);
   return ({ path }: { path: string }) => {
     const withoutTrailingSlash = path.replace(/\/$/, '');
     return (

@@ -14,7 +14,8 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error"
+    "importsNotUsedAsValues": "error",
+    "types": ["vitest/importMeta"]
   },
   "include": ["**/*.ts"]
 }

@@ -7,4 +7,7 @@ export default defineConfig({
   esbuild: {
     target: 'node14',
   },
+  test: {
+    includeSource: ['src/**/*.{js,ts}'],
+  },
 });
