@@ -2,10 +2,10 @@ import * as kleur from 'kleur/colors';
 import Crawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue.js';
 import type { IncomingMessage } from 'http';
-import globrex from 'globrex';
 import type { ModifiedConsole } from './cli.js';
 import type { ReadonlyAsyncIteratorQueue } from './async-iterator-queue.js';
 import { asyncIteratorQueue } from './async-iterator-queue.js';
+import { createUrlFilter } from './create-url-filter.js';
 
 export interface CrawlOptions {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
@@ -69,24 +69,3 @@ export function crawl(
 
   return resultsQueue;
 }
-
-const globToRegex = (glob: string) =>
-  globrex(glob.replace(/\/$/, ''), globOpts).regex;
-
-export const createUrlFilter = (
-  includeGlob: string[],
-  excludeGlob: string[],
-) => {
-  const pathIncludeRegexes = includeGlob.map(globToRegex);
-  const pathExcludeRegexes = excludeGlob.map(globToRegex);
-  return ({ path }: { path: string }) => {
-    const withoutTrailingSlash = path.replace(/\/$/, '');
-    return (
-      (pathIncludeRegexes.length === 0 ||
-        pathIncludeRegexes.some((regex) => regex.test(withoutTrailingSlash))) &&
-      !pathExcludeRegexes.some((regex) => regex.test(withoutTrailingSlash))
-    );
-  };
-};
-
-const globOpts: globrex.Options = { globstar: true, extended: true };
