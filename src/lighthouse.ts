@@ -6,6 +6,7 @@ import type { LHR } from 'lighthouse';
 export interface LighthouseRunner {
   run(url: string): Promise<LHR>;
   isFree: boolean;
+  /** Resolves when the runner is free (has nothing to do) */
   freePromise: Promise<LighthouseRunner>;
   worker: Worker;
 }
