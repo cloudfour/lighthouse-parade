@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 2.1.0
+
+### Minor Changes
+
+- [#110](https://github.com/cloudfour/lighthouse-parade/pull/110) [`38bfdf2`](https://github.com/cloudfour/lighthouse-parade/commit/38bfdf271dfc1a9d92b773b22810b52680570108) Thanks [@calebeby](https://github.com/calebeby)! - Add support for node 18
+
 ## 2.0.2
 
 ### Patch Changes
