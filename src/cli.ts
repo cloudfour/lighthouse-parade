@@ -6,9 +6,13 @@ import * as kleur from 'kleur/colors';
 import logUpdate from 'log-update';
 import * as path from 'path';
 import sade from 'sade';
-import { scan } from './scan-task';
-import { makeFileNameFromUrl, usefulDirName } from './utilities';
-import { aggregateCSVReports } from './aggregate';
+import { scan } from './scan-task.js';
+import { makeFileNameFromUrl, usefulDirName } from './utilities.js';
+import { aggregateCSVReports } from './aggregate.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+
 /*
 This is a require because if it was an import, TS would copy package.json to `dist`
 If TS copied package.json to `dist`, npm would not publish the JS files in `dist`
@@ -18,7 +22,7 @@ It may in the future make sense to use a bundler to combine all the dist/ files 
 (including package.json) which would eliminate this problem
 */
 // eslint-disable-next-line @cloudfour/typescript-eslint/no-var-requires
-const { version } = require('../package.json');
+const { version } = require('../../package.json');
 
 const symbols = {
   error: kleur.red('✖'),

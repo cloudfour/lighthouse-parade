@@ -1,9 +1,10 @@
+import { describe, test, it, expect } from 'vitest';
 import tk from 'timekeeper';
 import {
   isContentTypeHtml,
   usefulDirName,
   makeFileNameFromUrl,
-} from '../utilities';
+} from '../src/utilities.js';
 
 describe('isContentTypeHtml', () => {
   it('returns false when not HTML', () => {

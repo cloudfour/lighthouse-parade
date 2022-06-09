@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { reportToRow, reportToRowHeaders } from './report-to-row';
-import csvStringify from 'csv-stringify/lib/sync';
+import { reportToRow, reportToRowHeaders } from './report-to-row.js';
+import csvStringify from 'csv-stringify/lib/sync.js';
 
 const { readdir, writeFile } = fs.promises;
 

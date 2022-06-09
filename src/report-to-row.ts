@@ -1,4 +1,4 @@
-import csvParse from 'csv-parse/lib/sync';
+import csvParse from 'csv-parse/lib/sync.js';
 
 export const reportToRowHeaders = (csvFileContents: string) => {
   const singleReportRows: LighthouseCSVReportRow[] | undefined = csvParse(

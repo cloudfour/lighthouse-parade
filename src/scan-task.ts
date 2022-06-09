@@ -1,8 +1,8 @@
 import fs from 'fs';
-import { runLighthouseReport } from './lighthouse';
-import type { CrawlOptions } from './crawl';
-import { crawl as defaultCrawler } from './crawl';
-import { createEmitter } from './emitter';
+import { runLighthouseReport } from './lighthouse.js';
+import type { CrawlOptions } from './crawl.js';
+import { crawl as defaultCrawler } from './crawl.js';
+import { createEmitter } from './emitter.js';
 
 interface ScanOptions extends CrawlOptions {
   /** Where to store the newly-generated reports */

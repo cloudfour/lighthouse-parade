@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "CommonJS",
+    "target": "es2020",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "resolveJsonModule": true,
+    "paths": {
+      "timekeeper": ["./node_modules/timekeeper/index.d.ts"],
+      "kleur/colors": ["./node_modules/kleur/colors.d.ts"]
+    },
     "outDir": "dist",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["jest"],
     "importsNotUsedAsValues": "error"
   },
   "include": ["**/*.ts"]
