@@ -15,8 +15,8 @@ const createLighthouseRunner = (): LighthouseRunner => {
   const worker = new Worker(
     path.join(
       path.dirname(fileURLToPath(import.meta.url)),
-      'lighthouse-worker.js',
-    ),
+      'lighthouse-worker.js'
+    )
   );
   const runner: LighthouseRunner = {
     worker,
@@ -89,7 +89,7 @@ export const initWorkerThreads = (numThreads: number) => {
         await new Promise<void>((resolve) => {
           lighthouseRunner.worker.on('exit', () => resolve());
         });
-      }),
+      })
     );
   cleanupFunctions.push(close);
 

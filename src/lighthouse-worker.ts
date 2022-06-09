@@ -25,7 +25,7 @@ parentPort?.on('message', (message) => {
       .then((chrome) => chrome.kill())
       .then(() =>
         // eslint-disable-next-line @cloudfour/n/no-process-exit
-        process.exit(0),
+        process.exit(0)
       );
   }
 });

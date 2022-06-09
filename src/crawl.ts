@@ -22,7 +22,7 @@ export interface CrawlOptions {
 export function crawl(
   initialUrl: string,
   opts: CrawlOptions,
-  console: ModifiedConsole,
+  console: ModifiedConsole
 ): ReadonlyAsyncIteratorQueue<string> {
   const crawler = new Crawler(initialUrl);
   if (opts.crawlerUserAgent) crawler.userAgent = opts.crawlerUserAgent;
@@ -37,8 +37,8 @@ export function crawl(
       opts.includePathGlob.length > 0
         ? [...opts.includePathGlob, initialPath]
         : [],
-      opts.excludePathGlob,
-    ),
+      opts.excludePathGlob
+    )
   );
 
   crawler.on('fetchcomplete', (queueItem, _responseBuffer, response) => {
@@ -58,7 +58,7 @@ export function crawl(
     console.warn(
       `${kleur.yellow('⚠')} Error fetching (${response.statusCode}): ${
         queueItem.url
-      }`,
+      }`
     );
   };
   crawler.on('fetcherror', logWarning);

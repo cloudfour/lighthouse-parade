@@ -30,7 +30,7 @@ interface CSVColumn {
 const makeCSVRow = (cells: string[]) => `${cells.join(',')}\n`;
 
 export const createCSVOutputWriter = async (
-  filePath: string,
+  filePath: string
 ): Promise<OutputWriter> => {
   const outputFile = await fs.open(filePath, 'w');
   let hasWrittenHeader = false;
@@ -86,7 +86,7 @@ export const createCSVOutputWriter = async (
 
           await outputFile.write(
             makeCSVRow(['', ...columns.map((c) => c.category)]) +
-              makeCSVRow(['URL', ...columns.map((c) => c.name)]),
+              makeCSVRow(['URL', ...columns.map((c) => c.name)])
           );
         }
 
@@ -103,7 +103,7 @@ export const createCSVOutputWriter = async (
 
               return val ? String(val) : '';
             }),
-          ]),
+          ])
         );
       });
       await mutexPromise;

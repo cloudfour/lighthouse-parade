@@ -21,9 +21,9 @@ const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
       const ext = path.extname(output);
       if (ext === '.csv') return createCSVOutputWriter(output);
       throw new Error(
-        `Invalid output format: ${ext} (${output}). Expected <filename>.csv, or google-sheets`,
+        `Invalid output format: ${ext} (${output}). Expected <filename>.csv, or google-sheets`
       );
-    }),
+    })
   );
 
   // Used to make sure that the output writers are always updated with the same entry at the same time.
@@ -34,13 +34,13 @@ const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
   const combinedOutputWriter: OutputWriter = {
     addEntry: async (...args) => {
       mutexPromise = mutexPromise.then(() =>
-        Promise.all(outputWriters.map((writer) => writer.addEntry(...args))),
+        Promise.all(outputWriters.map((writer) => writer.addEntry(...args)))
       );
       await mutexPromise;
     },
     complete: async () => {
       mutexPromise = mutexPromise.then(() =>
-        Promise.all(outputWriters.map((writer) => writer.complete())),
+        Promise.all(outputWriters.map((writer) => writer.complete()))
       );
       await mutexPromise;
     },
@@ -77,7 +77,7 @@ export interface RunOptions extends CrawlOptions {
 export const main = (
   initialUrl: string,
   opts: RunOptions,
-  console: ModifiedConsole,
+  console: ModifiedConsole
 ): RunStatus => {
   const state = new Map<string, URLState>();
   const start = async () => {
@@ -101,7 +101,7 @@ export const main = (
           })
           .catch((error) => {
             state.set(url, { state: State.ReportFailure, error });
-          }),
+          })
       );
     }
 
