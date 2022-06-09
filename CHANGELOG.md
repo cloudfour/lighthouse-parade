@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 2.1.0
+
+### Minor Changes
+
+- [#110](https://github.com/cloudfour/lighthouse-parade/pull/110) [`38bfdf2`](https://github.com/cloudfour/lighthouse-parade/commit/38bfdf271dfc1a9d92b773b22810b52680570108) Thanks [@calebeby](https://github.com/calebeby)! - Add support for node 18
+
 ## 2.0.2
 
 ### Patch Changes
@@ -75,7 +81,7 @@
 
 - [`e3a9d2f`](https://github.com/cloudfour/lighthouse-parade/commit/e3a9d2fc9ce89240b2e8b359cb692b2e44396ee7) [#36](https://github.com/cloudfour/lighthouse-parade/pull/36) Thanks [@calebeby](https://github.com/calebeby)! - Support only Node 12 LTS versions or 14
 
-- [`b24d697`](https://github.com/cloudfour/lighthouse-parade/commit/b24d69769f12192783a89128ed2fb6453cdef28d) [#37](https://github.com/cloudfour/lighthouse-parade/pull/37) Thanks [@calebeby](https://github.com/calebeby)! - Updated lighthouse to [6.4.0](https://github.com/GoogleChrome/lighthouse/blob/master/changelog.md#640-2020-09-30).
+- [`b24d697`](https://github.com/cloudfour/lighthouse-parade/commit/b24d69769f12192783a89128ed2fb6453cdef28d) [#37](https://github.com/cloudfour/lighthouse-parade/pull/37) Thanks [@calebeby](https://github.com/calebeby)! - Updated lighthouse to [6.4.0](https://github.com/GoogleChrome/lighthouse/blob/main/changelog.md#640-2020-09-30).
 
 ### Patch Changes
 
