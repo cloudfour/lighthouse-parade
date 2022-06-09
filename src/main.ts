@@ -1,8 +1,8 @@
-import type { OutputWriter } from './output-writer.js';
+import type { OutputWriter } from './output-writer/index.js';
 import {
   createGoogleSheetsOutputWriter,
   createCSVOutputWriter,
-} from './output-writer.js';
+} from './output-writer/index.js';
 
 import * as path from 'path';
 import type { CrawlOptions } from './crawl.js';
@@ -95,8 +95,8 @@ export const main = (
       lighthousePromises.push(
         lighthouseRunner
           .run(url)
-          .then(async (lighthouseResult) => {
-            await outputWriter.addEntry(url, lighthouseResult);
+          .then(async (lighthouseReport) => {
+            await outputWriter.addEntry(lighthouseReport);
             state.set(url, { state: State.ReportSuccess });
           })
           .catch((error) => {

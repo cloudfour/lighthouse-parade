@@ -1,11 +1,10 @@
-import type { LighthouseResult } from './lighthouse-result.js';
 import { Worker } from 'worker_threads';
 import { fileURLToPath } from 'url';
 import * as path from 'path';
 import type { LHR } from 'lighthouse';
 
 export interface LighthouseRunner {
-  run(url: string): Promise<LighthouseResult>;
+  run(url: string): Promise<LHR>;
   isFree: boolean;
   freePromise: Promise<LighthouseRunner>;
   worker: Worker;
@@ -25,27 +24,25 @@ const createLighthouseRunner = (): LighthouseRunner => {
     async run(url) {
       this.isFree = false;
       worker.postMessage({ type: 'runLighthouse', url });
-      const lighthouseResultPromise = new Promise<LighthouseResult>(
-        (resolve, reject) => {
-          const workerListener = (message: unknown) => {
-            if (!isLighthouseReport(message)) return;
-            resolve(message);
-            worker.removeListener('message', workerListener);
-            worker.removeListener('error', errorListener);
-          };
+      const lighthouseReportPromise = new Promise<LHR>((resolve, reject) => {
+        const workerListener = (message: unknown) => {
+          if (!isLighthouseReport(message)) return;
+          resolve(message);
+          worker.removeListener('message', workerListener);
+          worker.removeListener('error', errorListener);
+        };
 
-          const errorListener = (error: any) => {
-            reject(error);
-            worker.removeListener('message', workerListener);
-            worker.removeListener('error', errorListener);
-          };
+        const errorListener = (error: any) => {
+          reject(error);
+          worker.removeListener('message', workerListener);
+          worker.removeListener('error', errorListener);
+        };
 
-          worker.addListener('message', workerListener);
-          worker.addListener('error', errorListener);
-        },
-      );
+        worker.addListener('message', workerListener);
+        worker.addListener('error', errorListener);
+      });
       const newFreePromise = this.freePromise
-        .then(() => lighthouseResultPromise)
+        .then(() => lighthouseReportPromise)
         .then(() => {
           if (this.freePromise === newFreePromise) {
             this.isFree = true;
@@ -54,7 +51,7 @@ const createLighthouseRunner = (): LighthouseRunner => {
           return this;
         });
       this.freePromise = newFreePromise;
-      return lighthouseResultPromise;
+      return lighthouseReportPromise;
     },
   };
   runner.freePromise = Promise.resolve(runner);

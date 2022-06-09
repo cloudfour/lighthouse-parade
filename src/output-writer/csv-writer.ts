@@ -1,10 +1,5 @@
-import type { LighthouseResult } from './lighthouse-result.js';
 import * as fs from 'fs/promises';
-
-export interface OutputWriter {
-  addEntry(url: string, reportColumns: LighthouseResult): Promise<void>;
-  complete(): Promise<void>;
-}
+import type { OutputWriter } from './index.js';
 
 const enum CSVColumnType {
   CategoryScore,
@@ -45,7 +40,7 @@ export const createCSVOutputWriter = async (
   let mutexPromise: Promise<unknown> = Promise.resolve();
   const columns: CSVColumn[] = [];
   return {
-    async addEntry(url, report) {
+    async addEntry(report) {
       mutexPromise = mutexPromise.then(async () => {
         if (!hasWrittenHeader) {
           hasWrittenHeader = true;
@@ -97,7 +92,7 @@ export const createCSVOutputWriter = async (
 
         await outputFile.write(
           makeCSVRow([
-            url,
+            report.finalUrl,
             ...columns.map((c) => {
               const val =
                 c.field.type === CSVColumnType.AuditScore
@@ -118,7 +113,3 @@ export const createCSVOutputWriter = async (
     },
   };
 };
-
-export const createGoogleSheetsOutputWriter =
-  // @ts-expect-error TODO: the google-sheets writer is not implemented yet.
-  async (): Promise<OutputWriter> => {};
