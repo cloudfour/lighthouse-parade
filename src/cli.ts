@@ -26,7 +26,8 @@ const symbols = {
   success: kleur.green('✔'),
 };
 
-const toArray = <T>(input: T) => (Array.isArray(input) ? input : [input]);
+const toArray = <T>(input: T) =>
+  Array.isArray(input) ? input : input === undefined ? [] : [input];
 
 /** Returns whether the given path is a full URL (with protocol, domain, etc.) */
 const isFullURL = (path: string) => {
@@ -84,7 +85,7 @@ sade('lighthouse-parade <url>', true)
 
     const ignoreRobotsTxt: boolean = opts['ignore-robots-txt'];
 
-    const outputs: string[] = toArray(opts.output).filter(Boolean);
+    const outputs: string[] = toArray(opts.output);
     if (outputs.length === 0) {
       const siteName = new URL(url).hostname.replace(/[^\da-z]+/gi, '-');
       const date = tinydate('{YYYY}-{MM}-{DD}-{HH}:{mm}')(new Date());
@@ -105,9 +106,8 @@ sade('lighthouse-parade <url>', true)
       throw new Error('--max-crawl-depth must be a number');
     }
 
-    const includePathGlob: string[] = toArray(
-      opts['include-path-glob'] as unknown
-    ).filter(Boolean);
+    const includePathGlob: string[] = toArray(opts['include-path-glob']);
+
     if (includePathGlob.some((glob) => typeof glob !== 'string')) {
       throw new Error('--include-path-glob must be string(s)');
     }
@@ -116,9 +116,7 @@ sade('lighthouse-parade <url>', true)
       throw new Error('--include-path-glob must be path(s), not full URL(s)');
     }
 
-    const excludePathGlob: string[] = toArray(
-      opts['exclude-path-glob'] as unknown
-    ).filter(Boolean);
+    const excludePathGlob: string[] = toArray(opts['exclude-path-glob']);
 
     if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
       throw new Error('--exclude-path-glob must be string(s)');
