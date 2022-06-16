@@ -10,6 +10,8 @@ export interface ReadonlyAsyncIteratorQueue<T> {
   [Symbol.asyncIterator](): AsyncGenerator<T, void, void>;
 }
 
+// Learn about async iterators here: https://javascript.info/async-iterators-generators
+
 export const asyncIteratorQueue = <T>(): AsyncIteratorQueue<T> => {
   const queue: T[] = [];
   let isFinished = false;

@@ -21,6 +21,8 @@ const createLighthouseRunner = (): LighthouseRunner => {
   const runner: LighthouseRunner = {
     worker,
     isFree: true,
+    // Initialized as null because it needs to resolve to the `runner` object which is not accessible here
+    // This property gets set after the object is defined
     freePromise: null as any,
     async run(url) {
       this.isFree = false;
@@ -42,14 +44,17 @@ const createLighthouseRunner = (): LighthouseRunner => {
         worker.addListener('message', workerListener);
         worker.addListener('error', errorListener);
       });
+      // Updates the freePromise to a new promise which will resolve once _this_ run finishes
+      // freePromise must always be a promise that resolves once the _last_ lighthouse run on this runner finishes.
       const newFreePromise = this.freePromise
         .then(() => lighthouseReportPromise)
         .then(() => {
           if (this.freePromise === newFreePromise) {
+            // Don't set isFree unless this is the last promise in the chain
             this.isFree = true;
           }
 
-          return this;
+          return runner;
         });
       this.freePromise = newFreePromise;
       return lighthouseReportPromise;
@@ -79,6 +84,7 @@ export const initWorkerThreads = (numThreads: number) => {
       return lighthouseRunner;
     }
 
+    // Return the worker which becomes available soonest
     return Promise.race(lighthouseRunners.map((runner) => runner.freePromise));
   };
 

@@ -37,6 +37,8 @@ export const createCSVOutputWriter = async (
   // Used to make sure that the addEntry calls happen one at a time
   // so they always write to the file in a deterministic order
   // (specifically important to make sure the header is first)
+  // This promise chains all the promises from addEntry calls,
+  // making sure each call finishes before the next one is processed
   let mutexPromise: Promise<unknown> = Promise.resolve();
   const columns: CSVColumn[] = [];
   return {

@@ -15,6 +15,10 @@ export const combineOutputWriters = (
   // Used to make sure that the output writers are always updated with the same entry at the same time.
   // Otherwise, there might be issues with output writers taking different amounts of time,
   // and entries would be written in different orders.
+  // This promise chains all the promises from addEntry and complete calls,
+  // making sure each call finishes before the next one is processed
+  // The promises from each child output writer is processed in parallel,
+  // but the top-level addEntry calls are processed one at a time
   let mutexPromise: Promise<unknown> = Promise.resolve();
 
   return {
