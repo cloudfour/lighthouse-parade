@@ -139,15 +139,15 @@ sade('lighthouse-parade <url>', true)
     const printLine = (url: string, urlState: URLState) => {
       const frame = frames[i];
       const statusIcon =
-        urlState.state === State.ReportFailure
+        urlState.state === State.Failure
           ? symbols.error
           : urlState.state === State.Pending
           ? ' '
-          : urlState.state === State.ReportInProgress
+          : urlState.state === State.InProgress
           ? frame
           : symbols.success;
       let output = `${statusIcon} ${url}`;
-      if (urlState.state === State.ReportFailure) {
+      if (urlState.state === State.Failure) {
         output += `\n  ${kleur.gray(urlState.error.toString())}`;
       }
 
@@ -164,8 +164,8 @@ sade('lighthouse-parade <url>', true)
 
       for (const [url, urlState] of urlStates.entries()) {
         if (
-          urlState.state === State.ReportSuccess ||
-          urlState.state === State.ReportFailure
+          urlState.state === State.Success ||
+          urlState.state === State.Failure
         ) {
           if (!completedURLs.has(urlState)) {
             completedURLs.add(urlState);

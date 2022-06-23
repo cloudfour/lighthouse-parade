@@ -32,16 +32,16 @@ const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
 
 export const enum State {
   Pending,
-  ReportInProgress,
-  ReportSuccess,
-  ReportFailure,
+  InProgress,
+  Success,
+  Failure,
 }
 
 export type URLState =
   | { state: State.Pending }
-  | { state: State.ReportSuccess }
-  | { state: State.ReportInProgress }
-  | { state: State.ReportFailure; error: Error };
+  | { state: State.Success }
+  | { state: State.InProgress }
+  | { state: State.Failure; error: Error };
 
 export type URLStates = ReadonlyMap<string, URLState>;
 
@@ -72,16 +72,16 @@ export const main = (
     });
     for await (const url of crawlIterator) {
       const lighthouseRunner = await lighthouseRunners.getNextAvailable();
-      state.set(url, { state: State.ReportInProgress });
+      state.set(url, { state: State.InProgress });
       lighthousePromises.push(
         lighthouseRunner
           .run(url)
           .then(async (lighthouseReport) => {
             await outputWriter.addEntry(lighthouseReport);
-            state.set(url, { state: State.ReportSuccess });
+            state.set(url, { state: State.Success });
           })
           .catch((error) => {
-            state.set(url, { state: State.ReportFailure, error });
+            state.set(url, { state: State.Failure, error });
           })
       );
     }
