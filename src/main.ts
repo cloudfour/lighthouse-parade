@@ -15,10 +15,14 @@ import {
  * Creates output writers for each specified output format,
  * and returns a single merged output writer that updates each of them individually.
  */
-const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
+const getOutputWriter = async (
+  outputs: string[],
+  initialUrl: string
+): Promise<OutputWriter> => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
-      if (output === 'google-sheets') return createGoogleSheetsOutputWriter();
+      if (output === 'google-sheets')
+        return createGoogleSheetsOutputWriter(initialUrl);
       const ext = path.extname(output);
       if (ext === '.csv') return createCSVOutputWriter(output);
       throw new Error(
@@ -55,14 +59,14 @@ export interface RunOptions extends CrawlOptions {
   lighthouseConcurrency: number;
 }
 
-export const main = (
+export const main = async (
   initialUrl: string,
   opts: RunOptions,
   console: ModifiedConsole
-): RunStatus => {
+): Promise<RunStatus> => {
   const state = new Map<string, URLState>();
+  const outputWriter = await getOutputWriter(opts.outputs, initialUrl);
   const start = async () => {
-    const outputWriter = await getOutputWriter(opts.outputs);
     const lighthouseRunners = initWorkerThreads(opts.lighthouseConcurrency);
 
     const lighthousePromises: Promise<void>[] = [];

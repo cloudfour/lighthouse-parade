@@ -71,6 +71,7 @@ export default defineConfig({
     nodeResolvePlugin(),
   ],
   output: { dir: 'dist' },
+  preserveEntrySignatures: false,
   external: [
     'lighthouse',
     'chrome-launcher',
@@ -79,5 +80,8 @@ export default defineConfig({
     'globrex',
     'sade',
     'tinydate',
+    'google-auth-library',
+    'googleapis',
+    'open',
   ],
 });

@@ -51,7 +51,7 @@ sade('lighthouse-parade <url>', true)
   )
   .option(
     '--output, -o',
-    'The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets' // TODO: the google-sheets writer is not implemented yet.
+    'The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets'
   )
   .option(
     '--ignore-robots-txt',
@@ -219,7 +219,7 @@ sade('lighthouse-parade <url>', true)
         printAboveLogUpdate(() => console.error(...messages)),
     };
 
-    const runStatus = main(
+    const runStatus = await main(
       url,
       {
         includePathGlob,

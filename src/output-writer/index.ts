@@ -1,7 +1,15 @@
 import type { LHR } from 'lighthouse';
 
+import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer.js';
+
 export { createCSVOutputWriter } from './csv-writer.js';
-export { createGoogleSheetsOutputWriter } from './google-sheets-writer.js';
+
+// Lazy-loaded
+export const createGoogleSheetsOutputWriter: typeof innerCreateGoogleSheetsOutputWriter =
+  async (...args) => {
+    const mod = await import('./google-sheets-writer.js');
+    return mod.createGoogleSheetsOutputWriter(...args);
+  };
 
 export interface OutputWriter {
   addEntry(report: LHR): Promise<void>;
