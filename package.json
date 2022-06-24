@@ -38,7 +38,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.4",
     "@changesets/cli": "^2.22.0",
-    "@cloudfour/eslint-plugin": "^19.0.0",
+    "@cloudfour/eslint-plugin": "^20.0.2",
     "@types/globrex": "^0.1.2",
     "@types/node": "^14.18.21",
     "@types/sade": "^1.7.4",

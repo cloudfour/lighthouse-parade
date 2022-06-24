@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 
-import * as os from 'os';
+import { createRequire } from 'node:module';
+import * as os from 'node:os';
+
+// eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
 import logUpdate from 'log-update';
 import sade from 'sade';
-import { createRequire } from 'module';
-import type { URLState, URLStates } from './main.js';
-import { main, State } from './main.js';
 import tinydate from 'tinydate';
+
+import type { URLState, URLStates } from './main.js';
+import { State, main } from './main.js';
 
 const require = createRequire(import.meta.url);
 

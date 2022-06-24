@@ -1,7 +1,8 @@
-import { parentPort } from 'worker_threads';
+import { parentPort } from 'node:worker_threads';
+
+import chromeLauncher from 'chrome-launcher';
 import type { LHOptions } from 'lighthouse';
 import lighthouse from 'lighthouse';
-import chromeLauncher from 'chrome-launcher';
 
 const chromePromise = chromeLauncher.launch({
   chromeFlags: ['--headless', '--no-first-run'],
@@ -24,7 +25,7 @@ parentPort?.on('message', (message) => {
     chromePromise
       .then((chrome) => chrome.kill())
       .then(() =>
-        // eslint-disable-next-line @cloudfour/n/no-process-exit
+        // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
         process.exit(0)
       );
   }

@@ -1,15 +1,15 @@
-import type { OutputWriter } from './output-writer/index.js';
-import {
-  combineOutputWriters,
-  createGoogleSheetsOutputWriter,
-  createCSVOutputWriter,
-} from './output-writer/index.js';
+import * as path from 'node:path';
 
-import * as path from 'path';
+import type { ModifiedConsole } from './cli.js';
 import type { CrawlOptions } from './crawl.js';
 import { crawl } from './crawl.js';
 import { initWorkerThreads } from './lighthouse.js';
-import type { ModifiedConsole } from './cli.js';
+import type { OutputWriter } from './output-writer/index.js';
+import {
+  combineOutputWriters,
+  createCSVOutputWriter,
+  createGoogleSheetsOutputWriter,
+} from './output-writer/index.js';
 
 /**
  * Creates output writers for each specified output format,
