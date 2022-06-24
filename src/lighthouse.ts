@@ -1,6 +1,7 @@
-import { Worker } from 'worker_threads';
-import { fileURLToPath } from 'url';
-import * as path from 'path';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Worker } from 'node:worker_threads';
+
 import type { LHR } from 'lighthouse';
 
 export interface LighthouseRunner {
@@ -109,7 +110,7 @@ const cleanupFunctions: (() => Promise<unknown>)[] = [];
 
 const cleanup = (exitCode: number) => {
   const exit = () =>
-    // eslint-disable-next-line @cloudfour/n/no-process-exit
+    // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
     process.exit(exitCode);
 
   Promise.all(cleanupFunctions.map((fn) => fn()))

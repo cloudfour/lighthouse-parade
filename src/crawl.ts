@@ -1,10 +1,13 @@
+import type { IncomingMessage } from 'node:http';
+
+// eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
 import Crawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue.js';
-import type { IncomingMessage } from 'http';
-import type { ModifiedConsole } from './cli.js';
+
 import type { ReadonlyAsyncIteratorQueue } from './async-iterator-queue.js';
 import { asyncIteratorQueue } from './async-iterator-queue.js';
+import type { ModifiedConsole } from './cli.js';
 import { createUrlFilter } from './create-url-filter.js';
 
 export interface CrawlOptions {
