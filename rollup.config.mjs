@@ -65,6 +65,7 @@ export default defineConfig({
   plugins: [
     esbuildPlugin({
       define: { 'import.meta.vitest': undefined },
+      target: 'node14',
     }),
     jsToTsResolvePlugin(),
     nodeResolvePlugin(),
