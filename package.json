@@ -18,7 +18,7 @@
     "build:watch": "rollup -c --watch",
     "changeset": "changeset",
     "version": "changeset version && prettier --write .",
-    "release": "npm run build && changeset publish"
+    "release": "npm run type && npm run build && changeset publish"
   },
   "author": "emerson@cloudfour.com",
   "license": "MIT",
