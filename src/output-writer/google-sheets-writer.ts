@@ -464,7 +464,7 @@ export const createGoogleSheetsOutputWriter = async (
                 ? report.audits[c.field.audit].numericValue
                 : report.categories[c.field.category].score;
 
-            return val
+            return typeof val === 'number'
               ? String(c.field.type === ColumnType.AuditValue ? val : val * 100)
               : '';
           }),

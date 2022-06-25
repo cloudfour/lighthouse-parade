@@ -104,7 +104,7 @@ export const createCSVOutputWriter = async (
                   ? report.audits[c.field.audit].numericValue
                   : report.categories[c.field.category].score;
 
-              return val ? String(val) : '';
+              return typeof val === 'number' ? String(val) : '';
             }),
           ])
         );
