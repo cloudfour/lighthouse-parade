@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "target": "es2020",
     "module": "node16",
     "moduleResolution": "node16",
     "resolveJsonModule": true,
     "paths": {
-      "timekeeper": ["./node_modules/timekeeper/index.d.ts"],
       "kleur/colors": ["./node_modules/kleur/colors.d.ts"]
     },
     "outDir": "dist",
