@@ -52,13 +52,13 @@ type ColumnField =
 interface Column {
   name: string;
   nameDetail?: string;
-  category: string;
+  lighthouseCategory: string;
   field: ColumnField;
 }
 
 const sheetNames = {
   main: 'Lighthouse Results',
-  histograms: 'Histograms',
+  auditBreakdown: 'Audit Breakdown',
 };
 
 export const createGoogleSheetsOutputWriter = async (
@@ -111,14 +111,14 @@ export const createGoogleSheetsOutputWriter = async (
     {
       addSheet: {
         properties: {
-          title: sheetNames.histograms,
+          title: sheetNames.auditBreakdown,
         },
       },
     },
   ]);
 
   const sheetId = updateResponse.data.replies[0].addSheet.properties.sheetId;
-  const histogramsSheetId =
+  const auditBreakdownSheetId =
     updateResponse.data.replies[1].addSheet.properties.sheetId;
 
   await batchUpdate(service, spreadsheetId, [
@@ -187,7 +187,7 @@ export const createGoogleSheetsOutputWriter = async (
             columns.push({
               name: category.title,
               nameDetail: 'category score',
-              category: category.title,
+              lighthouseCategory: category.title,
               field: {
                 type: ColumnType.CategoryScore,
                 category: category.id,
@@ -202,7 +202,7 @@ export const createGoogleSheetsOutputWriter = async (
                 columns.push({
                   name: auditData.title,
                   nameDetail: 'score',
-                  category: category.title,
+                  lighthouseCategory: category.title,
                   field: {
                     type: ColumnType.AuditScore,
                     hasAuditValueColumn: auditData.numericValue !== undefined,
@@ -215,7 +215,7 @@ export const createGoogleSheetsOutputWriter = async (
                 columns.push({
                   name: auditData.title,
                   nameDetail: auditData.numericUnit,
-                  category: category.title,
+                  lighthouseCategory: category.title,
                   field: {
                     type: ColumnType.AuditValue,
                     unit: auditData.numericUnit || '',
@@ -228,7 +228,7 @@ export const createGoogleSheetsOutputWriter = async (
 
           await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
             '',
-            ...columns.map((c) => c.category),
+            ...columns.map((c) => c.lighthouseCategory),
           ]);
           await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
             'URL',
@@ -289,7 +289,7 @@ export const createGoogleSheetsOutputWriter = async (
                       position: {
                         overlayPosition: {
                           anchorCell: {
-                            sheetId: histogramsSheetId,
+                            sheetId: auditBreakdownSheetId,
                             columnIndex: 0,
                             rowIndex: thisChartRow,
                           },
@@ -430,15 +430,45 @@ export const createGoogleSheetsOutputWriter = async (
           const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
             {
               data: charts.map((chart) => {
-                const columnReferenceLetter = numToSSColumn(
-                  chart.columnIndex + 1
-                );
+                const columnLetter = numToSSColumn(chart.columnIndex + 1);
+                const isScore =
+                  chart.column.field.type === ColumnType.AuditScore ||
+                  chart.column.field.type === ColumnType.CategoryScore;
+                const numRowsHighestOrLowestShown = 8;
                 return {
-                  range: `'${sheetNames.histograms}'!J${chart.chartRow + 1}`,
+                  range: `'${sheetNames.auditBreakdown}'!J${
+                    chart.chartRow + 1
+                  }`,
                   values: [
                     [
-                      'Average:',
-                      `=AVERAGE('${sheetNames.main}'!${columnReferenceLetter}3:${columnReferenceLetter})`,
+                      'Mean:',
+                      `=AVERAGE('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                    ],
+                    [
+                      'Median:',
+                      `=MEDIAN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                    ],
+                    [
+                      'Highest:',
+                      `=MAX('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                    ],
+                    [
+                      'Lowest:',
+                      `=MIN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                    ],
+                    [
+                      isScore
+                        ? 'Lowest scores:'
+                        : `Highest values (${chart.column.nameDetail}):`,
+                    ],
+                    [
+                      `=SORTN(
+                        {'${sheetNames.main}'!${columnLetter}$3:${columnLetter},'${sheetNames.main}'!$A$3:$A},
+                        ${numRowsHighestOrLowestShown},
+                        0,
+                        1,
+                        ${isScore}
+                      )`.replace(/\n\s*/g, ''),
                     ],
                   ],
                 };
