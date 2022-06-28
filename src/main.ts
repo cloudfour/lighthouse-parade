@@ -4,8 +4,8 @@ import type { ModifiedConsole } from './cli.js';
 import type { CrawlOptions } from './crawl.js';
 import { crawl } from './crawl.js';
 import { initWorkerThreads } from './lighthouse.js';
-import type { OutputWriter } from './output-writer/index.js';
 import {
+  adaptLHRToOutputWriter,
   combineOutputWriters,
   createCSVOutputWriter,
   createGoogleSheetsOutputWriter,
@@ -15,10 +15,7 @@ import {
  * Creates output writers for each specified output format,
  * and returns a single merged output writer that updates each of them individually.
  */
-const getOutputWriter = async (
-  outputs: string[],
-  initialUrl: string
-): Promise<OutputWriter> => {
+const getOutputWriter = async (outputs: string[], initialUrl: string) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
       if (output === 'google-sheets')
@@ -31,7 +28,8 @@ const getOutputWriter = async (
     })
   );
 
-  return combineOutputWriters(outputWriters);
+  const outputWriter = combineOutputWriters(outputWriters);
+  return adaptLHRToOutputWriter(outputWriter);
 };
 
 export const enum State {

@@ -8,7 +8,8 @@ import * as kleur from 'kleur/colors';
 import open from 'open';
 import tinydate from 'tinydate';
 
-import type { OutputWriter } from './index.js';
+import type { Column, OutputWriter } from './index.js';
+import { ColumnType } from './index.js';
 
 const makeColor = (
   red: number,
@@ -26,36 +27,6 @@ const colors = {
   neutral: makeColor(255, 255, 255),
 };
 
-const enum ColumnType {
-  CategoryScore,
-  AuditScore,
-  AuditValue,
-}
-
-type ColumnField =
-  | {
-      type: ColumnType.AuditScore;
-      audit: string;
-      /** Whether there is a corresponding AuditValue column for the same audit */
-      hasAuditValueColumn: boolean;
-    }
-  | {
-      type: ColumnType.AuditValue;
-      audit: string;
-      unit: string;
-    }
-  | {
-      type: ColumnType.CategoryScore;
-      category: string;
-    };
-
-interface Column {
-  name: string;
-  nameDetail?: string;
-  lighthouseCategory: string;
-  field: ColumnField;
-}
-
 const sheetNames = {
   main: 'Lighthouse Results',
   auditBreakdown: 'Audit Breakdown',
@@ -71,10 +42,8 @@ export const createGoogleSheetsOutputWriter = async (
   // so they always write to the file in a deterministic order
   // (specifically important to make sure the header is first)
   let mutexPromise: Promise<unknown> = Promise.resolve();
-  const columns: Column[] = [];
   const { auth, redirect } = await getAuthenticatedClient();
   const service = google.sheets({ version: 'v4', auth });
-  let hasWrittenHeader = false;
   let rowNum = 0;
 
   const spreadsheet: any = await service.spreadsheets
@@ -179,325 +148,269 @@ export const createGoogleSheetsOutputWriter = async (
   ]);
 
   return {
-    async addEntry(report) {
+    async writeHeader(columns) {
       mutexPromise = mutexPromise.then(async () => {
-        if (!hasWrittenHeader) {
-          hasWrittenHeader = true;
-          for (const category of Object.values(report.categories)) {
-            columns.push({
-              name: category.title,
-              nameDetail: 'category score',
-              lighthouseCategory: category.title,
-              field: {
-                type: ColumnType.CategoryScore,
-                category: category.id,
-              },
-            });
-          }
+        await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
+          '',
+          ...columns.map((c) => c.lighthouseCategory),
+        ]);
+        await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
+          'URL',
+          ...columns.map(
+            (c) => c.name + (c.nameDetail ? `\n(${c.nameDetail})` : '')
+          ),
+        ]);
 
-          for (const category of Object.values(report.categories)) {
-            for (const audit of Object.values(category.auditRefs)) {
-              const auditData = report.audits[audit.id];
-              if (auditData.scoreDisplayMode === 'numeric') {
-                columns.push({
-                  name: auditData.title,
-                  nameDetail: 'score',
-                  lighthouseCategory: category.title,
-                  field: {
-                    type: ColumnType.AuditScore,
-                    hasAuditValueColumn: auditData.numericValue !== undefined,
-                    audit: audit.id,
-                  },
-                });
-              }
+        let chartRow = 0;
 
-              if (auditData.numericValue) {
-                columns.push({
-                  name: auditData.title,
-                  nameDetail: auditData.numericUnit,
-                  lighthouseCategory: category.title,
-                  field: {
-                    type: ColumnType.AuditValue,
-                    unit: auditData.numericUnit || '',
-                    audit: audit.id,
-                  },
-                });
-              }
-            }
-          }
+        const charts: {
+          column: Column;
+          chartRow: number;
+          columnIndex: number;
+        }[] = [];
 
-          await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
-            '',
-            ...columns.map((c) => c.lighthouseCategory),
-          ]);
-          await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
-            'URL',
-            ...columns.map(
-              (c) => c.name + (c.nameDetail ? `\n(${c.nameDetail})` : '')
-            ),
-          ]);
-
-          let chartRow = 0;
-
-          const charts: {
-            column: Column;
-            chartRow: number;
-            columnIndex: number;
-          }[] = [];
-
-          await batchUpdate(service, spreadsheetId, [
-            {
-              // The default "filter view" - allows sorting by columns while keeping the headers in place
-              setBasicFilter: {
-                filter: {
-                  range: { sheetId, startRowIndex: 1 },
-                },
+        await batchUpdate(service, spreadsheetId, [
+          {
+            // The default "filter view" - allows sorting by columns while keeping the headers in place
+            setBasicFilter: {
+              filter: {
+                range: { sheetId, startRowIndex: 1 },
               },
             },
-            {
-              repeatCell: {
-                range: {
-                  sheetId,
-                  startRowIndex: 1,
-                  endRowIndex: 2,
-                },
-                cell: { userEnteredFormat: { wrapStrategy: 'WRAP' } },
-                fields: 'userEnteredFormat.wrapStrategy',
+          },
+          {
+            repeatCell: {
+              range: {
+                sheetId,
+                startRowIndex: 1,
+                endRowIndex: 2,
               },
+              cell: { userEnteredFormat: { wrapStrategy: 'WRAP' } },
+              fields: 'userEnteredFormat.wrapStrategy',
             },
-            ...columns
-              .map((column, i): Sheets.sheets_v4.Schema$Request | null => {
-                if (
-                  column.field.type === ColumnType.AuditScore &&
-                  column.field.hasAuditValueColumn
-                )
-                  return null;
+          },
+          ...columns
+            .map((column, i): Sheets.sheets_v4.Schema$Request | null => {
+              if (
+                column.field.type === ColumnType.AuditScore &&
+                column.field.hasAuditValueColumn
+              )
+                return null;
 
-                const thisChartRow = chartRow;
-                chartRow += 15;
-                const columnIndex = i + 1;
+              const thisChartRow = chartRow;
+              chartRow += 15;
+              const columnIndex = i + 1;
 
-                charts.push({
-                  column,
-                  chartRow: thisChartRow,
-                  columnIndex,
-                });
+              charts.push({
+                column,
+                chartRow: thisChartRow,
+                columnIndex,
+              });
 
-                return {
-                  addChart: {
-                    chart: {
-                      position: {
-                        overlayPosition: {
-                          anchorCell: {
-                            sheetId: auditBreakdownSheetId,
-                            columnIndex: 0,
-                            rowIndex: thisChartRow,
-                          },
-                          widthPixels: 800,
-                          heightPixels: 300,
+              return {
+                addChart: {
+                  chart: {
+                    position: {
+                      overlayPosition: {
+                        anchorCell: {
+                          sheetId: auditBreakdownSheetId,
+                          columnIndex: 0,
+                          rowIndex: thisChartRow,
                         },
+                        widthPixels: 800,
+                        heightPixels: 300,
                       },
-                      spec: {
-                        title: `Distribution of ${column.name} (${column.nameDetail})`,
-                        histogramChart: {
-                          series: [
-                            {
-                              data: {
-                                sourceRange: {
-                                  sources: [
-                                    {
-                                      sheetId,
-                                      startRowIndex: 2,
-                                      startColumnIndex: columnIndex,
-                                      endColumnIndex: columnIndex + 1,
-                                    },
-                                  ],
-                                },
+                    },
+                    spec: {
+                      title: `Distribution of ${column.name} (${column.nameDetail})`,
+                      histogramChart: {
+                        series: [
+                          {
+                            data: {
+                              sourceRange: {
+                                sources: [
+                                  {
+                                    sheetId,
+                                    startRowIndex: 2,
+                                    startColumnIndex: columnIndex,
+                                    endColumnIndex: columnIndex + 1,
+                                  },
+                                ],
                               },
                             },
-                          ],
-                        },
-                      },
-                    },
-                  },
-                };
-              })
-              .filter(
-                Boolean as any as <T>(input: T) => input is Exclude<T, null>
-              ),
-            ...columns.flatMap(
-              (column, i): Sheets.sheets_v4.Schema$Request[] => {
-                const colIndex = i + 1;
-                const colWidth = Math.min(
-                  Math.max(
-                    column.name.length,
-                    column.nameDetail ? column.nameDetail.length + 2 : 0
-                  ) *
-                    6 +
-                    42,
-                  170
-                );
-                const colRange: Sheets.sheets_v4.Schema$GridRange = {
-                  sheetId,
-                  startRowIndex: 2,
-                  startColumnIndex: colIndex,
-                  endColumnIndex: colIndex + 1,
-                };
-                return [
-                  {
-                    // Conditional format backgrounds for main data cells
-                    addConditionalFormatRule: {
-                      rule: {
-                        ranges: [colRange],
-                        gradientRule:
-                          column.field.type === ColumnType.AuditValue
-                            ? {
-                                maxpoint: {
-                                  colorStyle: { rgbColor: colors.bad },
-                                  type: 'MAX',
-                                },
-                                midpoint: {
-                                  colorStyle: { rgbColor: colors.neutral },
-                                  type: 'PERCENT',
-                                  value: '50',
-                                },
-                                minpoint: {
-                                  colorStyle: { rgbColor: colors.good },
-                                  type: 'MIN',
-                                },
-                              }
-                            : {
-                                maxpoint: {
-                                  colorStyle: { rgbColor: colors.good },
-                                  type: 'NUMBER',
-                                  value: '100',
-                                },
-                                midpoint: {
-                                  colorStyle: { rgbColor: colors.neutral },
-                                  type: 'PERCENT',
-                                  value: '50',
-                                },
-                                minpoint: {
-                                  colorStyle: { rgbColor: colors.bad },
-                                  type: 'MIN',
-                                },
-                              },
-                      },
-                      index: 0,
-                    },
-                  },
-                  {
-                    updateDimensionProperties: {
-                      range: {
-                        sheetId,
-                        startIndex: colIndex,
-                        endIndex: colIndex + 1,
-                        dimension: 'COLUMNS',
-                      },
-                      properties: {
-                        // We calculate the width and set it explicitly
-                        // rather than using the autoResizeDimensions request
-                        // because the auto-sizing via API call does not leave space
-                        // for the sort/filter button or account for the bold text
-                        pixelSize: colWidth,
-                      },
-                      fields: 'pixelSize',
-                    },
-                  },
-                  {
-                    // Format number of digits shown in main data cells
-                    repeatCell: {
-                      range: colRange,
-                      cell: {
-                        userEnteredFormat: {
-                          numberFormat: {
-                            type: 'NUMBER',
-                            pattern:
-                              column.field.type === ColumnType.AuditValue
-                                ? '#0.0'
-                                : '###',
                           },
-                        },
+                        ],
                       },
-                      fields: 'userEnteredFormat.numberFormat',
                     },
                   },
-                ];
-              }
+                },
+              };
+            })
+            .filter(
+              Boolean as any as <T>(input: T) => input is Exclude<T, null>
             ),
-          ]);
+          ...columns.flatMap((column, i): Sheets.sheets_v4.Schema$Request[] => {
+            const colIndex = i + 1;
+            const colWidth = Math.min(
+              Math.max(
+                column.name.length,
+                column.nameDetail ? column.nameDetail.length + 2 : 0
+              ) *
+                6 +
+                42,
+              170
+            );
+            const colRange: Sheets.sheets_v4.Schema$GridRange = {
+              sheetId,
+              startRowIndex: 2,
+              startColumnIndex: colIndex,
+              endColumnIndex: colIndex + 1,
+            };
+            return [
+              {
+                // Conditional format backgrounds for main data cells
+                addConditionalFormatRule: {
+                  rule: {
+                    ranges: [colRange],
+                    gradientRule:
+                      column.field.type === ColumnType.AuditValue
+                        ? {
+                            maxpoint: {
+                              colorStyle: { rgbColor: colors.bad },
+                              type: 'MAX',
+                            },
+                            midpoint: {
+                              colorStyle: { rgbColor: colors.neutral },
+                              type: 'PERCENT',
+                              value: '50',
+                            },
+                            minpoint: {
+                              colorStyle: { rgbColor: colors.good },
+                              type: 'MIN',
+                            },
+                          }
+                        : {
+                            maxpoint: {
+                              colorStyle: { rgbColor: colors.good },
+                              type: 'NUMBER',
+                              value: '100',
+                            },
+                            midpoint: {
+                              colorStyle: { rgbColor: colors.neutral },
+                              type: 'PERCENT',
+                              value: '50',
+                            },
+                            minpoint: {
+                              colorStyle: { rgbColor: colors.bad },
+                              type: 'MIN',
+                            },
+                          },
+                  },
+                  index: 0,
+                },
+              },
+              {
+                updateDimensionProperties: {
+                  range: {
+                    sheetId,
+                    startIndex: colIndex,
+                    endIndex: colIndex + 1,
+                    dimension: 'COLUMNS',
+                  },
+                  properties: {
+                    // We calculate the width and set it explicitly
+                    // rather than using the autoResizeDimensions request
+                    // because the auto-sizing via API call does not leave space
+                    // for the sort/filter button or account for the bold text
+                    pixelSize: colWidth,
+                  },
+                  fields: 'pixelSize',
+                },
+              },
+              {
+                // Format number of digits shown in main data cells
+                repeatCell: {
+                  range: colRange,
+                  cell: {
+                    userEnteredFormat: {
+                      numberFormat: {
+                        type: 'NUMBER',
+                        pattern:
+                          column.field.type === ColumnType.AuditValue
+                            ? '#0.0'
+                            : '###',
+                      },
+                    },
+                  },
+                  fields: 'userEnteredFormat.numberFormat',
+                },
+              },
+            ];
+          }),
+        ]);
 
-          const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
-            {
-              data: charts.map((chart) => {
-                const columnLetter = numToSSColumn(chart.columnIndex + 1);
-                const isScore =
-                  chart.column.field.type === ColumnType.AuditScore ||
-                  chart.column.field.type === ColumnType.CategoryScore;
-                const numRowsHighestOrLowestShown = 8;
-                return {
-                  range: `'${sheetNames.auditBreakdown}'!J${
-                    chart.chartRow + 1
-                  }`,
-                  values: [
-                    [
-                      'Mean:',
-                      `=AVERAGE('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
-                    ],
-                    [
-                      'Median:',
-                      `=MEDIAN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
-                    ],
-                    [
-                      'Highest:',
-                      `=MAX('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
-                    ],
-                    [
-                      'Lowest:',
-                      `=MIN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
-                    ],
-                    [
-                      isScore
-                        ? 'Lowest scores:'
-                        : `Highest values (${chart.column.nameDetail}):`,
-                    ],
-                    [
-                      `=SORTN(
+        const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
+          {
+            data: charts.map((chart) => {
+              const columnLetter = numToSSColumn(chart.columnIndex + 1);
+              const isScore =
+                chart.column.field.type === ColumnType.AuditScore ||
+                chart.column.field.type === ColumnType.CategoryScore;
+              const numRowsHighestOrLowestShown = 8;
+              return {
+                range: `'${sheetNames.auditBreakdown}'!J${chart.chartRow + 1}`,
+                values: [
+                  [
+                    'Mean:',
+                    `=AVERAGE('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                  ],
+                  [
+                    'Median:',
+                    `=MEDIAN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                  ],
+                  [
+                    'Highest:',
+                    `=MAX('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                  ],
+                  [
+                    'Lowest:',
+                    `=MIN('${sheetNames.main}'!${columnLetter}$3:${columnLetter})`,
+                  ],
+                  [
+                    isScore
+                      ? 'Lowest scores:'
+                      : `Highest values (${chart.column.nameDetail}):`,
+                  ],
+                  [
+                    `=SORTN(
                         {'${sheetNames.main}'!${columnLetter}$3:${columnLetter},'${sheetNames.main}'!$A$3:$A},
                         ${numRowsHighestOrLowestShown},
                         0,
                         1,
                         ${isScore}
                       )`.replace(/\n\s*/g, ''),
-                    ],
                   ],
-                };
-              }),
-            };
+                ],
+              };
+            }),
+          };
 
-          await service.spreadsheets.values
-            .batchUpdate({
-              spreadsheetId,
-              resource: valuesBatchUpdateRequest,
-              valueInputOption: 'USER_ENTERED',
-            } as any)
-            .then((r) => r);
-        }
+        await service.spreadsheets.values
+          .batchUpdate({
+            spreadsheetId,
+            resource: valuesBatchUpdateRequest,
+            valueInputOption: 'USER_ENTERED',
+          } as any)
+          .then((r) => r);
+      });
 
+      await mutexPromise;
+    },
+    async addEntry(url, rowValues) {
+      mutexPromise = mutexPromise.then(async () => {
         await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
-          report.finalUrl,
-          ...columns.map((c) => {
-            const val =
-              c.field.type === ColumnType.AuditScore
-                ? report.audits[c.field.audit].score
-                : c.field.type === ColumnType.AuditValue
-                ? report.audits[c.field.audit].numericValue
-                : report.categories[c.field.category].score;
-
-            return typeof val === 'number'
-              ? String(c.field.type === ColumnType.AuditValue ? val : val * 100)
-              : '';
-          }),
+          url,
+          ...rowValues,
         ]);
       });
 
