@@ -222,7 +222,7 @@ sade('lighthouse-parade <url>', true)
 
     const command = [
       path.basename(process.argv[1]),
-      process.argv
+      ...process.argv
         .slice(2)
         .map((chunk) => (chunk.includes('*') ? JSON.stringify(chunk) : chunk)),
     ].join(' ');
