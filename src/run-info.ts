@@ -37,7 +37,7 @@ export const getRunInfo = async (
       ),
       lighthouse: lighthouseVersion,
       lighthouseParade: lighthouseParadeVersion,
-      node: process.versions.node,
+      node: `${process.versions.node} (${process.arch})`,
     },
     system: {
       operatingSystem: `${os.platform()} ${os.release()}`,
