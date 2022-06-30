@@ -91,6 +91,9 @@ export const adaptLHRToOutputWriter = (
           for (const category of Object.values(report.categories)) {
             for (const audit of Object.values(category.auditRefs)) {
               const auditData = report.audits[audit.id];
+              // Depending on the data types available for the audit, the audit may appear in multiple columns
+              // We include a numeric score (i.e. a value with units) if it is available
+              // And a unitless score (from 0 to 100) if it is available
               if (auditData.scoreDisplayMode === 'numeric') {
                 columns.push({
                   name: auditData.title,
