@@ -24,7 +24,7 @@ const makeColor = (
 const colors = {
   bad: makeColor(242, 112, 65),
   good: makeColor(113, 244, 174),
-  neutral: makeColor(255, 255, 255),
+  neutral: makeColor(255, 255, 0),
 };
 
 const sheetNames = {
