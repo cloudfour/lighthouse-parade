@@ -221,9 +221,11 @@ sade('lighthouse-parade <url>', true)
     };
 
     const command = [
-      path.basename(process.argv[1]),
-      ...process.argv
+      path.basename(process.argv[1]), // This will usually be lighthouse-parade if referencing the global install
+      ...process.argv // These are all of the CLI args as strings
         .slice(2)
+        // We quote args that have asterisks in them, so you can paste the command directly in your shell
+        // without your shell trying to expand the asterisks.
         .map((chunk) => (chunk.includes('*') ? JSON.stringify(chunk) : chunk)),
     ].join(' ');
 
