@@ -24,7 +24,6 @@
   "license": "MIT",
   "dependencies": {
     "chrome-launcher": "^0.15.1",
-    "gaxios": "^5.0.0",
     "globrex": "^0.1.2",
     "google-auth-library": "^8.0.2",
     "googleapis": "^101.0.0",
