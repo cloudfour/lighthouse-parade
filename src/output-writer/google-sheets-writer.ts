@@ -230,7 +230,6 @@ export const createGoogleSheetsOutputWriter = async (
           columnIndex: number;
         }[] = [];
 
-        // TODO: comment each of these
         await batchUpdate(service, spreadsheetId, [
           {
             // The default "filter view" - allows sorting by columns while keeping the headers in place
@@ -241,6 +240,7 @@ export const createGoogleSheetsOutputWriter = async (
             },
           },
           {
+            // Text in the header rows should wrap
             repeatCell: {
               range: {
                 sheetId,
@@ -270,6 +270,7 @@ export const createGoogleSheetsOutputWriter = async (
               });
 
               return {
+                // Histogram chart for each field
                 addChart: {
                   chart: {
                     position: {
@@ -372,6 +373,7 @@ export const createGoogleSheetsOutputWriter = async (
                 },
               },
               {
+                // Widths of columns on main sheet
                 updateDimensionProperties: {
                   range: {
                     sheetId,
