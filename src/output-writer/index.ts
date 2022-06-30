@@ -3,14 +3,14 @@ import type { LHR } from 'lighthouse';
 import type { RunInfo } from '../run-info.js';
 import { getRunInfo } from '../run-info.js';
 
-import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer.js';
+import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer/index.js';
 
 export { createCSVOutputWriter } from './csv-writer.js';
 
 // Lazy-loaded
 export const createGoogleSheetsOutputWriter: typeof innerCreateGoogleSheetsOutputWriter =
   async (...args) => {
-    const mod = await import('./google-sheets-writer.js');
+    const mod = await import('./google-sheets-writer/index.js');
     return mod.createGoogleSheetsOutputWriter(...args);
   };
 
