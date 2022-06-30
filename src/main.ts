@@ -23,8 +23,9 @@ const getOutputWriter = async (
 ) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
-      if (output === 'google-sheets')
+      if (output === 'google-sheets') {
         return createGoogleSheetsOutputWriter(initialUrl);
+      }
       const ext = path.extname(output);
       if (ext === '.csv') return createCSVOutputWriter(output);
       throw new Error(
