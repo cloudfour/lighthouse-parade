@@ -314,6 +314,7 @@ export const createGoogleSheetsOutputWriter = async (
             ),
           ...columns.flatMap((column, i): Sheets.sheets_v4.Schema$Request[] => {
             const colIndex = i + 1;
+            // These numbers can be fiddled with to adjust the width of the columns, it is a linear equation based on the number of characters
             const colWidth = Math.min(
               Math.max(
                 column.name.length,
