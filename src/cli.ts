@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import * as os from 'node:os';
+import * as path from 'node:path';
 
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
@@ -219,6 +220,13 @@ sade('lighthouse-parade <url>', true)
         printAboveLogUpdate(() => console.error(...messages)),
     };
 
+    const command = [
+      path.basename(process.argv[1]),
+      process.argv
+        .slice(2)
+        .map((chunk) => (chunk.includes('*') ? JSON.stringify(chunk) : chunk)),
+    ].join(' ');
+
     const runStatus = await main(
       url,
       {
@@ -230,7 +238,9 @@ sade('lighthouse-parade <url>', true)
         crawlerUserAgent,
         lighthouseConcurrency,
       },
-      modifiedConsole
+      modifiedConsole,
+      command,
+      version
     );
 
     const intervalId = setInterval(() => {

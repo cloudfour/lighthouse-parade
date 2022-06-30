@@ -1,5 +1,8 @@
 import type { LHR } from 'lighthouse';
 
+import type { RunInfo } from '../run-info.js';
+import { getRunInfo } from '../run-info.js';
+
 import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer.js';
 
 export { createCSVOutputWriter } from './csv-writer.js';
@@ -43,6 +46,7 @@ export interface Column {
 }
 
 export interface OutputWriter {
+  writeRunInfo?: (runInfo: RunInfo) => Promise<void>;
   writeHeader(columns: Column[]): Promise<void>;
   addEntry(url: string, rowValues: string[]): Promise<void>;
   complete(): Promise<void>;
@@ -52,9 +56,13 @@ export interface OutputWriter {
  * Wraps an OutputWriter to allow being passed LHR (lighthouse reports)
  * and adapts it into a row/column format that is shared
  * between the different output writers.
- * Also, it handles calling writeHeader automatically after the first addEntry call.
+ * Also, it handles calling writeHeader and writeRunInfo automatically after the first addEntry call.
  */
-export const adaptLHRToOutputWriter = (outputWriter: OutputWriter) => {
+export const adaptLHRToOutputWriter = (
+  outputWriter: OutputWriter,
+  command: string,
+  lighthouseParadeVersion: string
+) => {
   // Used to make sure that the addEntry calls happen one at a time
   // (specifically important to make sure the header finishes getting written
   // before the next row starts getting written)
@@ -110,7 +118,15 @@ export const adaptLHRToOutputWriter = (outputWriter: OutputWriter) => {
               }
             }
           }
-          await outputWriter.writeHeader(columns);
+          await Promise.all([
+            outputWriter.writeHeader(columns),
+            outputWriter.writeRunInfo &&
+              getRunInfo(
+                command,
+                lighthouseParadeVersion,
+                report.lighthouseVersion
+              ).then((runInfo) => outputWriter.writeRunInfo?.(runInfo)),
+          ]);
         });
         await mutexPromise;
       }
@@ -150,6 +166,14 @@ export const combineOutputWriters = (
     async writeHeader(...args) {
       mutexPromise = mutexPromise.then(() =>
         Promise.all(outputWriters.map((writer) => writer.writeHeader(...args)))
+      );
+      await mutexPromise;
+    },
+    async writeRunInfo(...args) {
+      mutexPromise = mutexPromise.then(() =>
+        Promise.all(
+          outputWriters.map((writer) => writer.writeRunInfo?.(...args))
+        )
       );
       await mutexPromise;
     },

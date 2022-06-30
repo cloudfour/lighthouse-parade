@@ -15,7 +15,12 @@ import {
  * Creates output writers for each specified output format,
  * and returns a single merged output writer that updates each of them individually.
  */
-const getOutputWriter = async (outputs: string[], initialUrl: string) => {
+const getOutputWriter = async (
+  outputs: string[],
+  initialUrl: string,
+  command: string,
+  lighthouseParadeVersion: string
+) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
       if (output === 'google-sheets')
@@ -29,7 +34,7 @@ const getOutputWriter = async (outputs: string[], initialUrl: string) => {
   );
 
   const outputWriter = combineOutputWriters(outputWriters);
-  return adaptLHRToOutputWriter(outputWriter);
+  return adaptLHRToOutputWriter(outputWriter, command, lighthouseParadeVersion);
 };
 
 export const enum State {
@@ -60,10 +65,17 @@ export interface RunOptions extends CrawlOptions {
 export const main = async (
   initialUrl: string,
   opts: RunOptions,
-  console: ModifiedConsole
+  console: ModifiedConsole,
+  command: string,
+  lighthouseParadeVersion: string
 ): Promise<RunStatus> => {
   const state = new Map<string, URLState>();
-  const outputWriter = await getOutputWriter(opts.outputs, initialUrl);
+  const outputWriter = await getOutputWriter(
+    opts.outputs,
+    initialUrl,
+    command,
+    lighthouseParadeVersion
+  );
   const start = async () => {
     const lighthouseRunners = initWorkerThreads(opts.lighthouseConcurrency);
 

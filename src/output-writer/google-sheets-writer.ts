@@ -30,6 +30,7 @@ const colors = {
 const sheetNames = {
   main: 'Lighthouse Results',
   auditBreakdown: 'Audit Breakdown',
+  runInfo: 'Run Info',
 };
 
 export const createGoogleSheetsOutputWriter = async (
@@ -84,11 +85,20 @@ export const createGoogleSheetsOutputWriter = async (
         },
       },
     },
+    {
+      addSheet: {
+        properties: {
+          title: sheetNames.runInfo,
+        },
+      },
+    },
   ]);
 
   const sheetId = updateResponse.data.replies[0].addSheet.properties.sheetId;
   const auditBreakdownSheetId =
     updateResponse.data.replies[1].addSheet.properties.sheetId;
+  const runInfoSheetId =
+    updateResponse.data.replies[2].addSheet.properties.sheetId;
 
   await batchUpdate(service, spreadsheetId, [
     {
@@ -98,6 +108,7 @@ export const createGoogleSheetsOutputWriter = async (
       },
     },
     {
+      // URL column width in main sheet
       updateDimensionProperties: {
         range: {
           sheetId,
@@ -107,6 +118,21 @@ export const createGoogleSheetsOutputWriter = async (
         },
         properties: {
           pixelSize: 400,
+        },
+        fields: 'pixelSize',
+      },
+    },
+    {
+      // First column in run info sheet
+      updateDimensionProperties: {
+        range: {
+          sheetId: runInfoSheetId,
+          dimension: 'COLUMNS',
+          startIndex: 0,
+          endIndex: 1,
+        },
+        properties: {
+          pixelSize: 200,
         },
         fields: 'pixelSize',
       },
@@ -148,6 +174,41 @@ export const createGoogleSheetsOutputWriter = async (
   ]);
 
   return {
+    async writeRunInfo(runInfo) {
+      const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
+        {
+          data: [
+            {
+              range: `'${sheetNames.runInfo}'!A1`,
+              values: [
+                ['Command', runInfo.command],
+                ['Time', runInfo.time],
+                [],
+                ['node version:', runInfo.versions.node],
+                ['npm version:', runInfo.versions.npm],
+                ['lighthouse version:', runInfo.versions.lighthouse],
+                [
+                  'lighthouse-parade version:',
+                  runInfo.versions.lighthouseParade,
+                ],
+                ['chrome version:', runInfo.versions.chrome],
+                [],
+                ['OS:', runInfo.system.operatingSystem],
+                ['Memory:', runInfo.system.memory],
+                ['CPU Info', runInfo.system.cpus],
+              ],
+            },
+          ],
+        };
+
+      await service.spreadsheets.values
+        .batchUpdate({
+          spreadsheetId,
+          resource: valuesBatchUpdateRequest,
+          valueInputOption: 'USER_ENTERED',
+        } as any)
+        .then((r) => r);
+    },
     async writeHeader(columns) {
       mutexPromise = mutexPromise.then(async () => {
         await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
@@ -169,6 +230,7 @@ export const createGoogleSheetsOutputWriter = async (
           columnIndex: number;
         }[] = [];
 
+        // TODO: comment each of these
         await batchUpdate(service, spreadsheetId, [
           {
             // The default "filter view" - allows sorting by columns while keeping the headers in place
