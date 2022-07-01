@@ -54,23 +54,6 @@ export const getInitialFormatting = (
     },
   },
   {
-    // Center-align header rows
-    repeatCell: {
-      range: {
-        sheetId,
-        startRowIndex: 0,
-        endRowIndex: 2,
-        startColumnIndex: 0,
-      },
-      cell: {
-        userEnteredFormat: {
-          horizontalAlignment: 'CENTER',
-        },
-      },
-      fields: 'userEnteredFormat.horizontalAlignment',
-    },
-  },
-  {
     // Don't wrap first column (URLs)
     repeatCell: {
       range: {
@@ -100,15 +83,21 @@ export const getFormattingUpdates = (sheetId: number, columns: Column[]) => {
       },
     },
     {
-      // Text in the header rows should wrap
+      // Text in the header rows should wrap and be centered
       repeatCell: {
         range: {
           sheetId,
-          startRowIndex: 1,
+          startRowIndex: 0,
           endRowIndex: 2,
         },
-        cell: { userEnteredFormat: { wrapStrategy: 'WRAP' } },
-        fields: 'userEnteredFormat.wrapStrategy',
+        cell: {
+          userEnteredFormat: {
+            wrapStrategy: 'WRAP',
+            horizontalAlignment: 'CENTER',
+          },
+        },
+        fields:
+          'userEnteredFormat.wrapStrategy,userEnteredFormat.horizontalAlignment',
       },
     },
     ...columns.flatMap((column, i): Sheets.sheets_v4.Schema$Request[] => {

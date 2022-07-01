@@ -89,6 +89,11 @@ export const createGoogleSheetsOutputWriter = async (
     ...getInitialFormatting(sheetId, runInfoSheetId),
   ]);
 
+  await writeRow(service, spreadsheetId, sheetNames.main, 1, [
+    '',
+    'Waiting for first Lighthouse report to complete...',
+  ]);
+
   return {
     async writeRunInfo(runInfo) {
       const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
