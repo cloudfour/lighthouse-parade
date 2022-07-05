@@ -5,9 +5,6 @@
     "module": "node16",
     "moduleResolution": "node16",
     "resolveJsonModule": true,
-    "paths": {
-      "kleur/colors": ["./node_modules/kleur/colors.d.ts"]
-    },
     "outDir": "dist",
     "strict": true,
     "noUnusedLocals": true,

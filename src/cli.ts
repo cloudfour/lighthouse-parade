@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import * as os from 'node:os';
+import * as path from 'node:path';
 
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
@@ -51,7 +52,7 @@ sade('lighthouse-parade <url>', true)
   )
   .option(
     '--output, -o',
-    'The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets' // TODO: the google-sheets writer is not implemented yet.
+    'The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets'
   )
   .option(
     '--ignore-robots-txt',
@@ -219,7 +220,16 @@ sade('lighthouse-parade <url>', true)
         printAboveLogUpdate(() => console.error(...messages)),
     };
 
-    const runStatus = main(
+    const command = [
+      path.basename(process.argv[1]), // This will usually be lighthouse-parade if referencing the global install
+      ...process.argv // These are all of the CLI args as strings
+        .slice(2)
+        // We quote args that have asterisks in them, so you can paste the command directly in your shell
+        // without your shell trying to expand the asterisks.
+        .map((chunk) => (chunk.includes('*') ? JSON.stringify(chunk) : chunk)),
+    ].join(' ');
+
+    const runStatus = await main(
       url,
       {
         includePathGlob,
@@ -230,7 +240,9 @@ sade('lighthouse-parade <url>', true)
         crawlerUserAgent,
         lighthouseConcurrency,
       },
-      modifiedConsole
+      modifiedConsole,
+      command,
+      version
     );
 
     const intervalId = setInterval(() => {

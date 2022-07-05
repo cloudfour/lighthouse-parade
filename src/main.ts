@@ -4,8 +4,8 @@ import type { ModifiedConsole } from './cli.js';
 import type { CrawlOptions } from './crawl.js';
 import { crawl } from './crawl.js';
 import { initWorkerThreads } from './lighthouse.js';
-import type { OutputWriter } from './output-writer/index.js';
 import {
+  adaptLHRToOutputWriter,
   combineOutputWriters,
   createCSVOutputWriter,
   createGoogleSheetsOutputWriter,
@@ -15,10 +15,17 @@ import {
  * Creates output writers for each specified output format,
  * and returns a single merged output writer that updates each of them individually.
  */
-const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
+const getOutputWriter = async (
+  outputs: string[],
+  initialUrl: string,
+  command: string,
+  lighthouseParadeVersion: string
+) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
-      if (output === 'google-sheets') return createGoogleSheetsOutputWriter();
+      if (output === 'google-sheets') {
+        return createGoogleSheetsOutputWriter(initialUrl);
+      }
       const ext = path.extname(output);
       if (ext === '.csv') return createCSVOutputWriter(output);
       throw new Error(
@@ -27,7 +34,8 @@ const getOutputWriter = async (outputs: string[]): Promise<OutputWriter> => {
     })
   );
 
-  return combineOutputWriters(outputWriters);
+  const outputWriter = combineOutputWriters(outputWriters);
+  return adaptLHRToOutputWriter(outputWriter, command, lighthouseParadeVersion);
 };
 
 export const enum State {
@@ -55,14 +63,21 @@ export interface RunOptions extends CrawlOptions {
   lighthouseConcurrency: number;
 }
 
-export const main = (
+export const main = async (
   initialUrl: string,
   opts: RunOptions,
-  console: ModifiedConsole
-): RunStatus => {
+  console: ModifiedConsole,
+  command: string,
+  lighthouseParadeVersion: string
+): Promise<RunStatus> => {
   const state = new Map<string, URLState>();
+  const outputWriter = await getOutputWriter(
+    opts.outputs,
+    initialUrl,
+    command,
+    lighthouseParadeVersion
+  );
   const start = async () => {
-    const outputWriter = await getOutputWriter(opts.outputs);
     const lighthouseRunners = initWorkerThreads(opts.lighthouseConcurrency);
 
     const lighthousePromises: Promise<void>[] = [];
