@@ -175,6 +175,7 @@ export const createGoogleSheetsOutputWriter = async (
 
       await mutexPromise;
     },
+    // Doesn't need to do anything so it is empty
     async complete() {},
   };
 };

@@ -76,6 +76,8 @@ export const getCharts = (
         },
       };
     })
+    // The type cast is used to tell TS that the Boolean function will filter out null types from the array
+    // https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
     .filter(Boolean as any as <T>(input: T) => input is Exclude<T, null>);
 
   const batchValues: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest = {
