@@ -26,10 +26,17 @@ const getOutputWriter = async (
       if (output === 'google-sheets') {
         return createGoogleSheetsOutputWriter(initialUrl);
       }
+      const googleSheetsPrefix = 'google-sheets:';
+      if (output.startsWith(googleSheetsPrefix)) {
+        return createGoogleSheetsOutputWriter(
+          initialUrl,
+          output.slice(googleSheetsPrefix.length)
+        );
+      }
       const ext = path.extname(output);
       if (ext === '.csv') return createCSVOutputWriter(output);
       throw new Error(
-        `Invalid output format: ${ext} (${output}). Expected <filename>.csv, or google-sheets`
+        `Invalid output format: ${ext} (${output}). Expected <filename>.csv, or google-sheets, or google-sheets:"<title>"`
       );
     })
   );
