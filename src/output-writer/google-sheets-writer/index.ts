@@ -16,12 +16,15 @@ export const sheetNames = {
   runInfo: 'Run Info',
 };
 
-export const createGoogleSheetsOutputWriter = async (
-  initialUrl: string
-): Promise<OutputWriter> => {
+const getDefaultTitle = (initialUrl: string) => {
   const date = tinydate('{YYYY}-{MM}-{DD} {HH}:{mm}')(new Date());
-  const documentTitle = `Lighthouse ${new URL(initialUrl).hostname} ${date}`;
+  return `Lighthouse ${new URL(initialUrl).hostname} ${date}`;
+};
 
+export const createGoogleSheetsOutputWriter = async (
+  initialUrl: string,
+  documentTitle = getDefaultTitle(initialUrl)
+): Promise<OutputWriter> => {
   // Used to make sure that the addEntry calls happen one at a time
   // so they always write to the file in a deterministic order
   // (specifically important to make sure the header is first)
@@ -32,13 +35,12 @@ export const createGoogleSheetsOutputWriter = async (
 
   const spreadsheet: any = await service.spreadsheets
     .create({
-      // @ts-expect-error types are wrong
       resource: {
         properties: {
           title: documentTitle,
         },
       },
-    })
+    } as any)
     .then((r) => r);
 
   const spreadsheetId: string = spreadsheet.data.spreadsheetId;
