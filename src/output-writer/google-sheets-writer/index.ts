@@ -1,5 +1,6 @@
-import { google } from 'googleapis';
-import type Sheets from 'googleapis/build/src/apis/sheets/v4.js';
+import type Sheets from '@googleapis/sheets';
+import googleSheets from '@googleapis/sheets';
+
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
 import tinydate from 'tinydate';
@@ -30,7 +31,7 @@ export const createGoogleSheetsOutputWriter = async (
   // (specifically important to make sure the header is first)
   let mutexPromise: Promise<unknown> = Promise.resolve();
   const { auth, redirect } = await getAuthenticatedClient();
-  const service = google.sheets({ version: 'v4', auth });
+  const service = googleSheets.sheets({ version: 'v4', auth: auth as any });
   let rowNum = 0;
 
   const spreadsheet: any = await service.spreadsheets
