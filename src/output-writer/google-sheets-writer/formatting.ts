@@ -1,4 +1,4 @@
-import type Sheets from 'googleapis/build/src/apis/sheets/v4.js';
+import type Sheets from '@googleapis/sheets';
 
 import type { Column } from '../index.js';
 import { ColumnType } from '../index.js';
