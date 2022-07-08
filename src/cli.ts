@@ -10,6 +10,7 @@ import tinydate from 'tinydate';
 
 import type { URLState, URLStates } from './main.js';
 import { State, main } from './main.js';
+import type { LighthouseRunOpts } from './lighthouse.js';
 
 const require = createRequire(import.meta.url);
 
@@ -42,6 +43,14 @@ const isFullURL = (path: string) => {
   return false;
 };
 
+const allLighthouseCategories = [
+  'accessibility',
+  'best-practices',
+  'performance',
+  'pwa',
+  'seo',
+];
+
 sade('lighthouse-parade <url>', true)
   .version(version)
   .example(
@@ -67,6 +76,12 @@ sade('lighthouse-parade <url>', true)
     '--lighthouse-concurrency',
     'Control the maximum number of ligthhouse reports to run concurrently',
     os.cpus().length - 1
+  )
+  .option(
+    '--lh:only-categories',
+    `Only run the specified lighthouse categories. Available categories: ${allLighthouseCategories.join(
+      ', '
+    )}. Multiple can be specified using commas, e.g. --lh:only-categories=accessibility,seo. If not specified, all categories will be used.`
   )
   .option(
     '--max-crawl-depth',
@@ -132,6 +147,25 @@ sade('lighthouse-parade <url>', true)
     if (typeof lighthouseConcurrency !== 'number') {
       throw new TypeError('--lighthouse-concurrency must be a number');
     }
+
+    const lighthouseCategories: string[] = toArray(
+      opts['lh:only-categories']
+    ).flatMap((c: unknown) => String(c).split(','));
+    for (const category of lighthouseCategories) {
+      if (!allLighthouseCategories.includes(category)) {
+        throw new Error(
+          `Invalid lighthouse category: ${category}. --lh:only-categories must be a combination of: ${allLighthouseCategories.join(
+            ', '
+          )}`
+        );
+      }
+    }
+
+    if (lighthouseCategories.length === 0) {
+      lighthouseCategories.push(...allLighthouseCategories);
+    }
+
+    console.log(lighthouseCategories);
 
     const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'].map((f) =>
       kleur.blue(f)
@@ -229,6 +263,10 @@ sade('lighthouse-parade <url>', true)
         .map((chunk) => (chunk.includes('*') ? JSON.stringify(chunk) : chunk)),
     ].join(' ');
 
+    const lighthouseRunOpts: LighthouseRunOpts = {
+      categories: lighthouseCategories,
+    };
+
     const runStatus = await main(
       url,
       {
@@ -239,6 +277,7 @@ sade('lighthouse-parade <url>', true)
         maxCrawlDepth,
         crawlerUserAgent,
         lighthouseConcurrency,
+        lighthouseRunOpts,
       },
       modifiedConsole,
       command,

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 
 import type { LHR } from 'lighthouse';
+import type { RunOptions } from './main.js';
 
 export interface LighthouseRunner {
   run(url: string): Promise<LHR>;
@@ -12,7 +13,13 @@ export interface LighthouseRunner {
   worker: Worker;
 }
 
-const createLighthouseRunner = (): LighthouseRunner => {
+export interface LighthouseRunOpts {
+  categories: string[];
+}
+
+const createLighthouseRunner = (
+  lighthouseRunOpts: LighthouseRunOpts
+): LighthouseRunner => {
   const worker = new Worker(
     path.join(
       path.dirname(fileURLToPath(import.meta.url)),
@@ -27,7 +34,7 @@ const createLighthouseRunner = (): LighthouseRunner => {
     freePromise: null as any,
     async run(url) {
       this.isFree = false;
-      worker.postMessage({ type: 'runLighthouse', url });
+      worker.postMessage({ type: 'runLighthouse', url, lighthouseRunOpts });
       const lighthouseReportPromise = new Promise<LHR>((resolve, reject) => {
         const workerListener = (message: unknown) => {
           if (!isLighthouseReport(message)) return;
@@ -72,15 +79,15 @@ const isLighthouseReport = (report: unknown): report is LHR =>
   'audits' in report &&
   'lighthouseVersion' in report;
 
-export const initWorkerThreads = (numThreads: number) => {
+export const initWorkerThreads = (opts: RunOptions) => {
   const lighthouseRunners: LighthouseRunner[] = [];
   const getNextAvailable = async (): Promise<LighthouseRunner> => {
     for (const lighthouseRunner of lighthouseRunners)
       if (lighthouseRunner.isFree) return lighthouseRunner;
 
     // No worker is currently available
-    if (lighthouseRunners.length < numThreads) {
-      const lighthouseRunner = createLighthouseRunner();
+    if (lighthouseRunners.length < opts.lighthouseConcurrency) {
+      const lighthouseRunner = createLighthouseRunner(opts.lighthouseRunOpts);
       lighthouseRunners.push(lighthouseRunner);
       return lighthouseRunner;
     }

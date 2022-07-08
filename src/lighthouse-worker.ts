@@ -4,14 +4,19 @@ import chromeLauncher from 'chrome-launcher';
 import type { LHOptions } from 'lighthouse';
 import lighthouse from 'lighthouse';
 
+import type { LighthouseRunOpts } from './lighthouse.js';
+
 const chromePromise = chromeLauncher.launch({
   chromeFlags: ['--headless', '--no-first-run'],
 });
-const runLighthouse = async (url: string) => {
+const runLighthouse = async (
+  url: string,
+  lighthouseRunOpts: LighthouseRunOpts
+) => {
   const chrome = await chromePromise;
   const options: LHOptions = {
     output: 'json',
-    onlyCategories: ['performance'],
+    onlyCategories: lighthouseRunOpts.categories,
     port: chrome.port,
   };
   const runnerResult = await lighthouse(url, options);
@@ -20,7 +25,7 @@ const runLighthouse = async (url: string) => {
 
 parentPort?.on('message', (message) => {
   if (message.type === 'runLighthouse') {
-    runLighthouse(message.url);
+    runLighthouse(message.url, message.lighthouseRunOpts);
   } else if (message.type === 'close') {
     chromePromise
       .then((chrome) => chrome.kill())

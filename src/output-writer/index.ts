@@ -17,6 +17,7 @@ export const createGoogleSheetsOutputWriter: typeof innerCreateGoogleSheetsOutpu
 export const enum ColumnType {
   CategoryScore,
   AuditScore,
+  AuditBoolean,
   AuditValue,
 }
 
@@ -35,6 +36,10 @@ type ColumnField =
   | {
       type: ColumnType.CategoryScore;
       category: string;
+    }
+  | {
+      type: ColumnType.AuditBoolean;
+      audit: string;
     };
 
 export interface Column {
@@ -107,6 +112,17 @@ export const adaptLHRToOutputWriter = (
                 });
               }
 
+              if (auditData.scoreDisplayMode === 'binary') {
+                columns.push({
+                  name: auditData.title,
+                  lighthouseCategory: category.title,
+                  field: {
+                    type: ColumnType.AuditBoolean,
+                    audit: audit.id,
+                  },
+                });
+              }
+
               if (auditData.numericValue) {
                 columns.push({
                   name: auditData.title,
@@ -135,6 +151,12 @@ export const adaptLHRToOutputWriter = (
       }
 
       const rowValues = columns.map((c) => {
+        if (c.field.type === ColumnType.AuditBoolean) {
+          const val = report.audits[c.field.audit].score;
+          if (typeof val === 'number') return val ? 'PASS' : 'FAIL';
+          return '';
+        }
+
         const val =
           c.field.type === ColumnType.AuditScore
             ? report.audits[c.field.audit].score

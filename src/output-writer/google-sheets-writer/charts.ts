@@ -21,8 +21,10 @@ export const getCharts = (
   const batchUpdates = columns
     .map((column, i): Sheets.sheets_v4.Schema$Request | null => {
       if (
-        column.field.type === ColumnType.AuditScore &&
-        column.field.hasAuditValueColumn
+        // Don't display scores as charts if we can make a chart corresponding to the actual numerical data column
+        (column.field.type === ColumnType.AuditScore &&
+          column.field.hasAuditValueColumn) ||
+        column.field.type === ColumnType.AuditBoolean
       )
         return null;
 

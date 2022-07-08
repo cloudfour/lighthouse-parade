@@ -119,48 +119,85 @@ export const getFormattingUpdates = (sheetId: number, columns: Column[]) => {
         endColumnIndex: colIndex + 1,
       };
       return [
-        {
-          // Conditional format backgrounds for main data cells
-          addConditionalFormatRule: {
-            rule: {
-              ranges: [colRange],
-              gradientRule:
-                column.field.type === ColumnType.AuditValue
-                  ? {
-                      maxpoint: {
-                        colorStyle: { rgbColor: colors.bad },
-                        type: 'MAX',
+        ...(column.field.type === ColumnType.AuditBoolean
+          ? ([
+              {
+                addConditionalFormatRule: {
+                  rule: {
+                    ranges: [colRange],
+                    booleanRule: {
+                      condition: {
+                        type: 'TEXT_EQ',
+                        values: [{ userEnteredValue: 'PASS' }],
                       },
-                      midpoint: {
-                        colorStyle: { rgbColor: colors.neutral },
-                        type: 'PERCENT',
-                        value: '50',
-                      },
-                      minpoint: {
-                        colorStyle: { rgbColor: colors.good },
-                        type: 'MIN',
-                      },
-                    }
-                  : {
-                      maxpoint: {
-                        colorStyle: { rgbColor: colors.good },
-                        type: 'NUMBER',
-                        value: '100',
-                      },
-                      midpoint: {
-                        colorStyle: { rgbColor: colors.neutral },
-                        type: 'PERCENT',
-                        value: '50',
-                      },
-                      minpoint: {
-                        colorStyle: { rgbColor: colors.bad },
-                        type: 'MIN',
+                      format: {
+                        backgroundColor: colors.good,
                       },
                     },
-            },
-            index: 0,
-          },
-        },
+                  },
+                },
+              },
+              {
+                addConditionalFormatRule: {
+                  rule: {
+                    ranges: [colRange],
+                    booleanRule: {
+                      condition: {
+                        type: 'TEXT_EQ',
+                        values: [{ userEnteredValue: 'FAIL' }],
+                      },
+                      format: {
+                        backgroundColor: colors.bad,
+                      },
+                    },
+                  },
+                },
+              },
+            ] as Sheets.sheets_v4.Schema$Request[])
+          : ([
+              {
+                // Conditional format backgrounds for main data cells
+                addConditionalFormatRule: {
+                  rule: {
+                    ranges: [colRange],
+                    gradientRule:
+                      column.field.type === ColumnType.AuditValue
+                        ? {
+                            maxpoint: {
+                              colorStyle: { rgbColor: colors.bad },
+                              type: 'MAX',
+                            },
+                            midpoint: {
+                              colorStyle: { rgbColor: colors.neutral },
+                              type: 'PERCENT',
+                              value: '50',
+                            },
+                            minpoint: {
+                              colorStyle: { rgbColor: colors.good },
+                              type: 'MIN',
+                            },
+                          }
+                        : {
+                            maxpoint: {
+                              colorStyle: { rgbColor: colors.good },
+                              type: 'NUMBER',
+                              value: '100',
+                            },
+                            midpoint: {
+                              colorStyle: { rgbColor: colors.neutral },
+                              type: 'PERCENT',
+                              value: '50',
+                            },
+                            minpoint: {
+                              colorStyle: { rgbColor: colors.bad },
+                              type: 'MIN',
+                            },
+                          },
+                  },
+                  index: 0,
+                },
+              },
+            ] as Sheets.sheets_v4.Schema$Request[])),
         {
           // Widths of columns on main sheet
           updateDimensionProperties: {
