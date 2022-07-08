@@ -8,9 +8,9 @@ import logUpdate from 'log-update';
 import sade from 'sade';
 import tinydate from 'tinydate';
 
+import type { LighthouseRunOpts } from './lighthouse.js';
 import type { URLState, URLStates } from './main.js';
 import { State, main } from './main.js';
-import type { LighthouseRunOpts } from './lighthouse.js';
 
 const require = createRequire(import.meta.url);
 

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 
 import type { LHR } from 'lighthouse';
+
 import type { RunOptions } from './main.js';
 
 export interface LighthouseRunner {
