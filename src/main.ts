@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import type { ModifiedConsole } from './cli.js';
 import type { CrawlOptions } from './crawl.js';
 import { crawl } from './crawl.js';
+import type { LighthouseRunOpts } from './lighthouse.js';
 import { initWorkerThreads } from './lighthouse.js';
 import {
   adaptLHRToOutputWriter,
@@ -68,6 +69,7 @@ interface RunStatus {
 export interface RunOptions extends CrawlOptions {
   outputs: string[];
   lighthouseConcurrency: number;
+  lighthouseRunOpts: LighthouseRunOpts;
 }
 
 export const main = async (
@@ -85,7 +87,7 @@ export const main = async (
     lighthouseParadeVersion
   );
   const start = async () => {
-    const lighthouseRunners = initWorkerThreads(opts.lighthouseConcurrency);
+    const lighthouseRunners = initWorkerThreads(opts);
 
     const lighthousePromises: Promise<void>[] = [];
     const crawlIterator = crawl(initialUrl, opts, console);
