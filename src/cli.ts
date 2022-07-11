@@ -165,8 +165,6 @@ sade('lighthouse-parade <url>', true)
       lighthouseCategories.push(...allLighthouseCategories);
     }
 
-    console.log(lighthouseCategories);
-
     const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'].map((f) =>
       kleur.blue(f)
     );
