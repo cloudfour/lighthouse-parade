@@ -1,7 +1,6 @@
 import http from 'node:http';
 
-import type { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
 import open from 'open';
@@ -23,7 +22,7 @@ export const getAuthenticatedClient = async (): Promise<{
   auth: OAuth2Client;
   redirect: (url: string) => void;
 }> => {
-  const oAuth2Client = new google.auth.OAuth2(
+  const oAuth2Client = new OAuth2Client(
     CLIENT_ID,
     CLIENT_SECRET,
     `http://localhost:${PORT}/oauth2callback` // Redirect URL

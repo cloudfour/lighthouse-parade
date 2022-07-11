@@ -81,7 +81,7 @@ export default defineConfig({
     'sade',
     'tinydate',
     'google-auth-library',
-    'googleapis',
+    /googleapis/,
     'open',
   ],
 });
