@@ -288,8 +288,8 @@ sade('lighthouse-parade <url>', true)
     }, 80);
 
     await runStatus.start();
-    render(runStatus.state);
     clearInterval(intervalId);
+    render(runStatus.state);
   })
   .parse(process.argv);
 
