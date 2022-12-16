@@ -10,19 +10,51 @@ There are great tools for doing performance analysis on a single web page. We us
 
 ## How?
 
-TODO: rewrite/see what to keep
+With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a spreadsheet or CSV file with the aggregated data. [Here is an example of the produced output](https://docs.google.com/spreadsheets/d/1FNc5Rl4Tp2BruTBTRN7bAXToGpo9JgdN0OGvZsQ4igo).
 
-## Usage
+![Screenshot of the produced spreadsheet showing lighthouse data recorded for each visited page](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-1.png)
 
-TODO: rewrite/see what to keep
+![Screenshot of the produced spreadsheet showing histograms of lighthouse data](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-2.png)
+
+## Installation/Usage
+
+Make sure you have a recent Node version (Node 14+).
+
+You can use `npx` to automatically install and run the tool:
+
+```
+npx lighthouse-parade <url> [options]
+```
+
+Or you can install it globally and run it this way:
+
+```
+npm i -g lighthouse-parade
+lighthouse-parade <url> [options]
+```
+
+In the above commands, replace `<url>` with your starting URL to visit, and replace `[options]` with any additional options as needed. Lighthouse Parade will fetch the starting URL, and crawl your site for additional pages to visit. As it does, it will generate Lighthouse reports for the pages it finds.
 
 ### Options
 
-TODO: rewrite/see what to keep
+```
+-o, --output                The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"
+--ignore-robots-txt         Crawl pages even if they are listed in the site's robots.txt  (default false)
+--crawler-user-agent        Pass a user agent string to be used by the crawler (not by Lighthouse)
+--lighthouse-concurrency    Control the maximum number of ligthhouse reports to run concurrently  (default 7)
+--lh:only-categories        Only run the specified lighthouse categories. Available categories: accessibility, best-practices, performance, pwa, seo. Multiple can be specified using commas, e.g. --lh:only-categories=accessibility,seo. If not specified, all categories will be used.
+--max-crawl-depth           Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.
+--include-path-glob         Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
+--exclude-path-glob         Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
+-v, --version               Displays current version
+-h, --help                  Displays this message
+```
 
-## Analysis spreadsheet template
+Example options:
 
-TODO: rewrite/see what to keep
+```
+lighthouse-parade https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv
+```
 
 ## Mac M1 Note
 
