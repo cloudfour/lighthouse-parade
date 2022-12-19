@@ -49,7 +49,7 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {
     emit(
       'warning',
-      `Error fetching (${response.statusCode}): ${queueItem.url}`
+      `Error fetching (${response.statusCode}): ${queueItem.url}; referrer: ${queueItem.referrer}`
     );
   };
 
