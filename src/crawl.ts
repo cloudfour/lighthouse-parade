@@ -61,6 +61,8 @@ export function crawl(
     console.warn(
       `${kleur.yellow('⚠')} Error fetching (${response.statusCode}): ${
         queueItem.url
+      } - referrer: ${
+        queueItem.referrer
       }`
     );
   };
