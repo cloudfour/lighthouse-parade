@@ -23,7 +23,7 @@
   "author": "emerson@cloudfour.com",
   "license": "MIT",
   "dependencies": {
-    "@googleapis/sheets": "^4.0.0",
+    "@googleapis/sheets": "^4.0.1",
     "chrome-launcher": "^0.15.1",
     "globrex": "^0.1.2",
     "google-auth-library": "^8.7.0",
@@ -39,22 +39,22 @@
     "node": "^14.0.0 || ^16.0.0 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.7",
-    "@changesets/cli": "^2.25.2",
+    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/cli": "^2.26.0",
     "@cloudfour/eslint-plugin": "^21.1.0",
     "@types/globrex": "^0.1.2",
-    "@types/node": "^18.11.9",
+    "@types/node": "^18.11.18",
     "@types/sade": "^1.7.4",
     "@types/simplecrawler": "^1.1.2",
-    "esbuild": "^0.15.15",
-    "eslint": "^8.28.0",
-    "import-meta-resolve": "^2.2.0",
-    "prettier": "^2.8.0",
+    "esbuild": "^0.17.5",
+    "eslint": "^8.33.0",
+    "import-meta-resolve": "^2.2.1",
+    "prettier": "^2.8.3",
     "pretty-bytes": "^6.0.0",
-    "rollup": "^3.4.0",
-    "typescript": "^4.9.3",
-    "vite": "^3.2.4",
-    "vitest": "^0.25.3"
+    "rollup": "^3.12.0",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4",
+    "vitest": "^0.28.3"
   },
   "eslintConfig": {
     "extends": [

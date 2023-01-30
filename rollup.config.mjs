@@ -64,7 +64,7 @@ export default defineConfig({
   input: ['./src/cli.ts', './src/lighthouse-worker.ts'],
   plugins: [
     esbuildPlugin({
-      define: { 'import.meta.vitest': undefined },
+      define: { 'import.meta.vitest': 'undefined' },
       target: 'node14',
     }),
     jsToTsResolvePlugin(),
