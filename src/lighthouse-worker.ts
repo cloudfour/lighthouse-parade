@@ -1,6 +1,7 @@
 import { parentPort } from 'node:worker_threads';
 
-import chromeLauncher, { LaunchedChrome } from 'chrome-launcher';
+import type { LaunchedChrome } from 'chrome-launcher';
+import chromeLauncher from 'chrome-launcher';
 import type { LHOptions } from 'lighthouse';
 import lighthouse from 'lighthouse';
 
