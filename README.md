@@ -38,7 +38,7 @@ In the above commands, replace `<url>` with your starting URL to visit, and repl
 ### Options
 
 ```
--o, --output                The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"
+-o, --output                The output file(s). CSV and Google Sheets are supported. Can be passed multiple times for multiple outputs. Example: -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"
 --ignore-robots-txt         Crawl pages even if they are listed in the site's robots.txt  (default false)
 --crawler-user-agent        Pass a user agent string to be used by the crawler (not by Lighthouse)
 --lighthouse-concurrency    Control the maximum number of ligthhouse reports to run concurrently  (default 7)

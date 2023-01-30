@@ -61,7 +61,7 @@ sade('lighthouse-parade <url>', true)
   )
   .option(
     '--output, -o',
-    'The output file(s). Can be specified multiple times, e.g. -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"'
+    'The output file(s). CSV and Google Sheets are supported. Can be passed multiple times for multiple outputs. Example: -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"'
   )
   .option(
     '--ignore-robots-txt',
