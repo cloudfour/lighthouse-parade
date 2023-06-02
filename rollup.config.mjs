@@ -54,9 +54,10 @@ const nodeResolvePlugin = () => ({
   async resolveId(id, importer) {
     if (id.startsWith('node:')) return { id, external: true };
     if (id.startsWith('.') || !importer) return;
-    const resolved = await resolve(id, pathToFileURL(importer)).catch(() => {});
-    if (!resolved) return;
-    if (resolved.startsWith('file:')) return fileURLToPath(resolved);
+    try {
+      const resolved = resolve(id, pathToFileURL(importer));
+      if (resolved.startsWith('file:')) return fileURLToPath(resolved);
+    } catch {}
   },
 });
 

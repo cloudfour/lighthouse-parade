@@ -11,7 +11,7 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
     "types": ["vitest/importMeta"]
   },
   "include": ["**/*.ts"]
