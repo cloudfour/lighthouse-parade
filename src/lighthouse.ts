@@ -116,10 +116,17 @@ export const initWorkerThreads = (opts: RunOptions) => {
 
 const cleanupFunctions: (() => Promise<unknown>)[] = [];
 
-const cleanup = (exitCode: number) => {
-  const exit = () =>
-    // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
-    process.exit(exitCode);
+const cleanup = (info: unknown) => {
+  const exit = () => {
+    if (typeof info === 'number') {
+      // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
+      process.exit(info);
+    } else {
+      console.error('Exiting due to', info);
+      // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
+      process.exit(1);
+    }
+  };
 
   Promise.all(cleanupFunctions.map((fn) => fn()))
     .then(exit)
