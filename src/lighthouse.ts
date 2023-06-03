@@ -2,12 +2,12 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 
-import type { LHR } from 'lighthouse';
+import type { Result } from 'lighthouse';
 
 import type { RunOptions } from './main.js';
 
 export interface LighthouseRunner {
-  run(url: string): Promise<LHR>;
+  run(url: string): Promise<Result>;
   isFree: boolean;
   /** Resolves when the runner is free (has nothing to do) */
   freePromise: Promise<LighthouseRunner>;
@@ -36,7 +36,7 @@ const createLighthouseRunner = (
     async run(url) {
       this.isFree = false;
       worker.postMessage({ type: 'runLighthouse', url, lighthouseRunOpts });
-      const lighthouseReportPromise = new Promise<LHR>((resolve, reject) => {
+      const lighthouseReportPromise = new Promise<Result>((resolve, reject) => {
         const workerListener = (message: unknown) => {
           if (!isLighthouseReport(message)) return;
           resolve(message);
@@ -73,7 +73,7 @@ const createLighthouseRunner = (
   return runner;
 };
 
-const isLighthouseReport = (report: unknown): report is LHR =>
+const isLighthouseReport = (report: unknown): report is Result =>
   typeof report === 'object' &&
   report !== null &&
   'categories' in report &&

@@ -2,7 +2,7 @@ import { parentPort } from 'node:worker_threads';
 
 import type { LaunchedChrome } from 'chrome-launcher';
 import chromeLauncher from 'chrome-launcher';
-import type { LHOptions } from 'lighthouse';
+import type { Flags } from 'lighthouse';
 import lighthouse from 'lighthouse';
 
 import type { LighthouseRunOpts } from './lighthouse.js';
@@ -17,7 +17,7 @@ const runLighthouse = async (
     chromeFlags: ['--headless', '--no-first-run'],
   });
   chromeInstances.add(chrome);
-  const options: LHOptions = {
+  const options: Flags = {
     output: 'json',
     onlyCategories: lighthouseRunOpts.categories,
     port: chrome.port,
@@ -25,7 +25,7 @@ const runLighthouse = async (
   const runnerResult = await lighthouse(url, options);
   chrome.kill();
   chromeInstances.delete(chrome);
-  parentPort?.postMessage(runnerResult.lhr);
+  parentPort?.postMessage(runnerResult?.lhr);
 };
 
 parentPort?.on('message', (message) => {

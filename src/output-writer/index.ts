@@ -1,4 +1,4 @@
-import type { LHR } from 'lighthouse';
+import type { Result } from 'lighthouse';
 
 import type { RunInfo } from '../run-info.js';
 import { getRunInfo } from '../run-info.js';
@@ -77,7 +77,7 @@ export const adaptLHRToOutputWriter = (
 
   return {
     complete: () => outputWriter.complete(),
-    async addEntry(report: LHR) {
+    async addEntry(report: Result) {
       if (!hasWrittenHeader) {
         mutexPromise = mutexPromise.then(async () => {
           hasWrittenHeader = true;
@@ -169,7 +169,9 @@ export const adaptLHRToOutputWriter = (
           : '';
       });
 
-      return outputWriter.addEntry(report.finalUrl, rowValues);
+      if (report.mainDocumentUrl) {
+        await outputWriter.addEntry(report.mainDocumentUrl, rowValues);
+      }
     },
   };
 };
