@@ -8,6 +8,7 @@ import type { RunOptions } from './main.js';
 
 export interface LighthouseRunner {
   run(url: string): Promise<Result>;
+
   isFree: boolean;
   /** Resolves when the runner is free (has nothing to do) */
   freePromise: Promise<LighthouseRunner>;
@@ -16,6 +17,7 @@ export interface LighthouseRunner {
 
 export interface LighthouseRunOpts {
   categories: string[];
+  formFactor: 'mobile' | 'desktop';
 }
 
 const createLighthouseRunner = (
