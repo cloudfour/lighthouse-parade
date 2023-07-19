@@ -84,5 +84,6 @@ export default defineConfig({
     'google-auth-library',
     /googleapis/,
     'open',
+    'puppeteer',
   ],
 });
