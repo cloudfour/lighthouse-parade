@@ -22,7 +22,10 @@ const runLighthouse = async (
   // It's not clear if we need to more options, such as the
   // `--enable-automation` flag.
   // @see https://github.com/GoogleChrome/lighthouse/blob/main/docs/puppeteer.md#option-1-launch-chrome-with-puppeteer-and-handoff-to-lighthouse
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    // @see https://developer.chrome.com/articles/new-headless/
+    headless: 'new',
+  });
   const page = await browser.newPage();
 
   // Set the cookie to prevent the cookie banner from showing
