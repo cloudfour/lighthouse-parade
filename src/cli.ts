@@ -195,6 +195,7 @@ sade('lighthouse-parade <url>', true)
       logUpdate.clear();
       const pendingUrls: string[] = [];
       const currentUrls: string[] = [];
+
       for (const [url, urlState] of urlStates.entries()) {
         if (
           urlState.state === State.Success ||
@@ -204,12 +205,14 @@ sade('lighthouse-parade <url>', true)
             completedURLs.add(urlState);
             console.log(printLine(url, urlState));
           }
+
           continue;
         }
         const line = `${printLine(url, urlState)}\n`;
         if (urlState.state === State.Pending) pendingUrls.push(line);
         else currentUrls.push(line);
       }
+      
       const numPendingToDisplay = Math.min(
         Math.max(process.stdout.rows - currentUrls.length - 3, 1),
         pendingUrls.length
