@@ -192,41 +192,41 @@ sade('lighthouse-parade <url>', true)
     const completedURLs = new Set<URLState>();
 
     const render = (urlStates: URLStates) => {
-      // logUpdate.clear();
-      // const pendingUrls: string[] = [];
-      // const currentUrls: string[] = [];
-      // for (const [url, urlState] of urlStates.entries()) {
-      //   if (
-      //     urlState.state === State.Success ||
-      //     urlState.state === State.Failure
-      //   ) {
-      //     if (!completedURLs.has(urlState)) {
-      //       completedURLs.add(urlState);
-      //       console.log(printLine(url, urlState));
-      //     }
-      //     continue;
-      //   }
-      //   const line = `${printLine(url, urlState)}\n`;
-      //   if (urlState.state === State.Pending) pendingUrls.push(line);
-      //   else currentUrls.push(line);
-      // }
-      // const numPendingToDisplay = Math.min(
-      //   Math.max(process.stdout.rows - currentUrls.length - 3, 1),
-      //   pendingUrls.length
-      // );
-      // const numHiddenUrls =
-      //   numPendingToDisplay === pendingUrls.length
-      //     ? ''
-      //     : kleur.dim(
-      //         `\n...And ${
-      //           pendingUrls.length - numPendingToDisplay
-      //         } more pending`
-      //       );
-      // logUpdate(
-      //   currentUrls.join('') +
-      //     pendingUrls.slice(0, numPendingToDisplay).join('') +
-      //     numHiddenUrls
-      // );
+      logUpdate.clear();
+      const pendingUrls: string[] = [];
+      const currentUrls: string[] = [];
+      for (const [url, urlState] of urlStates.entries()) {
+        if (
+          urlState.state === State.Success ||
+          urlState.state === State.Failure
+        ) {
+          if (!completedURLs.has(urlState)) {
+            completedURLs.add(urlState);
+            console.log(printLine(url, urlState));
+          }
+          continue;
+        }
+        const line = `${printLine(url, urlState)}\n`;
+        if (urlState.state === State.Pending) pendingUrls.push(line);
+        else currentUrls.push(line);
+      }
+      const numPendingToDisplay = Math.min(
+        Math.max(process.stdout.rows - currentUrls.length - 3, 1),
+        pendingUrls.length
+      );
+      const numHiddenUrls =
+        numPendingToDisplay === pendingUrls.length
+          ? ''
+          : kleur.dim(
+              `\n...And ${
+                pendingUrls.length - numPendingToDisplay
+              } more pending`
+            );
+      logUpdate(
+        currentUrls.join('') +
+          pendingUrls.slice(0, numPendingToDisplay).join('') +
+          numHiddenUrls
+      );
     };
 
     /**
