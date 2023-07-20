@@ -52,6 +52,7 @@ const runLighthouse = async (
     // disableStorageReset: true,
   };
 
+  // Make sure to pass the Puppeteer page to Lighthouse
   const runnerResult = await lighthouse(url, options, undefined, page);
 
   writeFile(
