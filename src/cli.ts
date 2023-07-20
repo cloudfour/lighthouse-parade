@@ -208,11 +208,12 @@ sade('lighthouse-parade <url>', true)
 
           continue;
         }
+
         const line = `${printLine(url, urlState)}\n`;
         if (urlState.state === State.Pending) pendingUrls.push(line);
         else currentUrls.push(line);
       }
-      
+
       const numPendingToDisplay = Math.min(
         Math.max(process.stdout.rows - currentUrls.length - 3, 1),
         pendingUrls.length
