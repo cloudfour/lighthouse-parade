@@ -37,9 +37,9 @@ In the above commands, replace `<url>` with your starting URL to visit, and repl
 
 ### Options
 
-#### `-o`, `--output`       
+#### `-o`, `--output`
 
-The output file(s). CSV and Google Sheets are supported. It can be passed multiple times for multiple outputs. 
+The output file(s). CSV and Google Sheets are supported. It can be passed multiple times for multiple outputs.
 
 Example: `-o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"`.
 
@@ -57,9 +57,9 @@ Control the maximum number of Lighthouse reports running concurrently (default 7
 
 #### `--lh:only-categories`
 
-Only run the specified lighthouse categories. If not specified, all categories will be used. Available categories: accessibility, best-practices, performance, pwa, SEO. 
+Only run the specified lighthouse categories. If not specified, all categories will be used. Available categories: accessibility, best-practices, performance, pwa, SEO.
 
-Multiple can be specified using commas, e.g. `--lh:only-categories=accessibility,seo`. 
+Multiple can be specified using commas, e.g. `--lh:only-categories=accessibility,seo`.
 
 #### `--max-crawl-depth`
 
@@ -67,13 +67,13 @@ Control the maximum depth of crawled links. 1 means only the entry page will be 
 
 #### `--include-path-glob`
 
-Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. 
+Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths.
 
 `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
 
 #### `--exclude-path-glob`
 
-Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. 
+Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths.
 
 `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
 
