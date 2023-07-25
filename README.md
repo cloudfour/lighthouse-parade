@@ -37,20 +37,55 @@ In the above commands, replace `<url>` with your starting URL to visit, and repl
 
 ### Options
 
-```
--o, --output                The output file(s). CSV and Google Sheets are supported. Can be passed multiple times for multiple outputs. Example: -o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"
---ignore-robots-txt         Crawl pages even if they are listed in the site's robots.txt  (default false)
---crawler-user-agent        Pass a user agent string to be used by the crawler (not by Lighthouse)
---lighthouse-concurrency    Control the maximum number of ligthhouse reports to run concurrently  (default 7)
---lh:only-categories        Only run the specified lighthouse categories. Available categories: accessibility, best-practices, performance, pwa, seo. Multiple can be specified using commas, e.g. --lh:only-categories=accessibility,seo. If not specified, all categories will be used.
---max-crawl-depth           Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.
---include-path-glob         Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
---exclude-path-glob         Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
--v, --version               Displays current version
--h, --help                  Displays this message
-```
+#### `-o`, `--output`       
 
-Example options:
+The output file(s). CSV and Google Sheets are supported. It can be passed multiple times for multiple outputs. 
+
+Example: `-o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name"`.
+
+#### `--ignore-robots-txt`
+
+Crawl pages even if they are listed in the site's robots.txt (default false)
+
+#### `--crawler-user-agent`
+
+Pass a user agent string to be used by the crawler (not by Lighthouse)
+
+#### `--lighthouse-concurrency`
+
+Control the maximum number of Lighthouse reports running concurrently (default 7)
+
+#### `--lh:only-categories`
+
+Only run the specified lighthouse categories. If not specified, all categories will be used. Available categories: accessibility, best-practices, performance, pwa, SEO. 
+
+Multiple can be specified using commas, e.g. `--lh:only-categories=accessibility,seo`. 
+
+#### `--max-crawl-depth`
+
+Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.
+
+#### `--include-path-glob`
+
+Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. 
+
+`*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
+
+#### `--exclude-path-glob`
+
+Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. 
+
+`*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
+
+#### `-v`, `--version`
+
+Displays current version
+
+#### `-h`, `--help`
+
+Displays all of these options
+
+#### Example with multiple options
 
 ```
 lighthouse-parade https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv
