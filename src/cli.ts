@@ -125,6 +125,8 @@ sade('lighthouse-parade <url>', true)
 
     const includePathGlob: string[] = toArray(opts['include-path-glob']);
 
+    const formFactor = opts['form-factor'];
+
     if (includePathGlob.some((glob) => typeof glob !== 'string')) {
       throw new Error('--include-path-glob must be string(s)');
     }
@@ -263,6 +265,7 @@ sade('lighthouse-parade <url>', true)
 
     const lighthouseRunOpts: LighthouseRunOpts = {
       categories: lighthouseCategories,
+      formFactor: formFactor as 'desktop' | 'mobile',
     };
 
     const runStatus = await main(

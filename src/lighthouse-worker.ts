@@ -18,6 +18,7 @@ const runLighthouse = async (
     output: 'json',
     onlyCategories: lighthouseRunOpts.categories,
     port: chrome.port,
+    formFactor: lighthouseRunOpts.formFactor,
   };
   const runnerResult = await lighthouse(url, options);
   parentPort?.postMessage(runnerResult?.lhr);
