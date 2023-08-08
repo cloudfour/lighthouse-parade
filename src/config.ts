@@ -5,9 +5,9 @@ import * as kleur from 'kleur/colors';
 import stringWidth from 'string-width';
 import * as z from 'zod';
 
+import type { LighthouseSettings } from './lighthouse.js';
 import type { Crawler } from './main.js';
 import { OutputType } from './output-writer/index.js';
-import type { LighthouseSettings } from './lighthouse.js';
 
 export type ConfigOptions = z.input<typeof configSchema>;
 
