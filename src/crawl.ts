@@ -2,73 +2,80 @@ import type { IncomingMessage } from 'node:http';
 
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
-import Crawler from 'simplecrawler';
+import SimpleCrawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue.js';
+import * as z from 'zod';
 
-import type { ReadonlyAsyncIteratorQueue } from './async-iterator-queue.js';
-import { asyncIteratorQueue } from './async-iterator-queue.js';
-import type { ModifiedConsole } from './cli.js';
+import { console } from './cli.js';
+import { parseConfig } from './config.js';
 import { createUrlFilter } from './create-url-filter.js';
+import type { Crawler } from './main.js';
 
-export interface CrawlOptions {
+export const crawlOptionsSchema = z.object({
+  initialUrl: z.string().url(),
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
-  ignoreRobotsTxt: boolean;
-  crawlerUserAgent?: string;
+  ignoreRobotsTxt: z.boolean().default(false),
+  crawlerUserAgent: z.string().optional(),
   /** Maximum depth of fetched links */
-  maxCrawlDepth?: number;
+  maxCrawlDepth: z.number().int().positive().optional(),
   /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
-  includePathGlob: string[];
+  includePathGlob: z.array(z.string()).default([]),
   /** Any path that matches these globs will not be crawled. */
-  excludePathGlob: string[];
-}
+  excludePathGlob: z.array(z.string()).default([]),
+});
 
-export function crawl(
-  initialUrl: string,
-  opts: CrawlOptions,
-  console: ModifiedConsole
-): ReadonlyAsyncIteratorQueue<string> {
-  const crawler = new Crawler(initialUrl);
-  if (opts.crawlerUserAgent) crawler.userAgent = opts.crawlerUserAgent;
-  crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
-  if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
+export type CrawlOptions = z.output<typeof crawlOptionsSchema>;
 
-  const initialPath = new URL(initialUrl).pathname;
+export const defaultCrawler = (
+  opts: z.input<typeof crawlOptionsSchema>
+): Crawler => crawl(parseConfig(crawlOptionsSchema, opts, 'crawlerOptions'));
 
-  const resultsQueue = asyncIteratorQueue<string>();
-  crawler.addFetchCondition(
-    createUrlFilter(
-      opts.includePathGlob.length > 0
-        ? [...opts.includePathGlob, initialPath]
-        : [],
-      opts.excludePathGlob
-    )
-  );
+export const crawl =
+  (opts: CrawlOptions): Crawler =>
+  (emitURL) =>
+    new Promise((resolve, _reject) => {
+      const { initialUrl } = opts;
+      const crawler = new SimpleCrawler(initialUrl);
+      if (opts.crawlerUserAgent) crawler.userAgent = opts.crawlerUserAgent;
+      crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
+      if (opts.maxCrawlDepth !== undefined)
+        crawler.maxDepth = opts.maxCrawlDepth;
 
-  crawler.on('fetchcomplete', (queueItem, _responseBuffer, response) => {
-    const url = queueItem.url;
-    const contentType = response.headers['content-type'];
-    if (!contentType || !/html/i.test(contentType)) return;
-    const statusCode = response.statusCode;
-    if (!contentType || !statusCode) return;
-    resultsQueue.push(url);
-  });
+      const initialPath = new URL(initialUrl).pathname;
 
-  crawler.on('complete', () => {
-    resultsQueue.finish();
-  });
+      crawler.addFetchCondition(
+        createUrlFilter(
+          opts.includePathGlob.length > 0
+            ? [...opts.includePathGlob, initialPath]
+            : [],
+          opts.excludePathGlob
+        )
+      );
 
-  const logWarning = (queueItem: QueueItem, response: IncomingMessage) => {
-    console.warn(
-      `${kleur.yellow('⚠')} Error fetching (${response.statusCode}): ${
-        queueItem.url
-      } - referrer: ${queueItem.referrer}`
-    );
-  };
-  crawler.on('fetcherror', logWarning);
-  crawler.on('fetch404', logWarning);
-  crawler.on('fetch410', logWarning);
+      crawler.on('fetchcomplete', (queueItem, _responseBuffer, response) => {
+        const url = queueItem.url;
+        const contentType = response.headers['content-type'];
+        if (!contentType || !/html/i.test(contentType)) return;
+        const statusCode = response.statusCode;
+        if (!contentType || !statusCode) return;
+        emitURL(url);
+      });
 
-  crawler.start();
+      crawler.on('complete', () => {
+        resolve();
+      });
 
-  return resultsQueue;
-}
+      // eslint-disable-next-line @cloudfour/unicorn/consistent-function-scoping
+      const logWarning = (queueItem: QueueItem, response: IncomingMessage) => {
+        console.warn(
+          `${kleur.yellow('⚠')} Error fetching (${response.statusCode}): ${
+            queueItem.url
+          } - referrer: ${queueItem.referrer}`
+        );
+      };
+      crawler.on('fetcherror', logWarning);
+      crawler.on('fetch404', logWarning);
+      crawler.on('fetch410', logWarning);
+
+      crawler.start();
+    });

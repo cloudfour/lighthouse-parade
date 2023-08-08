@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as esbuild from 'esbuild';
 import { resolve } from 'import-meta-resolve';
 import { defineConfig } from 'rollup';
+import { dts } from 'rollup-plugin-dts';
 
 /**
  * @param {esbuild.TransformOptions} config
@@ -29,6 +30,7 @@ const loader = (ext) => (ext === '.ts' || ext === '.mts' ? 'ts' : 'js');
 
 /**
  * Changes ./asdf.js import paths to look for a file ./asdf.ts if necessary
+ *
  * @returns {import('rollup').Plugin}
  */
 const jsToTsResolvePlugin = () => ({
@@ -47,6 +49,7 @@ const jsToTsResolvePlugin = () => ({
 
 /**
  * Changes ./asdf.js import paths to look for a file ./asdf.ts if necessary
+ *
  * @returns {import('rollup').Plugin}
  */
 const nodeResolvePlugin = () => ({
@@ -61,28 +64,46 @@ const nodeResolvePlugin = () => ({
   },
 });
 
-export default defineConfig({
-  input: ['./src/cli.ts', './src/lighthouse-worker.ts'],
-  plugins: [
-    esbuildPlugin({
-      define: { 'import.meta.vitest': 'undefined' },
-      target: 'node14',
-    }),
-    jsToTsResolvePlugin(),
-    nodeResolvePlugin(),
-  ],
-  output: { dir: 'dist' },
-  preserveEntrySignatures: false,
-  external: [
-    'lighthouse',
-    'chrome-launcher',
-    'log-update',
-    'simplecrawler',
-    'globrex',
-    'sade',
-    'tinydate',
-    'google-auth-library',
-    /googleapis/,
-    'open',
-  ],
-});
+export default defineConfig([
+  {
+    input: [
+      './src/cli.ts',
+      './src/lighthouse-worker.ts',
+      './src/import-entry.ts',
+    ],
+    plugins: [
+      esbuildPlugin({
+        define: { 'import.meta.vitest': 'undefined' },
+        target: 'node16',
+      }),
+      jsToTsResolvePlugin(),
+      nodeResolvePlugin(),
+    ],
+    output: { dir: 'dist', hoistTransitiveImports: false },
+    external: [
+      'lighthouse',
+      'chrome-launcher',
+      'log-update',
+      'simplecrawler',
+      'globrex',
+      'emoji-regex',
+      'eastasianwidth',
+      'sade',
+      'mri',
+      'tinydate',
+      'google-auth-library',
+      /googleapis/,
+      'open',
+      'zod',
+    ],
+  },
+  {
+    input: ['./src/import-entry.ts'],
+    plugins: [
+      dts({
+        compilerOptions: { noEmit: false },
+      }),
+    ],
+    output: [{ file: 'dist/import-entry.d.ts', format: 'es' }],
+  },
+]);

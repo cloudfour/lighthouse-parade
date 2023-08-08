@@ -2,7 +2,6 @@ import type Sheets from '@googleapis/sheets';
 import googleSheets from '@googleapis/sheets';
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
-import tinydate from 'tinydate';
 
 import type { OutputWriter } from '../index.js';
 
@@ -16,14 +15,8 @@ export const sheetNames = {
   runInfo: 'Run Info',
 };
 
-const getDefaultTitle = (initialUrl: string) => {
-  const date = tinydate('{YYYY}-{MM}-{DD} {HH}:{mm}')(new Date());
-  return `Lighthouse ${new URL(initialUrl).hostname} ${date}`;
-};
-
 export const createGoogleSheetsOutputWriter = async (
-  initialUrl: string,
-  documentTitle = getDefaultTitle(initialUrl)
+  documentTitle: string
 ): Promise<OutputWriter> => {
   // Used to make sure that the addEntry calls happen one at a time
   // so they always write to the file in a deterministic order

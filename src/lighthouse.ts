@@ -2,24 +2,22 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 
-import type { Result } from 'lighthouse';
+import type * as lh from 'lighthouse';
 
+import { console } from './cli.js';
 import type { RunOptions } from './main.js';
 
 export interface LighthouseRunner {
-  run(url: string): Promise<Result>;
+  run(url: string): Promise<lh.Result>;
   isFree: boolean;
-  /** Resolves when the runner is free (has nothing to do) */
-  freePromise: Promise<LighthouseRunner>;
   worker: Worker;
 }
 
-export interface LighthouseRunOpts {
-  categories: string[];
-}
+export type LighthouseSettings = lh.SharedFlagsSettings;
 
 const createLighthouseRunner = (
-  lighthouseRunOpts: LighthouseRunOpts
+  lighthouseRunOpts: LighthouseSettings,
+  queue: Queue
 ): LighthouseRunner => {
   const worker = new Worker(
     path.join(
@@ -30,13 +28,10 @@ const createLighthouseRunner = (
   const runner: LighthouseRunner = {
     worker,
     isFree: true,
-    // Initialized as null because it needs to resolve to the `runner` object which is not accessible here
-    // This property gets set after the object is defined
-    freePromise: null as any,
     async run(url) {
       this.isFree = false;
       worker.postMessage({ type: 'runLighthouse', url, lighthouseRunOpts });
-      const lighthouseReportPromise = new Promise<Result>((resolve, reject) => {
+      const result = await new Promise<lh.Result>((resolve, reject) => {
         const workerListener = (message: unknown) => {
           if (!isLighthouseReport(message)) return;
           resolve(message);
@@ -44,7 +39,7 @@ const createLighthouseRunner = (
           worker.removeListener('error', errorListener);
         };
 
-        const errorListener = (error: any) => {
+        const errorListener = (error: unknown) => {
           reject(error);
           worker.removeListener('message', workerListener);
           worker.removeListener('error', errorListener);
@@ -53,48 +48,54 @@ const createLighthouseRunner = (
         worker.addListener('message', workerListener);
         worker.addListener('error', errorListener);
       });
-      // Updates the freePromise to a new promise which will resolve once _this_ run finishes
-      // freePromise must always be a promise that resolves once the _last_ lighthouse run on this runner finishes.
-      const newFreePromise = this.freePromise
-        .then(() => lighthouseReportPromise)
-        .then(() => {
-          if (this.freePromise === newFreePromise) {
-            // Don't set isFree unless this is the last promise in the chain
-            this.isFree = true;
-          }
-
-          return runner;
-        });
-      this.freePromise = newFreePromise;
-      return lighthouseReportPromise;
+      this.isFree = true;
+      setImmediate(() => {
+        // Notify the next queue item that this runner is available
+        queue.shift()?.(this);
+      });
+      return result;
     },
   };
-  runner.freePromise = Promise.resolve(runner);
   return runner;
 };
 
-const isLighthouseReport = (report: unknown): report is Result =>
+const isLighthouseReport = (report: unknown): report is lh.Result =>
   typeof report === 'object' &&
   report !== null &&
   'categories' in report &&
   'audits' in report &&
   'lighthouseVersion' in report;
 
+type Queue = ((runner: LighthouseRunner) => void)[];
+
 export const initWorkerThreads = (opts: RunOptions) => {
   const lighthouseRunners: LighthouseRunner[] = [];
+  const queue: Queue = [];
   const getNextAvailable = async (): Promise<LighthouseRunner> => {
     for (const lighthouseRunner of lighthouseRunners)
-      if (lighthouseRunner.isFree) return lighthouseRunner;
+      if (lighthouseRunner.isFree) {
+        lighthouseRunner.isFree = false;
+        return lighthouseRunner;
+      }
 
     // No worker is currently available
     if (lighthouseRunners.length < opts.lighthouseConcurrency) {
-      const lighthouseRunner = createLighthouseRunner(opts.lighthouseRunOpts);
+      const lighthouseRunner = createLighthouseRunner(
+        opts.lighthouseSettings,
+        queue
+      );
       lighthouseRunners.push(lighthouseRunner);
+      lighthouseRunner.isFree = false;
       return lighthouseRunner;
     }
 
-    // Return the worker which becomes available soonest
-    return Promise.race(lighthouseRunners.map((runner) => runner.freePromise));
+    // Return a Promise which resolves when a worker becomes available
+    return new Promise<LighthouseRunner>((resolve) => {
+      queue.push((runner) => {
+        runner.isFree = false;
+        resolve(runner);
+      });
+    });
   };
 
   const close = () =>
@@ -119,11 +120,9 @@ const cleanupFunctions: (() => Promise<unknown>)[] = [];
 const cleanup = (info: unknown) => {
   const exit = () => {
     if (typeof info === 'number') {
-      // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
       process.exit(info);
     } else {
       console.error('Exiting due to', info);
-      // eslint-disable-next-line @cloudfour/n/no-process-exit, @cloudfour/unicorn/no-process-exit
       process.exit(1);
     }
   };

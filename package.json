@@ -33,7 +33,8 @@
     "open": "^9.1.0",
     "sade": "^1.8.1",
     "simplecrawler": "^1.1.9",
-    "tinydate": "^1.3.0"
+    "tinydate": "^1.3.0",
+    "zod": "^3.21.4"
   },
   "engines": {
     "node": "^16.0.0 || ^18.0.0 || ^20.0.0"
@@ -51,18 +52,28 @@
     "import-meta-resolve": "^3.0.0",
     "prettier": "^2.8.8",
     "pretty-bytes": "^6.1.0",
-    "rollup": "^3.23.0",
-    "typescript": "~5.1.3",
+    "rollup": "^3.27.0",
+    "rollup-plugin-dts": "^5.3.1",
+    "string-width": "^6.1.0",
+    "typescript": "^5.1.6",
     "vite": "^4.3.9",
     "vitest": "^0.31.4"
   },
   "eslintConfig": {
     "extends": [
       "plugin:@cloudfour/recommended"
-    ]
+    ],
+    "rules": {
+      "@cloudfour/n/no-process-exit": "off",
+      "@cloudfour/unicorn/no-process-exit": "off"
+    }
   },
   "prettier": {
     "singleQuote": true
+  },
+  "exports": {
+    "import": "./dist/import-entry.js",
+    "types": "./dist/import-entry.d.ts"
   },
   "type": "module"
 }

@@ -7,6 +7,23 @@ import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWri
 
 export { createCSVOutputWriter } from './csv-writer.js';
 
+export const OutputType = {
+  CSV: 'csv',
+  GoogleSheets: 'google-sheets',
+} as const;
+
+type GoogleSheetsOutput = {
+  type: typeof OutputType.GoogleSheets;
+  name: string;
+};
+
+type CSVOutput = {
+  type: typeof OutputType.CSV;
+  name: string;
+};
+
+export type Output = GoogleSheetsOutput | CSVOutput;
+
 // Lazy-loaded
 export const createGoogleSheetsOutputWriter: typeof innerCreateGoogleSheetsOutputWriter =
   async (...args) => {

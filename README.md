@@ -45,7 +45,7 @@ Example: `-o cloudfour-a.csv -o google-sheets -o google-sheets:"Spreadsheet Name
 
 #### `--ignore-robots-txt`
 
-Crawl pages even if they are listed in the site's robots.txt (default false)
+Crawl pages even if they are listed in the site's `robots.txt`
 
 #### `--crawler-user-agent`
 
@@ -53,13 +53,11 @@ Pass a user agent string to be used by the crawler (not by Lighthouse)
 
 #### `--lighthouse-concurrency`
 
-Control the maximum number of Lighthouse reports running concurrently (default 7)
+Control the maximum number of Lighthouse reports running concurrently (defaults to `os.cpus().length - 1`)
 
-#### `--lh:only-categories`
+#### `--lighthouse-category`
 
-Only run the specified lighthouse categories. If not specified, all categories will be used. Available categories: accessibility, best-practices, performance, pwa, SEO.
-
-Multiple can be specified using commas, e.g. `--lh:only-categories=accessibility,seo`.
+Only run the specified lighthouse category. Available categories: `accessibility`, `best-practices,` `performance,` `pwa`, `seo`. Multiple categories can be enabled by passing the flag multiple times, e.g. `--lighthouse-category accessibility --lighthouse-category seo`. If not specified, all categories will be used.
 
 #### `--max-crawl-depth`
 
