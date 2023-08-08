@@ -16,5 +16,5 @@
     "checkJs": true,
     "rootDir": "."
   },
-  "include": ["**/*.ts", "config.mjs"]
+  "include": ["**/*.ts"]
 }
