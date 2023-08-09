@@ -10,6 +10,7 @@ import type { Crawler } from './main.js';
 import { OutputType } from './output-writer/index.js';
 
 export interface ConfigOptions {
+  /** An array of targets where the results will be saved */
   outputs: (
     | {
         type: 'google-sheets';
@@ -26,12 +27,12 @@ export interface ConfigOptions {
    * Options to be passed into Lighthouse.
    * See [Lighthouse's .d.ts](https://github.com/GoogleChrome/lighthouse/blob/v11.0.0/types/lhr/settings.d.ts#L49-L117) for more details.
    */
-  lighthouseSettings: LighthouseSettings;
+  lighthouseSettings?: LighthouseSettings;
   /**
    * A function that generates the list of URLs to run lighthouse on.
    * You can use `defaultCrawler` to create this function, or use your own.
-   * The function will be passed a callback, emitURL,
-   * which should be called for each URL to enqueue
+   * The function will be passed a callback, `emitURL`,
+   * which should be called for each URL to enqueue.
    */
   getURLs: Crawler;
   /**
@@ -68,7 +69,9 @@ export const configSchema = z.object({
     .positive()
     .int()
     .default(os.cpus().length - 1),
-  lighthouseSettings: z.object({}).default({}) as z.ZodType<LighthouseSettings>,
+  lighthouseSettings: z.object({}).default({}) as z.ZodType<
+    LighthouseSettings | undefined
+  >,
   getURLs: z.function() as z.ZodType<Crawler>,
 });
 

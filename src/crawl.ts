@@ -21,7 +21,7 @@ export const crawlOptionsSchema = z.object({
 });
 
 interface CrawlOptions {
-  /** The starting URL which will be crawled first  */
+  /** The starting URL which will be crawled first */
   initialUrl: string;
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
   ignoreRobotsTxt?: boolean;
@@ -29,9 +29,12 @@ interface CrawlOptions {
   crawlerUserAgent?: string;
   /** Maximum depth of fetched links */
   maxCrawlDepth?: number;
-  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
+  /**
+   * Any path that doesn't match these globs will not be crawled.
+   * If the array is empty, all paths are allowed.
+   */
   includePathGlob?: string[];
-  /** Any path that matches these globs will not be crawled. */
+  /** Any path that matches these globs will not be crawled */
   excludePathGlob?: string[];
 }
 

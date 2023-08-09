@@ -115,60 +115,65 @@ export default defineConfig({
 
 The `defineConfig` function is an optional pass-through function that only exists to provide editor types and autocompletion for the configuration object.
 
-Here is the expected type of the configuration object:
+Here are the properties of the configuration object:
+
+#### `config.outputs` (required)
+
+An array of targets where the results will be saved. At least one is required. Each output must be one of the following types:
 
 ```ts
-interface ConfigOptions {
-  outputs: (
-    | {
-        type: 'google-sheets';
-        /** The document title of the created Google Spreadsheet */
-        name: string;
-      }
-    | {
-        type: 'csv';
-        /** The filename of the CSV file */
-        name: string;
-      }
-  )[];
-  /**
-   * Options to be passed into Lighthouse.
-   * See [Lighthouse's .d.ts](https://github.com/GoogleChrome/lighthouse/blob/v11.0.0/types/lhr/settings.d.ts#L49-L117) for more details.
-   */
-  lighthouseSettings: LighthouseSettings;
-  /**
-   * A function that generates the list of URLs to run lighthouse on.
-   * You can use `defaultCrawler` to create this function, or use your own.
-   * The function will be passed a callback, emitURL,
-   * which should be called for each URL to enqueue
-   */
-  getURLs: (emitURL: (url: string) => void) => Promise<void>;
-  /**
-   * Control the maximum number of Lighthouse reports running concurrently
-   * (defaults to `os.cpus().length - 1`)
-   */
-  lighthouseConcurrency?: number;
+{
+  type: 'google-sheets';
+  /** The document title of the created Google Spreadsheet */
+  name: string;
 }
 ```
 
-You can supply your own URL-generating function for `getURLs` or you can use the built-in `defaultCrawler`. `defaultCrawler` has the following options:
-
 ```ts
-interface CrawlOptions {
-  /** The starting URL which will be crawled first  */
-  initialUrl: string;
-  /** Whether to crawl pages even if they are listed in the site's robots.txt */
-  ignoreRobotsTxt?: boolean;
-  /** Pass a user agent string to be used by the crawler (not by Lighthouse) */
-  crawlerUserAgent?: string;
-  /** Maximum depth of fetched links */
-  maxCrawlDepth?: number;
-  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
-  includePathGlob?: string[];
-  /** Any path that matches these globs will not be crawled. */
-  excludePathGlob?: string[];
+{
+  type: 'csv';
+  /** The filename of the CSV file */
+  name: string;
 }
 ```
+
+#### `config.lighthouseSettings` (optional)
+
+Options to be passed into Lighthouse. See [Lighthouse's .d.ts](https://github.com/GoogleChrome/lighthouse/blob/v11.0.0/types/lhr/settings.d.ts#L49-L117) for more details.
+
+#### `config.getURLs` (required) (`(emitURL: (url: string) => void): Promise<void>`)
+
+A function that generates the list of URLs to run Lighthouse on. You can use `defaultCrawler` to create this function, or use your own. The function will be passed a callback, `emitURL`, which should be called for each URL to enqueue.
+
+You can supply your own URL-generating function for `getURLs` or you can use the built-in `defaultCrawler` (see below).
+
+#### `config.lighthouseConcurrency` (optional) (`number`)
+
+Control the maximum number of Lighthouse reports running concurrently (defaults to `os.cpus().length - 1`). Must be a positive whole number.
+
+### `defaultCrawler`
+
+This is the built-in crawler that generates the list of URLs to run Lighthouse on. (you can pass the value returned by this function to `getURLs`). `defaultCrawler` can be passed the following options:
+
+#### `crawlOptions.initialURL` (required) (`string`)
+
+The starting URL which will be crawled first.
+
+#### `crawlOptions.ignoreRobotsTxt` (optional) (`boolean`)
+
+Whether to crawl pages even if they are listed in the site's `robots.txt`.
+
+#### `crawlOptions.crawlerUserAgent` (optional) (`string`)
+
+Pass a user agent string to be used by the crawler (not by Lighthouse).
+
+#### `crawlOptions.includePathGlob` (optional) (`string[]`)
+
+Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed.
+
+### `crawlOptions.excludePathGlob` (optional) (`string[]`)
+
+Any path that matches these globs will not be crawled.
 
 ## Mac M1 Note
 
