@@ -171,7 +171,7 @@ Pass a user agent string to be used by the crawler (not by Lighthouse).
 
 Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed.
 
-### `crawlOptions.excludePathGlob` (optional) (`string[]`)
+#### `crawlOptions.excludePathGlob` (optional) (`string[]`)
 
 Any path that matches these globs will not be crawled.
 
