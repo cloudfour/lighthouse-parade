@@ -179,7 +179,7 @@ Any path that matches these globs will not be crawled.
 
 Users running virtualized x64 versions of Node on Macs with M1 chips may see anomalous results. For best results on an M1 chip, ensure you are running the native arm version of Node 16+.
 
-When you run the command `node -p process.arch` you should see `arm64`. If you see `x86`, try uninstalling and reinstalling Node. [[More details here]](https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c).
+When you run the command `node -p process.arch` you should see `arm64`. If you see `x86`, try uninstalling and reinstalling Node. [More details here](https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c).
 
 ## Shout-outs
 
