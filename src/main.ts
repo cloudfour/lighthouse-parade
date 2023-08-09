@@ -87,15 +87,13 @@ export const main = async (
           state.set(url, { state: State.Pending });
           const lighthouseRunner = await lighthouseRunners.getNextAvailable();
           state.set(url, { state: State.InProgress });
-          await lighthouseRunner
-            .run(url)
-            .then(async (lighthouseReport) => {
-              await outputWriter.addEntry(lighthouseReport);
-              state.set(url, { state: State.Success });
-            })
-            .catch((error) => {
-              state.set(url, { state: State.Failure, error });
-            });
+          try {
+            const lighthouseReport = await lighthouseRunner.run(url);
+            await outputWriter.addEntry(lighthouseReport);
+            state.set(url, { state: State.Success });
+          } catch (error) {
+            state.set(url, { state: State.Failure, error: error as Error });
+          }
         })()
       );
     };
