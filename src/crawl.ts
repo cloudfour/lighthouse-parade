@@ -7,31 +7,46 @@ import type { QueueItem } from 'simplecrawler/queue.js';
 import * as z from 'zod';
 
 import { console } from './cli.js';
-import { parseConfig } from './config.js';
+import { type AssertEqual, parseConfig } from './config.js';
 import { createUrlFilter } from './create-url-filter.js';
 import type { Crawler } from './main.js';
 
 export const crawlOptionsSchema = z.object({
   initialUrl: z.string().url(),
-  /** Whether to crawl pages even if they are listed in the site's robots.txt */
   ignoreRobotsTxt: z.boolean().default(false),
   crawlerUserAgent: z.string().optional(),
-  /** Maximum depth of fetched links */
   maxCrawlDepth: z.number().int().positive().optional(),
-  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
   includePathGlob: z.array(z.string()).default([]),
-  /** Any path that matches these globs will not be crawled. */
   excludePathGlob: z.array(z.string()).default([]),
 });
 
-export type CrawlOptions = z.output<typeof crawlOptionsSchema>;
+interface CrawlOptions {
+  /** The starting URL which will be crawled first  */
+  initialUrl: string;
+  /** Whether to crawl pages even if they are listed in the site's robots.txt */
+  ignoreRobotsTxt?: boolean;
+  /** Pass a user agent string to be used by the crawler (not by Lighthouse) */
+  crawlerUserAgent?: string;
+  /** Maximum depth of fetched links */
+  maxCrawlDepth?: number;
+  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
+  includePathGlob?: string[];
+  /** Any path that matches these globs will not be crawled. */
+  excludePathGlob?: string[];
+}
 
-export const defaultCrawler = (
-  opts: z.input<typeof crawlOptionsSchema>
-): Crawler => crawl(parseConfig(crawlOptionsSchema, opts, 'crawlerOptions'));
+// Forces us to keep the manually-written type above in sync with the generated type from zod
+// The manually-written type is there for the sake of preserving doc comments in the generated .d.ts
+export type Check1 = AssertEqual<
+  CrawlOptions,
+  z.input<typeof crawlOptionsSchema>
+>;
+
+export const defaultCrawler = (opts: CrawlOptions): Crawler =>
+  crawl(parseConfig(crawlOptionsSchema, opts, 'crawlerOptions'));
 
 export const crawl =
-  (opts: CrawlOptions): Crawler =>
+  (opts: z.output<typeof crawlOptionsSchema>): Crawler =>
   (emitURL) =>
     new Promise((resolve, _reject) => {
       const { initialUrl } = opts;

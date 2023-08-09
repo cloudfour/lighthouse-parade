@@ -35,7 +35,11 @@ lighthouse-parade <url> [options]
 
 In the above commands, replace `<url>` with your starting URL to visit, and replace `[options]` with any additional options as needed. Lighthouse Parade will fetch the starting URL, and crawl your site for additional pages to visit. As it does, it will generate Lighthouse reports for the pages it finds.
 
-### Options
+### CLI Options
+
+#### `-c`, `--config`
+
+The config file to read options from. If this is passed, no other CLI flags may be passed. The config file is described below.
 
 #### `-o`, `--output`
 
@@ -89,11 +93,88 @@ Displays all of these options
 lighthouse-parade https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv
 ```
 
+### Config File
+
+A config file can be specified via `-c` or `--config`. It must be a JS file that provides a default export that is the configuration object.
+
+Example `config.mjs`:
+
+```js
+// @ts-check
+
+import { defaultCrawler, defineConfig } from 'lighthouse-parade';
+
+export default defineConfig({
+  outputs: [{ type: 'csv', name: 'cloudfour.csv' }],
+  getURLs: defaultCrawler({
+    initialUrl: 'https://cloudfour.com',
+  }),
+  lighthouseConcurrency: 2,
+});
+```
+
+The `defineConfig` function is an optional pass-through function that only exists to provide editor types and autocompletion for the configuration object.
+
+Here is the expected type of the configuration object:
+
+```ts
+interface ConfigOptions {
+  outputs: (
+    | {
+        type: 'google-sheets';
+        /** The document title of the created Google Spreadsheet */
+        name: string;
+      }
+    | {
+        type: 'csv';
+        /** The filename of the CSV file */
+        name: string;
+      }
+  )[];
+  /**
+   * Options to be passed into Lighthouse.
+   * See [Lighthouse's .d.ts](https://github.com/GoogleChrome/lighthouse/blob/v11.0.0/types/lhr/settings.d.ts#L49-L117) for more details.
+   */
+  lighthouseSettings: LighthouseSettings;
+  /**
+   * A function that generates the list of URLs to run lighthouse on.
+   * You can use `defaultCrawler` to create this function, or use your own.
+   * The function will be passed a callback, emitURL,
+   * which should be called for each URL to enqueue
+   */
+  getURLs: (emitURL: (url: string) => void) => Promise<void>;
+  /**
+   * Control the maximum number of Lighthouse reports running concurrently
+   * (defaults to `os.cpus().length - 1`)
+   */
+  lighthouseConcurrency?: number;
+}
+```
+
+You can supply your own URL-generating function for `getURLs` or you can use the built-in `defaultCrawler`. `defaultCrawler` has the following options:
+
+```ts
+interface CrawlOptions {
+  /** The starting URL which will be crawled first  */
+  initialUrl: string;
+  /** Whether to crawl pages even if they are listed in the site's robots.txt */
+  ignoreRobotsTxt?: boolean;
+  /** Pass a user agent string to be used by the crawler (not by Lighthouse) */
+  crawlerUserAgent?: string;
+  /** Maximum depth of fetched links */
+  maxCrawlDepth?: number;
+  /** Any path that doesn't match these globs will not be crawled. If the array is empty, all paths are allowed. */
+  includePathGlob?: string[];
+  /** Any path that matches these globs will not be crawled. */
+  excludePathGlob?: string[];
+}
+```
+
 ## Mac M1 Note
 
 Users running virtualized x64 versions of Node on Macs with M1 chips may see anomalous results. For best results on an M1 chip, ensure you are running the native arm version of Node 16+.
 
-When you run the command `node -p process.arch` you should see `arm64`. If you see `x86`, try uninstalling and reinstalling Node. [More details here](https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c).
+When you run the command `node -p process.arch` you should see `arm64`. If you see `x86`, try uninstalling and reinstalling Node. [[More details here]](https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c).
 
 ## Shout-outs
 

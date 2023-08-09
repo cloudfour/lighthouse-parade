@@ -181,7 +181,7 @@ const allowMultiple = <Schema extends z.Schema>(valueType: Schema) =>
 
 const configFileFlag = addOption(
   ['--config', '-c'],
-  'The config file to read options from. If this is passes, no other CLI flags may be passed.',
+  'The config file to read options from. If this is passed, no other CLI flags may be passed.',
   z.string().optional()
 );
 

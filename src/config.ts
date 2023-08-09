@@ -9,7 +9,43 @@ import type { LighthouseSettings } from './lighthouse.js';
 import type { Crawler } from './main.js';
 import { OutputType } from './output-writer/index.js';
 
-export type ConfigOptions = z.input<typeof configSchema>;
+export interface ConfigOptions {
+  outputs: (
+    | {
+        type: 'google-sheets';
+        /** The document title of the created Google Spreadsheet */
+        name: string;
+      }
+    | {
+        type: 'csv';
+        /** The filename of the CSV file */
+        name: string;
+      }
+  )[];
+  /**
+   * Options to be passed into Lighthouse.
+   * See [Lighthouse's .d.ts](https://github.com/GoogleChrome/lighthouse/blob/v11.0.0/types/lhr/settings.d.ts#L49-L117) for more details.
+   */
+  lighthouseSettings: LighthouseSettings;
+  /**
+   * A function that generates the list of URLs to run lighthouse on.
+   * You can use `defaultCrawler` to create this function, or use your own.
+   * The function will be passed a callback, emitURL,
+   * which should be called for each URL to enqueue
+   */
+  getURLs: Crawler;
+  /**
+   * Control the maximum number of Lighthouse reports running concurrently
+   * (defaults to `os.cpus().length - 1`)
+   */
+  lighthouseConcurrency?: number;
+}
+
+/** Checks that two types are exactly equal. Do not pass a third type parameter. */
+export type AssertEqual<A extends B, B extends C, C = A> = never;
+// Forces us to keep the manually-written type above in sync with the generated type from zod
+// The manually-written type is there for the sake of preserving doc comments in the generated .d.ts
+export type Check1 = AssertEqual<ConfigOptions, z.input<typeof configSchema>>;
 
 const googleSheetsOutputSchema = z.object({
   type: z.literal(OutputType.GoogleSheets),
@@ -244,10 +280,9 @@ const formatZodError = (
     .map((issue) => ({ ...issue, originalPath: issue.path }));
 
   const allIssues = issues
-    .map((issue, i) => {
-      const num = issues.length > 1 ? `#${i + 1}: ` : '';
+    .map((issue) => {
       const issuePath = kleur.cyan(formatIssuePath(rootName, issue.path));
-      return `${num}${issuePath}: ${issue.message}`;
+      return `${issuePath}: ${issue.message}`;
     })
     .join('\n');
   const msg = `Parsing ${rootName} failed: Received the following:
