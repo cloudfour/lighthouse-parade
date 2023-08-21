@@ -59,7 +59,7 @@
 * [`035f73f`](https://github.com/cloudfour/lighthouse-parade/commit/035f73f56cb331870b99d20821a0eacd6fa254c4) [#45](https://github.com/cloudfour/lighthouse-parade/pull/45) Thanks [@calebeby](https://github.com/calebeby)! - Reoorganize code to make testing easier
 
   - Reduce CLI output
-  - Run lighthouse on URLs even if there are already reports saved for those URLs
+  - Run Lighthouse on URLs even if there are already reports saved for those URLs
 
 - [`7b46d70`](https://github.com/cloudfour/lighthouse-parade/commit/7b46d70d7d02e37dec14e0744cef1659d0943a4b) [#48](https://github.com/cloudfour/lighthouse-parade/pull/48) Thanks [@calebeby](https://github.com/calebeby)! - Change default data directory to `lighthouse-parade-data`
 

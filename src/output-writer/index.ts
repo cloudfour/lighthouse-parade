@@ -7,6 +7,23 @@ import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWri
 
 export { createCSVOutputWriter } from './csv-writer.js';
 
+export const OutputType = {
+  CSV: 'csv',
+  GoogleSheets: 'google-sheets',
+} as const;
+
+type GoogleSheetsOutput = {
+  type: typeof OutputType.GoogleSheets;
+  title: string;
+};
+
+type CSVOutput = {
+  type: typeof OutputType.CSV;
+  filename: string;
+};
+
+export type Output = GoogleSheetsOutput | CSVOutput;
+
 // Lazy-loaded
 export const createGoogleSheetsOutputWriter: typeof innerCreateGoogleSheetsOutputWriter =
   async (...args) => {
@@ -58,7 +75,7 @@ export interface OutputWriter {
 }
 
 /**
- * Wraps an OutputWriter to allow being passed LHR (lighthouse reports)
+ * Wraps an OutputWriter to allow being passed LHR (Lighthouse reports)
  * and adapts it into a row/column format that is shared
  * between the different output writers.
  * Also, it handles calling writeHeader and writeRunInfo automatically after the first addEntry call.

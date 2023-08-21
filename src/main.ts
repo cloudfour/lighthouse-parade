@@ -1,11 +1,7 @@
-import * as path from 'node:path';
-
-import type { ModifiedConsole } from './cli.js';
-import type { CrawlOptions } from './crawl.js';
-import { crawl } from './crawl.js';
-import type { LighthouseRunOpts } from './lighthouse.js';
-import { initWorkerThreads } from './lighthouse.js';
+import { type LighthouseSettings, initWorkerThreads } from './lighthouse.js';
 import {
+  type Output,
+  OutputType,
   adaptLHRToOutputWriter,
   combineOutputWriters,
   createCSVOutputWriter,
@@ -17,28 +13,16 @@ import {
  * and returns a single merged output writer that updates each of them individually.
  */
 const getOutputWriter = async (
-  outputs: string[],
-  initialUrl: string,
+  outputs: Output[],
   command: string,
   lighthouseParadeVersion: string
 ) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
-      if (output === 'google-sheets') {
-        return createGoogleSheetsOutputWriter(initialUrl);
+      if (output.type === OutputType.GoogleSheets) {
+        return createGoogleSheetsOutputWriter(output.title);
       }
-      const googleSheetsPrefix = 'google-sheets:';
-      if (output.startsWith(googleSheetsPrefix)) {
-        return createGoogleSheetsOutputWriter(
-          initialUrl,
-          output.slice(googleSheetsPrefix.length)
-        );
-      }
-      const ext = path.extname(output);
-      if (ext === '.csv') return createCSVOutputWriter(output);
-      throw new Error(
-        `Invalid output format: ${ext} (${output}). Expected <filename>.csv, or google-sheets, or google-sheets:"<title>"`
-      );
+      return createCSVOutputWriter(output.filename);
     })
   );
 
@@ -66,23 +50,25 @@ interface RunStatus {
   start: () => Promise<void>;
 }
 
-export interface RunOptions extends CrawlOptions {
-  outputs: string[];
+export interface Crawler {
+  (emitURL: (url: string) => void): Promise<void>;
+}
+
+export interface RunOptions {
+  outputs: Output[];
   lighthouseConcurrency: number;
-  lighthouseRunOpts: LighthouseRunOpts;
+  lighthouseSettings: LighthouseSettings;
+  getURLs: Crawler;
 }
 
 export const main = async (
-  initialUrl: string,
   opts: RunOptions,
-  console: ModifiedConsole,
   command: string,
   lighthouseParadeVersion: string
 ): Promise<RunStatus> => {
   const state = new Map<string, URLState>();
   const outputWriter = await getOutputWriter(
     opts.outputs,
-    initialUrl,
     command,
     lighthouseParadeVersion
   );
@@ -90,25 +76,28 @@ export const main = async (
     const lighthouseRunners = initWorkerThreads(opts);
 
     const lighthousePromises: Promise<void>[] = [];
-    const crawlIterator = crawl(initialUrl, opts, console);
-    crawlIterator.onItemAdded((url) => {
-      state.set(url, { state: State.Pending });
-    });
-    for await (const url of crawlIterator) {
-      const lighthouseRunner = await lighthouseRunners.getNextAvailable();
-      state.set(url, { state: State.InProgress });
-      lighthousePromises.push(
-        lighthouseRunner
-          .run(url)
-          .then(async (lighthouseReport) => {
+    const emitURL = (url: unknown) => {
+      if (typeof url !== 'string') {
+        throw new TypeError(
+          `emitURL (the callback passed to getURLs) must be passed a URL as a string. Received ${typeof url} (${url})`
+        );
+      }
+      return lighthousePromises.push(
+        (async () => {
+          state.set(url, { state: State.Pending });
+          const lighthouseRunner = await lighthouseRunners.getNextAvailable();
+          state.set(url, { state: State.InProgress });
+          try {
+            const lighthouseReport = await lighthouseRunner.run(url);
             await outputWriter.addEntry(lighthouseReport);
             state.set(url, { state: State.Success });
-          })
-          .catch((error) => {
-            state.set(url, { state: State.Failure, error });
-          })
+          } catch (error) {
+            state.set(url, { state: State.Failure, error: error as Error });
+          }
+        })()
       );
-    }
+    };
+    await opts.getURLs(emitURL);
 
     await Promise.all(lighthousePromises);
 

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "target": "es2020",
-    "module": "node16",
-    "moduleResolution": "node16",
+    "target": "es2021",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "outDir": "dist",
     "strict": true,
@@ -12,7 +12,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
-    "types": ["vitest/importMeta"]
+    "types": ["vitest/importMeta"],
+    "checkJs": true,
+    "rootDir": "."
   },
   "include": ["**/*.ts"]
 }
