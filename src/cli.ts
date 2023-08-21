@@ -217,7 +217,7 @@ const outputsFlag = addOption(
         ctx.addIssue({
           code: 'custom',
           path: [i],
-          message: `Invalid output value: ${output}. Expected <name>.csv, or google-sheets, or google-sheets:"<title>"`,
+          message: `Invalid output value: ${output}. Expected <filename>.csv, or google-sheets, or google-sheets:"<title>"`,
         });
         return z.NEVER;
       });
