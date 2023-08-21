@@ -66,7 +66,7 @@ const cli = sade('lighthouse-parade [url]', true)
     'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv'
   )
   .describe(
-    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found.'
+    'Crawls the site at the provided URL, recording the Lighthouse scores for each URL found.'
   );
 
 const allFlags: string[] = [];
