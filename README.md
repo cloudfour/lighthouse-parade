@@ -145,7 +145,7 @@ Options to be passed into Lighthouse. See [Lighthouse's .d.ts](https://github.co
 
 A function that generates the list of URLs to run Lighthouse on. You can use `defaultCrawler` to create this function, or use your own. The function will be passed a callback, `emitURL`, which should be called for each URL to enqueue.
 
-You can supply your own URL-generating function for `getURLs` or you can use the built-in `defaultCrawler` (see below).
+You can supply your own URL-generating function for `getURLs` or you can use the built-in `defaultCrawler` ([see below](#defaultcrawler)).
 
 #### `config.lighthouseConcurrency` (optional) (`number`)
 
