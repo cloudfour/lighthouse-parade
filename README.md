@@ -61,7 +61,7 @@ Control the maximum number of Lighthouse reports running concurrently (defaults 
 
 #### `--lighthouse-category`
 
-Only run the specified lighthouse category. Available categories: `accessibility`, `best-practices,` `performance,` `pwa`, `seo`. Multiple categories can be enabled by passing the flag multiple times, e.g. `--lighthouse-category accessibility --lighthouse-category seo`. If not specified, all categories will be used.
+Only run the specified Lighthouse category. Available categories: `accessibility`, `best-practices`, `performance`, `pwa`, `seo`. Multiple categories can be enabled by passing the flag multiple times, e.g. `--lighthouse-category accessibility --lighthouse-category seo`. If not specified, all categories will be used.
 
 #### `--max-crawl-depth`
 
