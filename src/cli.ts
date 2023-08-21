@@ -12,7 +12,7 @@ import { configSchema, parseConfig } from './config.js';
 import { crawl, crawlOptionsSchema } from './crawl.js';
 import type { RunOptions, URLState, URLStates } from './main.js';
 import { State, main } from './main.js';
-import { OutputType, type Output } from './output-writer/index.js';
+import { type Output, OutputType } from './output-writer/index.js';
 
 const require = createRequire(import.meta.url);
 
