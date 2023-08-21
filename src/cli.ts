@@ -235,7 +235,7 @@ const lighthouseConcurrencyFlag = addOption(
 );
 const lighthouseOnlyCategoriesFlag = addOption(
   ['--lighthouse-category'],
-  `Only run the specified lighthouse category. Available categories: ${allLighthouseCategories.join(
+  `Only run the specified Lighthouse category. Available categories: ${allLighthouseCategories.join(
     ', '
   )}. Multiple can be specified by passing the flag multiple times, e.g. --lighthouse-category accessibility --lighthouse-category seo. If not specified, all categories will be used.`,
   allowMultiple(z.enum(allLighthouseCategories)).optional()
