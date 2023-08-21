@@ -12,7 +12,7 @@ import { configSchema, parseConfig } from './config.js';
 import { crawl, crawlOptionsSchema } from './crawl.js';
 import type { RunOptions, URLState, URLStates } from './main.js';
 import { State, main } from './main.js';
-import { OutputType } from './output-writer/index.js';
+import { OutputType, type Output } from './output-writer/index.js';
 
 const require = createRequire(import.meta.url);
 
@@ -194,25 +194,25 @@ const outputsFlag = addOption(
       if (outputs.length === 0) {
         outputs.push(`lighthouse-{sitename}-{timestamp}.csv`);
       }
-      return outputs.map((output, i) => {
+      return outputs.map((output, i): Output => {
         if (output === 'google-sheets') {
           return {
             type: OutputType.GoogleSheets,
-            name: `Lighthouse {hostname} {timestamp}`,
+            title: `Lighthouse {hostname} {timestamp}`,
           };
         }
         const googleSheetsPrefix = 'google-sheets:';
         if (output.startsWith(googleSheetsPrefix)) {
           return {
             type: OutputType.GoogleSheets,
-            name: output.slice(googleSheetsPrefix.length),
+            title: output.slice(googleSheetsPrefix.length),
           };
         }
         const ext = path.extname(output);
         if (ext === '.csv')
           return {
             type: OutputType.CSV,
-            name: output,
+            filename: output,
           };
         ctx.addIssue({
           code: 'custom',
@@ -329,17 +329,25 @@ cli
       }
 
       const hostname = new URL(url).hostname;
+      // For file names, we need to take out non-ASCII characters
       const hostnameReduced = hostname.replace(/[^\da-z]+/gi, '-');
       const timestamp = tinydate('{YYYY}-{MM}-{DD} {HH}:{mm}')(new Date());
-      const outputs = outputsFlag(rawFlags).map((output) => ({
-        ...output,
-        name: output.name.replaceAll('{timestamp}', timestamp).replaceAll(
-          '{hostname}',
-          // For file names, we need to take out non-ASCII characters
-          // (we don't need to do this for Google Sheets document titles)
-          output.type === OutputType.CSV ? hostnameReduced : hostname
-        ),
-      }));
+      const outputs = outputsFlag(rawFlags).map(
+        (output): Output =>
+          output.type === OutputType.CSV
+            ? {
+                type: OutputType.CSV,
+                filename: output.filename
+                  .replaceAll('{timestamp}', timestamp)
+                  .replaceAll('{hostname}', hostnameReduced),
+              }
+            : {
+                type: OutputType.GoogleSheets,
+                title: output.title
+                  .replaceAll('{timestamp}', timestamp)
+                  .replaceAll('{hostname}', hostname),
+              }
+      );
 
       const ignoreRobotsTxt = ignoreRobotsTxtFlag(rawFlags);
       const crawlerUserAgent = crawlerUserAgentFlag(rawFlags);

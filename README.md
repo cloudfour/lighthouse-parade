@@ -105,7 +105,7 @@ Example `config.mjs`:
 import { defaultCrawler, defineConfig } from 'lighthouse-parade';
 
 export default defineConfig({
-  outputs: [{ type: 'csv', name: 'cloudfour.csv' }],
+  outputs: [{ type: 'csv', filename: 'cloudfour.csv' }],
   getURLs: defaultCrawler({
     initialUrl: 'https://cloudfour.com',
   }),
@@ -125,7 +125,7 @@ An array of targets where the results will be saved. At least one is required. E
 {
   type: 'google-sheets';
   /** The document title of the created Google Spreadsheet */
-  name: string;
+  title: string;
 }
 ```
 
@@ -133,7 +133,7 @@ An array of targets where the results will be saved. At least one is required. E
 {
   type: 'csv';
   /** The filename of the CSV file */
-  name: string;
+  filename: string;
 }
 ```
 

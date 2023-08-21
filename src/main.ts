@@ -20,9 +20,9 @@ const getOutputWriter = async (
   const outputWriters = await Promise.all(
     outputs.map((output) => {
       if (output.type === OutputType.GoogleSheets) {
-        return createGoogleSheetsOutputWriter(output.name);
+        return createGoogleSheetsOutputWriter(output.title);
       }
-      return createCSVOutputWriter(output.name);
+      return createCSVOutputWriter(output.filename);
     })
   );
 

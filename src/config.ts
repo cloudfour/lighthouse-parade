@@ -15,12 +15,12 @@ export interface ConfigOptions {
     | {
         type: 'google-sheets';
         /** The document title of the created Google Spreadsheet */
-        name: string;
+        title: string;
       }
     | {
         type: 'csv';
         /** The filename of the CSV file */
-        name: string;
+        filename: string;
       }
   )[];
   /**
@@ -50,12 +50,12 @@ export type Check1 = AssertEqual<ConfigOptions, z.input<typeof configSchema>>;
 
 const googleSheetsOutputSchema = z.object({
   type: z.literal(OutputType.GoogleSheets),
-  name: z.string(),
+  title: z.string(),
 });
 
 const csvOutputSchema = z.object({
   type: z.literal(OutputType.CSV),
-  name: z.string(),
+  filename: z.string(),
 });
 
 export const configSchema = z.object({
@@ -70,6 +70,8 @@ export const configSchema = z.object({
     .int()
     .default(os.cpus().length - 1),
   lighthouseSettings: z.object({}).default({}) as z.ZodType<
+    LighthouseSettings,
+    z.ZodTypeDef,
     LighthouseSettings | undefined
   >,
   getURLs: z.function() as z.ZodType<Crawler>,
@@ -295,11 +297,11 @@ ${allIssues}`;
   return new Error(msg);
 };
 
-export const parseConfig = (
-  schema: z.Schema,
+export const parseConfig = <Schema extends z.Schema>(
+  schema: Schema,
   config: unknown,
   rootName: string
-) => {
+): z.output<Schema> => {
   const result = schema.safeParse(config);
   if (result.success) return result.data;
   throw formatZodError(config, result.error, rootName);

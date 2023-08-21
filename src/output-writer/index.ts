@@ -14,12 +14,12 @@ export const OutputType = {
 
 type GoogleSheetsOutput = {
   type: typeof OutputType.GoogleSheets;
-  name: string;
+  title: string;
 };
 
 type CSVOutput = {
   type: typeof OutputType.CSV;
-  name: string;
+  filename: string;
 };
 
 export type Output = GoogleSheetsOutput | CSVOutput;
