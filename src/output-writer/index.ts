@@ -75,7 +75,7 @@ export interface OutputWriter {
 }
 
 /**
- * Wraps an OutputWriter to allow being passed LHR (lighthouse reports)
+ * Wraps an OutputWriter to allow being passed LHR (Lighthouse reports)
  * and adapts it into a row/column format that is shared
  * between the different output writers.
  * Also, it handles calling writeHeader and writeRunInfo automatically after the first addEntry call.

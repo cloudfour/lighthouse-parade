@@ -12,9 +12,9 @@ There are great tools for doing performance analysis on a single web page. We us
 
 With a single command, the tool will crawl an entire site, run a Lighthouse report for each page, and then output a spreadsheet or CSV file with the aggregated data. [Here is an example of the produced output](https://docs.google.com/spreadsheets/d/1FNc5Rl4Tp2BruTBTRN7bAXToGpo9JgdN0OGvZsQ4igo).
 
-![Screenshot of the produced spreadsheet showing lighthouse data recorded for each visited page](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-1.png)
+![Screenshot of the produced spreadsheet showing Lighthouse data recorded for each visited page](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-1.png)
 
-![Screenshot of the produced spreadsheet showing histograms of lighthouse data](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-2.png)
+![Screenshot of the produced spreadsheet showing histograms of Lighthouse data](https://raw.githubusercontent.com/cloudfour/lighthouse-parade/main/assets/example-sheet-2.png)
 
 ## Installation/Usage
 
