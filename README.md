@@ -39,7 +39,7 @@ In the above commands, replace `<url>` with your starting URL to visit, and repl
 
 #### `-c`, `--config`
 
-The config file to read options from. If this is passed, no other CLI flags may be passed. The config file is described below.
+The config file to read options from. If this is passed, no other CLI flags may be passed. The [config file](#config-file) is described below.
 
 #### `-o`, `--output`
 
