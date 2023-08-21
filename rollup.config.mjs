@@ -86,10 +86,8 @@ export default defineConfig([
       'log-update',
       'simplecrawler',
       'globrex',
-      'emoji-regex',
-      'eastasianwidth',
+      'string-width',
       'sade',
-      'mri',
       'tinydate',
       'google-auth-library',
       /googleapis/,
@@ -104,6 +102,12 @@ export default defineConfig([
         compilerOptions: { noEmit: false },
       }),
     ],
-    output: [{ file: 'dist/import-entry.d.ts', format: 'es' }],
+    output: [
+      {
+        file: 'dist/import-entry.d.ts',
+        format: 'es',
+      },
+    ],
+    external: [/^node:/],
   },
 ]);
