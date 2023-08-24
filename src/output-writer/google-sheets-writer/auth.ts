@@ -25,7 +25,7 @@ export const getAuthenticatedClient = async (): Promise<{
   const oAuth2Client = new OAuth2Client(
     CLIENT_ID,
     CLIENT_SECRET,
-    `http://localhost:${PORT}/oauth2callback` // Redirect URL
+    `http://localhost:${PORT}/oauth2callback`, // Redirect URL
   );
 
   const authorizeUrl = oAuth2Client.generateAuthUrl({
@@ -84,8 +84,8 @@ body {
       .listen(PORT, () => {
         console.log(
           `Waiting for google authentication: ${kleur.blue(
-            kleur.underline(authorizeUrl)
-          )}`
+            kleur.underline(authorizeUrl),
+          )}`,
         );
         open(authorizeUrl, { wait: false }).then((cp) => cp.unref());
       });

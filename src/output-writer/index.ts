@@ -1,7 +1,6 @@
 import type { Result } from 'lighthouse';
 
-import type { RunInfo } from '../run-info.js';
-import { getRunInfo } from '../run-info.js';
+import { type RunInfo, getRunInfo } from '../run-info.js';
 
 import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer/index.js';
 
@@ -83,7 +82,7 @@ export interface OutputWriter {
 export const adaptLHRToOutputWriter = (
   outputWriter: OutputWriter,
   command: string,
-  lighthouseParadeVersion: string
+  lighthouseParadeVersion: string,
 ) => {
   // Used to make sure that the addEntry calls happen one at a time
   // (specifically important to make sure the header finishes getting written
@@ -160,7 +159,7 @@ export const adaptLHRToOutputWriter = (
               getRunInfo(
                 command,
                 lighthouseParadeVersion,
-                report.lighthouseVersion
+                report.lighthouseVersion,
               ).then((runInfo) => outputWriter.writeRunInfo?.(runInfo)),
           ]);
         });
@@ -195,7 +194,7 @@ export const adaptLHRToOutputWriter = (
 
 /** Create a single top-level OutputWriter that outputs to multiple OutputWriters */
 export const combineOutputWriters = (
-  outputWriters: OutputWriter[]
+  outputWriters: OutputWriter[],
 ): OutputWriter => {
   // Used to make sure that the output writers are always updated with the same entry at the same time.
   // Otherwise, there might be issues with output writers taking different amounts of time,
@@ -209,27 +208,27 @@ export const combineOutputWriters = (
   return {
     async writeHeader(...args) {
       mutexPromise = mutexPromise.then(() =>
-        Promise.all(outputWriters.map((writer) => writer.writeHeader(...args)))
+        Promise.all(outputWriters.map((writer) => writer.writeHeader(...args))),
       );
       await mutexPromise;
     },
     async writeRunInfo(...args) {
       mutexPromise = mutexPromise.then(() =>
         Promise.all(
-          outputWriters.map((writer) => writer.writeRunInfo?.(...args))
-        )
+          outputWriters.map((writer) => writer.writeRunInfo?.(...args)),
+        ),
       );
       await mutexPromise;
     },
     async addEntry(...args) {
       mutexPromise = mutexPromise.then(() =>
-        Promise.all(outputWriters.map((writer) => writer.addEntry(...args)))
+        Promise.all(outputWriters.map((writer) => writer.addEntry(...args))),
       );
       await mutexPromise;
     },
     async complete() {
       mutexPromise = mutexPromise.then(() =>
-        Promise.all(outputWriters.map((writer) => writer.complete()))
+        Promise.all(outputWriters.map((writer) => writer.complete())),
       );
       await mutexPromise;
     },

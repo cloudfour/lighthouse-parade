@@ -1,14 +1,13 @@
 import type Sheets from '@googleapis/sheets';
 
-import type { Column } from '../index.js';
-import { ColumnType } from '../index.js';
+import { type Column, ColumnType } from '../index.js';
 
 import { sheetNames } from './index.js';
 
 export const getCharts = (
   sheetId: number,
   auditBreakdownSheetId: number,
-  columns: Column[]
+  columns: Column[],
 ) => {
   let chartRow = 0;
 

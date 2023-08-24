@@ -1,4 +1,3 @@
-import type Sheets from '@googleapis/sheets';
 import googleSheets from '@googleapis/sheets';
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
@@ -16,7 +15,7 @@ export const sheetNames = {
 };
 
 export const createGoogleSheetsOutputWriter = async (
-  documentTitle: string
+  documentTitle: string,
 ): Promise<OutputWriter> => {
   // Used to make sure that the addEntry calls happen one at a time
   // so they always write to the file in a deterministic order
@@ -40,7 +39,7 @@ export const createGoogleSheetsOutputWriter = async (
   const spreadsheetUrl: string = spreadsheet.data.spreadsheetUrl;
 
   console.log(
-    `Output spreadsheet: ${kleur.blue(kleur.underline(spreadsheetUrl))}`
+    `Output spreadsheet: ${kleur.blue(kleur.underline(spreadsheetUrl))}`,
   );
   redirect(spreadsheetUrl);
 
@@ -91,7 +90,7 @@ export const createGoogleSheetsOutputWriter = async (
 
   return {
     async writeRunInfo(runInfo) {
-      const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
+      const valuesBatchUpdateRequest: googleSheets.sheets_v4.Schema$BatchUpdateValuesRequest =
         {
           data: [
             {
@@ -134,7 +133,7 @@ export const createGoogleSheetsOutputWriter = async (
         await writeRow(service, spreadsheetId, sheetNames.main, ++rowNum, [
           'URL',
           ...columns.map(
-            (c) => c.name + (c.nameDetail ? `\n(${c.nameDetail})` : '')
+            (c) => c.name + (c.nameDetail ? `\n(${c.nameDetail})` : ''),
           ),
         ]);
 
@@ -176,11 +175,11 @@ export const createGoogleSheetsOutputWriter = async (
 };
 
 const writeRow = async (
-  service: Sheets.sheets_v4.Sheets,
+  service: googleSheets.sheets_v4.Sheets,
   spreadsheetId: string,
   sheetName: string,
   rowNum: number,
-  row: (string | number)[]
+  row: (string | number)[],
 ) => {
   await service.spreadsheets.values.update({
     spreadsheetId,
@@ -193,9 +192,9 @@ const writeRow = async (
 };
 
 const batchUpdate = async (
-  service: Sheets.sheets_v4.Sheets,
+  service: googleSheets.sheets_v4.Sheets,
   spreadsheetId: string,
-  requests: Sheets.sheets_v4.Schema$Request[]
+  requests: googleSheets.sheets_v4.Schema$Request[],
 ) => {
   const r = await service.spreadsheets.batchUpdate({
     spreadsheetId,

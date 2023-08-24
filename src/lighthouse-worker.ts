@@ -1,8 +1,7 @@
 import { parentPort } from 'node:worker_threads';
 
-import chromeLauncher from 'chrome-launcher';
-import type { Flags } from 'lighthouse';
-import lighthouse from 'lighthouse';
+import * as chromeLauncher from 'chrome-launcher';
+import lighthouse, { type Flags } from 'lighthouse';
 
 import type { LighthouseSettings } from './lighthouse.js';
 
@@ -11,7 +10,7 @@ const chromePromise = chromeLauncher.launch({
 });
 const runLighthouse = async (
   url: string,
-  lighthouseRunOpts: LighthouseSettings
+  lighthouseRunOpts: LighthouseSettings,
 ) => {
   const chrome = await chromePromise;
   const options: Flags = {
