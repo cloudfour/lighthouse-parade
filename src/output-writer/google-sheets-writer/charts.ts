@@ -8,7 +8,7 @@ import { sheetNames } from './index.js';
 export const getCharts = (
   sheetId: number,
   auditBreakdownSheetId: number,
-  columns: Column[]
+  columns: Column[],
 ) => {
   let chartRow = 0;
 

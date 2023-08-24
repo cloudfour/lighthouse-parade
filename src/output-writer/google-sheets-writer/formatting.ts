@@ -6,7 +6,7 @@ import { ColumnType } from '../index.js';
 const makeColor = (
   red: number,
   green: number,
-  blue: number
+  blue: number,
 ): Sheets.sheets_v4.Schema$Color => ({
   red: red / 255,
   green: green / 255,
@@ -21,7 +21,7 @@ const colors = {
 
 export const getInitialFormatting = (
   sheetId: number,
-  runInfoSheetId: number
+  runInfoSheetId: number,
 ) => [
   {
     // URL column width in main sheet
@@ -106,11 +106,11 @@ export const getFormattingUpdates = (sheetId: number, columns: Column[]) => {
       const colWidth = Math.min(
         Math.max(
           column.name.length,
-          column.nameDetail ? column.nameDetail.length + 2 : 0
+          column.nameDetail ? column.nameDetail.length + 2 : 0,
         ) *
           6 +
           42,
-        170
+        170,
       );
       const colRange: Sheets.sheets_v4.Schema$GridRange = {
         sheetId,

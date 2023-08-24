@@ -24,7 +24,7 @@ export interface RunInfo {
 export const getRunInfo = async (
   command: string,
   lighthouseParadeVersion: string,
-  lighthouseVersion: string
+  lighthouseVersion: string,
 ): Promise<RunInfo> => {
   const chromePath = getChromePath();
   return {
@@ -33,7 +33,7 @@ export const getRunInfo = async (
     versions: {
       npm: await runWithTimeoutAndGetStdout('npm --version'),
       chrome: await runWithTimeoutAndGetStdout(
-        `${chromePath.replace(/\s/g, '\\$&')} --version`
+        `${chromePath.replace(/\s/g, '\\$&')} --version`,
       ),
       lighthouse: lighthouseVersion,
       lighthouseParade: lighthouseParadeVersion,

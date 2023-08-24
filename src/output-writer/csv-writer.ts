@@ -5,7 +5,7 @@ import type { OutputWriter } from './index.js';
 const makeCSVRow = (cells: string[]) => `${cells.join(',')}\n`;
 
 export const createCSVOutputWriter = async (
-  filePath: string
+  filePath: string,
 ): Promise<OutputWriter> => {
   const outputFile = await fs.open(filePath, 'w');
   // Used to make sure that the addEntry calls happen one at a time
@@ -22,9 +22,9 @@ export const createCSVOutputWriter = async (
             makeCSVRow([
               'URL',
               ...columns.map(
-                (c) => c.name + (c.nameDetail ? ` (${c.nameDetail})` : '')
+                (c) => c.name + (c.nameDetail ? ` (${c.nameDetail})` : ''),
               ),
-            ])
+            ]),
         );
       });
       await mutexPromise;

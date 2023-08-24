@@ -61,7 +61,7 @@ const csvOutputSchema = z.object({
 export const configSchema = z.object({
   outputs: z
     .array(
-      z.discriminatedUnion('type', [googleSheetsOutputSchema, csvOutputSchema])
+      z.discriminatedUnion('type', [googleSheetsOutputSchema, csvOutputSchema]),
     )
     .min(1),
   lighthouseConcurrency: z
@@ -84,7 +84,7 @@ type Issue = z.ZodIssue & {
 const formatIssuePath = (rootName: string, path: (string | number)[]) =>
   `${rootName}${path
     .map((segment) =>
-      typeof segment === 'string' ? `.${segment}` : `[${segment}]`
+      typeof segment === 'string' ? `.${segment}` : `[${segment}]`,
     )
     .join('')}`;
 
@@ -96,7 +96,7 @@ const padEnd = (input: string, length: number, padCharacter: string) =>
 const stringify = (
   value: unknown,
   issues: Issue[],
-  rootName: string
+  rootName: string,
 ): string => {
   if (typeof value === 'number') {
     // Not using JSON.stringify for handling NaN, Infinity, and -Infinity
@@ -138,8 +138,8 @@ const stringify = (
           .map((issue) => issue.path[0])
           .filter(
             (prop) =>
-              !Object.getOwnPropertyNames(value).includes(prop as string)
-          )
+              !Object.getOwnPropertyNames(value).includes(prop as string),
+          ),
       ),
     ];
 
@@ -165,14 +165,14 @@ const stringify = (
             missingSymbol,
             childsIssues,
             rootName,
-            prefix.length
+            prefix.length,
           )},`;
         }
         return `${prefix}${stringifyWithIssues(
           (value as any)[prop],
           childsIssues,
           rootName,
-          prefix.length
+          prefix.length,
         )},`;
       })
       .join('\n');
@@ -196,7 +196,7 @@ const stringifyWithIssues = (
   value: unknown,
   issues: Issue[],
   rootName: string,
-  firstLineOffset = 0
+  firstLineOffset = 0,
 ): string => {
   const selfIssues = issues.filter((issue) => issue.path.length === 0);
   const childIssues = issues.filter((issue) => issue.path.length > 0);
@@ -205,7 +205,7 @@ const stringifyWithIssues = (
   if (selfIssues.length === 0) return stringified;
 
   const printedPath = kleur.gray(
-    `╭─➤ ${formatIssuePath(rootName, selfIssues[0].originalPath)}`
+    `╭─➤ ${formatIssuePath(rootName, selfIssues[0].originalPath)}`,
   );
 
   const stringifiedLines = stringified.split('\n');
@@ -216,19 +216,19 @@ const stringifyWithIssues = (
         /^(\s*)(.*?)(\s*)$/g,
         (_full, leadingWhitespace, middle, trailingWhitespace) =>
           `${leadingWhitespace}${'^'.repeat(
-            stringWidth(middle)
-          )}${trailingWhitespace}`
-      )
+            stringWidth(middle),
+          )}${trailingWhitespace}`,
+      ),
     )}`;
     const subsequentIssueSpacer = ' '.repeat(stringWidth(squiggles) + 1);
     return `${kleur.red(stringified)} ${printedPath}\n${kleur.red(
-      squiggles
+      squiggles,
     )} ${selfIssues
       .map(
         (issue, i) =>
           `${i === 0 ? '' : subsequentIssueSpacer}${kleur.bold(
-            kleur.red(issue.message)
-          )}`
+            kleur.red(issue.message),
+          )}`,
       )
       .join('\n')}`;
   }
@@ -236,8 +236,8 @@ const stringifyWithIssues = (
   const widest =
     Math.max(
       ...stringifiedLines.map((line, i) =>
-        i === 0 ? stringWidth(line) + firstLineOffset : stringWidth(line)
-      )
+        i === 0 ? stringWidth(line) + firstLineOffset : stringWidth(line),
+      ),
     ) + 1;
   const lastLine = selfIssues
     .map(
@@ -246,7 +246,7 @@ const stringifyWithIssues = (
           i === 0
             ? kleur.gray(`└${'─'.repeat(widest - 1)}┴─ `)
             : ' '.repeat(widest + 3)
-        }${kleur.bold(kleur.red(issue.message))}`
+        }${kleur.bold(kleur.red(issue.message))}`,
     )
     .join('\n');
   return [
@@ -254,7 +254,7 @@ const stringifyWithIssues = (
       const paddedLine = padEnd(
         line,
         i === 0 ? widest - firstLineOffset : widest,
-        kleur.gray(i === 0 ? '─' : ' ')
+        kleur.gray(i === 0 ? '─' : ' '),
       );
       const lineEnd = kleur.gray(i === 0 ? '┐' : '│');
       const path = i === stringifiedLines.length - 1 ? `  ${printedPath}` : '';
@@ -267,7 +267,7 @@ const stringifyWithIssues = (
 const formatZodError = (
   inputConfig: unknown,
   error: z.ZodError,
-  rootName: string
+  rootName: string,
 ): Error => {
   const issues = error.issues
     .map((issue) => {
@@ -300,7 +300,7 @@ ${allIssues}`;
 export const parseConfig = <Schema extends z.Schema>(
   schema: Schema,
   config: unknown,
-  rootName: string
+  rootName: string,
 ): z.output<Schema> => {
   const result = schema.safeParse(config);
   if (result.success) return result.data;

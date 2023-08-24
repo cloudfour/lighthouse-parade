@@ -63,10 +63,10 @@ type RawFlags = Record<
 const cli = sade('lighthouse-parade [url]', true)
   .version(version)
   .example(
-    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv'
+    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2 --output cloudfour-a.csv',
   )
   .describe(
-    'Crawls the site at the provided URL, recording the Lighthouse scores for each URL found.'
+    'Crawls the site at the provided URL, recording the Lighthouse scores for each URL found.',
   );
 
 const allFlags: string[] = [];
@@ -78,7 +78,7 @@ const toArray = <T>(value: T) =>
 /** For use in a Zod transform. Passes through undefined values (to support .optional) */
 const stringToNumber = <T>(
   input: T,
-  ctx: z.RefinementCtx
+  ctx: z.RefinementCtx,
 ): T extends undefined ? undefined : number => {
   if (input === undefined) return undefined as any;
   const num = Number(input);
@@ -113,7 +113,7 @@ const nth = (input: number) => {
 const addOption = <Schema extends z.Schema>(
   nameAndAliases: string[],
   description: string,
-  schema: Schema
+  schema: Schema,
 ): ((rawFlags: RawFlags) => z.infer<typeof schema>) => {
   cli.option(nameAndAliases.join(', '), description);
   const mainFlagName = nameAndAliases[0];
@@ -136,7 +136,7 @@ const addOption = <Schema extends z.Schema>(
     const errors = parsed.error.issues.map((issue) => {
       if (issue.code === 'invalid_type' && issue.received === 'array') {
         return kleur.red(
-          'This flag can only be passed once, received multiple'
+          'This flag can only be passed once, received multiple',
         );
       }
       if (issue.code === 'invalid_type' && issue.received === 'undefined') {
@@ -145,7 +145,7 @@ const addOption = <Schema extends z.Schema>(
       if (issue.path.length === 1 && Array.isArray(value) && value.length > 1) {
         const issueIndex = issue.path[0] as number;
         return `${kleur.red(issue.message)} (from ${nth(
-          issueIndex + 1
+          issueIndex + 1,
         )} ${mainFlagName} flag, value: ${printVal(value[issueIndex])})`;
       }
       return kleur.red(issue.message);
@@ -167,7 +167,7 @@ ${
         .join(' ')}\n`
 }
 Help text for ${nameAndAliases.join(' / ')}:
-${indent(description)}`
+${indent(description)}`,
     );
     process.exit(1);
   };
@@ -182,7 +182,7 @@ const allowMultiple = <Schema extends z.Schema>(valueType: Schema) =>
 const configFileFlag = addOption(
   ['--config', '-c'],
   'The config file to read options from. If this is passed, no other CLI flags may be passed.',
-  z.string().optional()
+  z.string().optional(),
 );
 
 const outputsFlag = addOption(
@@ -221,7 +221,7 @@ const outputsFlag = addOption(
         });
         return z.NEVER;
       });
-    })
+    }),
 );
 
 const lighthouseConcurrencyFlag = addOption(
@@ -231,24 +231,24 @@ const lighthouseConcurrencyFlag = addOption(
     .string()
     .optional()
     .transform(stringToNumber)
-    .pipe(configSchema.shape.lighthouseConcurrency)
+    .pipe(configSchema.shape.lighthouseConcurrency),
 );
 const lighthouseOnlyCategoriesFlag = addOption(
   ['--lighthouse-category'],
   `Only run the specified Lighthouse category. Available categories: ${allLighthouseCategories.join(
-    ', '
+    ', ',
   )}. Multiple can be specified by passing the flag multiple times, e.g. --lighthouse-category accessibility --lighthouse-category seo. If not specified, all categories will be used.`,
-  allowMultiple(z.enum(allLighthouseCategories)).optional()
+  allowMultiple(z.enum(allLighthouseCategories)).optional(),
 );
 const ignoreRobotsTxtFlag = addOption(
   ['--ignore-robots-txt'],
   "Crawl pages even if they are listed in the site's robots.txt (boolean)",
-  crawlOptionsSchema.shape.ignoreRobotsTxt
+  crawlOptionsSchema.shape.ignoreRobotsTxt,
 );
 const crawlerUserAgentFlag = addOption(
   ['--crawler-user-agent'],
   'Pass a user agent string to be used by the crawler (not by Lighthouse) (string)',
-  crawlOptionsSchema.shape.crawlerUserAgent
+  crawlOptionsSchema.shape.crawlerUserAgent,
 );
 const maxCrawlDepthFlag = addOption(
   ['--max-crawl-depth'],
@@ -257,21 +257,21 @@ const maxCrawlDepthFlag = addOption(
     .string()
     .optional()
     .transform(stringToNumber)
-    .pipe(crawlOptionsSchema.shape.maxCrawlDepth)
+    .pipe(crawlOptionsSchema.shape.maxCrawlDepth),
 );
 const includePathGlobFlag = addOption(
   ['--include-path-glob'],
   'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   allowMultiple(z.string())
     .optional()
-    .pipe(crawlOptionsSchema.shape.includePathGlob)
+    .pipe(crawlOptionsSchema.shape.includePathGlob),
 );
 const excludePathGlobFlag = addOption(
   ['--exclude-path-glob'],
   'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   allowMultiple(z.string())
     .optional()
-    .pipe(crawlOptionsSchema.shape.excludePathGlob)
+    .pipe(crawlOptionsSchema.shape.excludePathGlob),
 );
 
 cli
@@ -287,7 +287,7 @@ cli
         ...Object.entries(rawFlags)
           .filter(
             ([k, v]) =>
-              k !== '_' && k !== 'c' && k !== 'config' && v !== undefined
+              k !== '_' && k !== 'c' && k !== 'config' && v !== undefined,
           )
           .map(([k, _v]) => k),
       ];
@@ -295,9 +295,9 @@ cli
         console.error(
           kleur.red(
             `Unexpected CLI input: ${extraInput.join(
-              ', '
-            )}. When the --config / -c flag is passed, it must be the only flag/input.`
-          )
+              ', ',
+            )}. When the --config / -c flag is passed, it must be the only flag/input.`,
+          ),
         );
         process.exit(1);
       }
@@ -305,8 +305,8 @@ cli
       if (!('default' in configModule)) {
         console.error(
           kleur.red(
-            `The config file ${configFile} must export the configuration object as the default export.`
-          )
+            `The config file ${configFile} must export the configuration object as the default export.`,
+          ),
         );
         process.exit(1);
       }
@@ -316,9 +316,9 @@ cli
         console.error(
           kleur.red(
             `The input URL must be a full URL (with protocol, etc.). Received ${JSON.stringify(
-              url
-            )}`
-          )
+              url,
+            )}`,
+          ),
         );
         process.exit(1);
       }
@@ -346,7 +346,7 @@ cli
                 title: output.title
                   .replaceAll('{timestamp}', timestamp)
                   .replaceAll('{hostname}', hostname),
-              }
+              },
       );
 
       const ignoreRobotsTxt = ignoreRobotsTxtFlag(rawFlags);
@@ -377,7 +377,7 @@ cli
     }
 
     const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'].map((f) =>
-      kleur.blue(f)
+      kleur.blue(f),
     );
     let i = 0;
 
@@ -427,7 +427,7 @@ cli
 
       const numPendingToDisplay = Math.min(
         Math.max(process.stdout.rows - currentUrls.length - 3, 1),
-        pendingUrls.length
+        pendingUrls.length,
       );
       const numHiddenUrls =
         numPendingToDisplay === pendingUrls.length
@@ -435,12 +435,12 @@ cli
           : kleur.dim(
               `\n...And ${
                 pendingUrls.length - numPendingToDisplay
-              } more pending`
+              } more pending`,
             );
       logUpdate(
         currentUrls.join('') +
           pendingUrls.slice(0, numPendingToDisplay).join('') +
-          numHiddenUrls
+          numHiddenUrls,
       );
     };
 

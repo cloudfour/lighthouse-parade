@@ -17,13 +17,13 @@ export type LighthouseSettings = lh.SharedFlagsSettings;
 
 const createLighthouseRunner = (
   lighthouseRunOpts: LighthouseSettings,
-  queue: Queue
+  queue: Queue,
 ): LighthouseRunner => {
   const worker = new Worker(
     path.join(
       path.dirname(fileURLToPath(import.meta.url)),
-      'lighthouse-worker.js'
-    )
+      'lighthouse-worker.js',
+    ),
   );
   const runner: LighthouseRunner = {
     worker,
@@ -82,7 +82,7 @@ export const initWorkerThreads = (opts: RunOptions) => {
     if (lighthouseRunners.length < opts.lighthouseConcurrency) {
       const lighthouseRunner = createLighthouseRunner(
         opts.lighthouseSettings,
-        queue
+        queue,
       );
       lighthouseRunners.push(lighthouseRunner);
       lighthouseRunner.isFree = false;
@@ -105,7 +105,7 @@ export const initWorkerThreads = (opts: RunOptions) => {
         await new Promise<void>((resolve) => {
           lighthouseRunner.worker.on('exit', () => resolve());
         });
-      })
+      }),
     );
   cleanupFunctions.push(close);
 

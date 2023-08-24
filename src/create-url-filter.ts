@@ -5,7 +5,7 @@ const globToRegex = (glob: string) =>
 
 export const createUrlFilter = (
   includeGlob: string[],
-  excludeGlob: string[]
+  excludeGlob: string[],
 ) => {
   const pathIncludeRegexes = includeGlob.map(globToRegex);
   const pathExcludeRegexes = excludeGlob.map(globToRegex);

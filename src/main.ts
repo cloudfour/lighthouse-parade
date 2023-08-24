@@ -15,7 +15,7 @@ import {
 const getOutputWriter = async (
   outputs: Output[],
   command: string,
-  lighthouseParadeVersion: string
+  lighthouseParadeVersion: string,
 ) => {
   const outputWriters = await Promise.all(
     outputs.map((output) => {
@@ -23,7 +23,7 @@ const getOutputWriter = async (
         return createGoogleSheetsOutputWriter(output.title);
       }
       return createCSVOutputWriter(output.filename);
-    })
+    }),
   );
 
   const outputWriter = combineOutputWriters(outputWriters);
@@ -64,13 +64,13 @@ export interface RunOptions {
 export const main = async (
   opts: RunOptions,
   command: string,
-  lighthouseParadeVersion: string
+  lighthouseParadeVersion: string,
 ): Promise<RunStatus> => {
   const state = new Map<string, URLState>();
   const outputWriter = await getOutputWriter(
     opts.outputs,
     command,
-    lighthouseParadeVersion
+    lighthouseParadeVersion,
   );
   const start = async () => {
     const lighthouseRunners = initWorkerThreads(opts);
@@ -79,7 +79,7 @@ export const main = async (
     const emitURL = (url: unknown) => {
       if (typeof url !== 'string') {
         throw new TypeError(
-          `emitURL (the callback passed to getURLs) must be passed a URL as a string. Received ${typeof url} (${url})`
+          `emitURL (the callback passed to getURLs) must be passed a URL as a string. Received ${typeof url} (${url})`,
         );
       }
       return lighthousePromises.push(
@@ -94,7 +94,7 @@ export const main = async (
           } catch (error) {
             state.set(url, { state: State.Failure, error: error as Error });
           }
-        })()
+        })(),
       );
     };
     await opts.getURLs(emitURL);
