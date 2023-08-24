@@ -1,4 +1,3 @@
-import type Sheets from '@googleapis/sheets';
 import googleSheets from '@googleapis/sheets';
 // eslint-disable-next-line @cloudfour/n/file-extension-in-import
 import * as kleur from 'kleur/colors';
@@ -91,7 +90,7 @@ export const createGoogleSheetsOutputWriter = async (
 
   return {
     async writeRunInfo(runInfo) {
-      const valuesBatchUpdateRequest: Sheets.sheets_v4.Schema$BatchUpdateValuesRequest =
+      const valuesBatchUpdateRequest: googleSheets.sheets_v4.Schema$BatchUpdateValuesRequest =
         {
           data: [
             {
@@ -176,7 +175,7 @@ export const createGoogleSheetsOutputWriter = async (
 };
 
 const writeRow = async (
-  service: Sheets.sheets_v4.Sheets,
+  service: googleSheets.sheets_v4.Sheets,
   spreadsheetId: string,
   sheetName: string,
   rowNum: number,
@@ -193,9 +192,9 @@ const writeRow = async (
 };
 
 const batchUpdate = async (
-  service: Sheets.sheets_v4.Sheets,
+  service: googleSheets.sheets_v4.Sheets,
   spreadsheetId: string,
-  requests: Sheets.sheets_v4.Schema$Request[],
+  requests: googleSheets.sheets_v4.Schema$Request[],
 ) => {
   const r = await service.spreadsheets.batchUpdate({
     spreadsheetId,

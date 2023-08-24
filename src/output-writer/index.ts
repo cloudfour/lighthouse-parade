@@ -1,7 +1,6 @@
 import type { Result } from 'lighthouse';
 
-import type { RunInfo } from '../run-info.js';
-import { getRunInfo } from '../run-info.js';
+import { type RunInfo, getRunInfo } from '../run-info.js';
 
 import type { createGoogleSheetsOutputWriter as innerCreateGoogleSheetsOutputWriter } from './google-sheets-writer/index.js';
 

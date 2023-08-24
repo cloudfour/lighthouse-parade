@@ -1,8 +1,7 @@
 import { parentPort } from 'node:worker_threads';
 
 import * as chromeLauncher from 'chrome-launcher';
-import type { Flags } from 'lighthouse';
-import lighthouse from 'lighthouse';
+import lighthouse, { type Flags } from 'lighthouse';
 
 import type { LighthouseSettings } from './lighthouse.js';
 

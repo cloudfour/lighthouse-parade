@@ -1,7 +1,6 @@
 import type Sheets from '@googleapis/sheets';
 
-import type { Column } from '../index.js';
-import { ColumnType } from '../index.js';
+import { type Column, ColumnType } from '../index.js';
 
 const makeColor = (
   red: number,
