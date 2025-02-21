@@ -20,7 +20,7 @@ It is also easy to graph data in this format. The following example is a histogr
 
 ## Usage
 
-(Check to make sure you are using Node 14+)
+(Check to make sure you are using Node 18+)
 
 ```
 $ npx lighthouse-parade <url> [dataDirectory] [options]

@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -11,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x, 20.x, 22.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,10 +39,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Use Node.js 14
+      - name: Use Node.js 22
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 22
       - name: Cache node modules
         uses: actions/cache@v2
         with:
@@ -55,10 +59,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Use Node.js 14
+      - name: Use Node.js 22
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 22
       - name: Cache node modules
         uses: actions/cache@v2
         with:
