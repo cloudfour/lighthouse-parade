@@ -3,8 +3,8 @@
   "minimumReleaseAge": "3 days",
   "packageRules": [
     {
-      "matchDepTypes": ["engines"],
-      "rangeStrategy": "replace"
+      "packageNames": ["node"],
+      "enabled": false
     }
   ]
 }
