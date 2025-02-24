@@ -49,7 +49,7 @@
     "timekeeper": "^2.2.0",
     "typescript": "~4.7.2",
     "vite": "^2.9.9",
-    "vitest": "^0.13.1"
+    "vitest": "^3.0.7"
   },
   "eslintConfig": {
     "extends": [
