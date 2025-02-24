@@ -1,4 +1,10 @@
 {
   "extends": ["config:recommended", ":automergeMinor", ":pinVersions"],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "packageRules": [
+    {
+      "matchDepTypes": ["engines"],
+      "rangeStrategy": "replace"
+    }
+  ]
 }
