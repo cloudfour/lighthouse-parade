@@ -1,9 +1,10 @@
-import { describe, test, it, expect } from 'vitest';
 import tk from 'timekeeper';
+import { describe, expect, it, test } from 'vitest';
+
 import {
   isContentTypeHtml,
-  usefulDirName,
   makeFileNameFromUrl,
+  usefulDirName,
 } from '../src/utilities.js';
 
 describe('isContentTypeHtml', () => {
@@ -22,7 +23,7 @@ describe('isContentTypeHtml', () => {
 
 describe('usefulDirName', () => {
   it('returns what we expect', () => {
-    const time = new Date(1893448800000); // Mon Dec 31 2029 22:00:00 UTC
+    const time = new Date(1_893_448_800_000); // Mon Dec 31 2029 22:00:00 UTC
     tk.freeze(time);
     expect(usefulDirName()).toBe('2029-12-31T22_00_00');
     tk.reset();
@@ -31,9 +32,9 @@ describe('usefulDirName', () => {
 
 test('makeFileNameFromUrl works as expected', () => {
   expect(makeFileNameFromUrl('http://example.com/foo', 'csv')).toBe(
-    'http--example_com-foo.csv'
+    'http--example_com-foo.csv',
   );
   expect(makeFileNameFromUrl('http://example.com/bar/', 'html')).toBe(
-    'http--example_com-bar-.html'
+    'http--example_com-bar-.html',
   );
 });

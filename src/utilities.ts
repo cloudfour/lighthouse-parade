@@ -1,8 +1,7 @@
 import sanitize from 'sanitize-filename';
 
-export const isContentTypeHtml = (contentType?: string) => {
-  return contentType?.toLowerCase().includes('html');
-};
+export const isContentTypeHtml = (contentType?: string) =>
+  contentType?.toLowerCase().includes('html');
 
 export const usefulDirName = () => {
   const date = new Date();

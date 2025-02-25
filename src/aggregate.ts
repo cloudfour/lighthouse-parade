@@ -1,7 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { reportToRow, reportToRowHeaders } from './report-to-row.js';
+import fs from 'node:fs';
+import path from 'node:path';
+
 import csvStringify from 'csv-stringify/lib/sync.js';
+
+import { reportToRow, reportToRowHeaders } from './report-to-row.js';
 
 const { readdir, writeFile } = fs.promises;
 
@@ -18,7 +20,7 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
       const filePath = path.join(reportsDirPath, fileName);
       const fileContents = fs.readFileSync(filePath, 'utf8');
       // If headers aren't set yet, do it now
-      if (!headers) headers = reportToRowHeaders(fileContents);
+      headers ||= reportToRowHeaders(fileContents);
       const newRow = reportToRow(fileContents);
       if (newRow) {
         rows.push(newRow);

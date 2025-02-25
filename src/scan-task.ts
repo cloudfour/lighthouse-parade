@@ -1,8 +1,10 @@
-import fs from 'fs';
-import { runLighthouseReport } from './lighthouse.js';
+/* eslint-disable import/no-duplicates */
+import fs from 'node:fs';
+
 import type { CrawlOptions } from './crawl.js';
 import { crawl as defaultCrawler } from './crawl.js';
 import { createEmitter } from './emitter.js';
+import { runLighthouseReport } from './lighthouse.js';
 
 interface ScanOptions extends CrawlOptions {
   /** Where to store the newly-generated reports */
@@ -27,7 +29,7 @@ type ScanEvents = {
     url: string,
     contentType: string,
     bytes: number,
-    statusCode: number
+    statusCode: number,
   ) => void;
 };
 
@@ -39,7 +41,7 @@ export const scan = (
     dataDirectory,
     lighthouseConcurrency,
     ...opts
-  }: ScanOptions
+  }: ScanOptions,
 ) => {
   const { promise, on, emit } = createEmitter<ScanEvents>();
   fs.mkdirSync(dataDirectory, { recursive: true });
@@ -68,7 +70,7 @@ export const scan = (
             // Resolves instead of rejects because we want to continue with the other lighthouses even if one fails
             resolve();
           });
-      })
+      }),
     );
   });
 
@@ -84,7 +86,7 @@ export const scan = (
           'warning',
           `No pages were found for this site. The two most likely reasons for this are:
 1) the URL is incorrect
-2) the crawler is being denied by a robots.txt file`
+2) the crawler is being denied by a robots.txt file`,
         );
         return;
       }

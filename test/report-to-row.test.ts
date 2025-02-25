@@ -1,10 +1,12 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+import { describe, expect, it } from 'vitest';
+
 import { reportToRow, reportToRowHeaders } from '../src/report-to-row.js';
-import { describe, it, expect } from 'vitest';
 
 const testCsvPath = path.join(__dirname, 'support', 'lombard.csv');
-const fileContents = fs.readFileSync(testCsvPath, { encoding: 'utf-8' });
+const fileContents = fs.readFileSync(testCsvPath, { encoding: 'utf8' });
 
 describe('reportToRow', () => {
   it('converts rows to columns', () => {
@@ -31,7 +33,7 @@ describe('reportToRowHeaders', () => {
     expect(headers[0]).toBe('Requested URL');
     expect(headers[1]).toBe('Final URL');
     expect(headers[2]).toBe(
-      'Performance: Overall Performance Category Score (numeric)'
+      'Performance: Overall Performance Category Score (numeric)',
     );
     expect(headers[3]).toBe('Performance: First Contentful Paint (numeric)');
     expect(headers).toHaveLength(59); // @TODO This will break

@@ -1,6 +1,7 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
+
 import { createEmitter } from './emitter.js';
-import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
@@ -58,7 +59,7 @@ export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
       } else {
         emit(
           'error',
-          new Error(stderr.trim() || `Lighthouse report failed for: ${url}`)
+          new Error(stderr.trim() || `Lighthouse report failed for: ${url}`),
         );
       }
 
