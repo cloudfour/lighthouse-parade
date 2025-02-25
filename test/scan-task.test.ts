@@ -1,8 +1,9 @@
-import { test, expect, vi } from 'vitest';
-import { scan } from '../src/scan-task.js';
+import { expect, test, vi } from 'vitest';
+
 import { createFakeCrawler } from '../src/crawl.mock.js';
-import type { LighthouseEvents } from '../src/lighthouse.js';
 import { createEmitter } from '../src/emitter.js';
+import type { LighthouseEvents } from '../src/lighthouse.js';
+import { scan } from '../src/scan-task.js';
 
 const nextTick = () => new Promise((resolve) => process.nextTick(resolve));
 
@@ -47,7 +48,7 @@ test('Displays useful error if no pages are found while crawling', async () => {
   expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/complete/i));
   expect(onWarning).toHaveBeenCalledTimes(1);
   expect(onWarning).toHaveBeenCalledWith(
-    expect.stringMatching(/no pages were found/i)
+    expect.stringMatching(/no pages were found/i),
   );
 
   expect(onUrlFound).toHaveBeenCalledTimes(0);
@@ -112,7 +113,7 @@ test('Fires correct lighthouse events as pages are found', async () => {
     'https://google.com/hello',
     'text/html',
     1000,
-    200
+    200,
   );
 
   // Fire the "report begin" event

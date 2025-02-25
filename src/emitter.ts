@@ -7,7 +7,9 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
   let savedReject: (value: unknown) => void;
 
   const emit: Emit = (eventName: string, ...args: unknown[]) => {
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     if (eventName === 'resolve') return savedResolve(...(args as [Resolve]));
+    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     if (eventName === 'reject') return savedReject(...(args as [unknown]));
     // Event handlers are executed in a microtask
     // so that if events are fired right before event listeners are added,

@@ -1,9 +1,11 @@
+import type { IncomingMessage } from 'node:http';
+
+import globrex from 'globrex';
 import Crawler from 'simplecrawler';
 import type { QueueItem } from 'simplecrawler/queue.js';
-import type { IncomingMessage } from 'http';
+
 import { createEmitter } from './emitter.js';
 import { isContentTypeHtml } from './utilities.js';
-import globrex from 'globrex';
 
 export interface CrawlOptions {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
@@ -22,7 +24,7 @@ export type CrawlerEvents = {
     url: string,
     contentType: string,
     bytes: number,
-    statusCode: number
+    statusCode: number,
   ) => void;
   warning: (message: string | Error) => void;
 };
@@ -42,14 +44,14 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
       opts.includePathGlob.length > 0
         ? [...opts.includePathGlob, initialPath]
         : [],
-      opts.excludePathGlob
-    )
+      opts.excludePathGlob,
+    ),
   );
 
   const emitWarning = (queueItem: QueueItem, response: IncomingMessage) => {
     emit(
       'warning',
-      `Error fetching (${response.statusCode}): ${queueItem.url}`
+      `Error fetching (${response.statusCode}): ${queueItem.url}`,
     );
   };
 
@@ -75,13 +77,13 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
 
 export const createUrlFilter = (
   includeGlob: string[],
-  excludeGlob: string[]
+  excludeGlob: string[],
 ) => {
   const pathIncludeRegexes = includeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
   );
   const pathExcludeRegexes = excludeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex
+    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
   );
   return ({ path }: { path: string }) => {
     const withoutTrailingSlash = path.replace(/\/$/, '');

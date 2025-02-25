@@ -40,21 +40,16 @@
   "devDependencies": {
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.16.0",
-    "@cloudfour/eslint-plugin": "16.0.0",
+    "@cloudfour/eslint-config": "24.0.0",
     "@types/globrex": "0.1.4",
     "@types/sade": "1.7.2",
     "@types/simplecrawler": "1.1.5",
-    "eslint": "7.27.0",
-    "prettier": "2.3.0",
+    "eslint": "9.14.0",
+    "prettier": "3.5.2",
     "timekeeper": "2.2.0",
     "typescript": "4.7.2",
     "vite": "4.5.9",
     "vitest": "0.13.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:@cloudfour/recommended"
-    ]
   },
   "prettier": {
     "singleQuote": true

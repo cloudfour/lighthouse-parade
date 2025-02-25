@@ -8,7 +8,7 @@ export const reportToRowHeaders = (csvFileContents: string) => {
       skip_empty_lines: true,
       ltrim: true,
       relax: true, // https://csv.js.org/parse/options/
-    }
+    },
   );
   if (!singleReportRows || singleReportRows.length === 0)
     throw new Error('Unable to find report headers');
@@ -16,7 +16,7 @@ export const reportToRowHeaders = (csvFileContents: string) => {
     'Requested URL',
     'Final URL',
     ...singleReportRows.map(
-      (row) => `${row.category}: ${row.title} (${row.type})`
+      (row) => `${row.category}: ${row.title} (${row.type})`,
     ),
   ];
   return headers;
@@ -30,7 +30,7 @@ export const reportToRow = (csvFileContents: string) => {
       columns: true,
       skip_empty_lines: true,
       ltrim: true,
-    }
+    },
   );
   // Sometimes reports come out half-baked...
   if (!reportRows || reportRows.length === 0) {
@@ -58,5 +58,5 @@ interface LighthouseCSVReportRow {
 type CSVReportRow = [
   requestedUrl: string,
   finalUrl: string,
-  ...scores: string[]
+  ...scores: string[],
 ];
