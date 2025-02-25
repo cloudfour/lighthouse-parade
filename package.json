@@ -23,7 +23,7 @@
   "author": "emerson@cloudfour.com",
   "license": "MIT",
   "dependencies": {
-    "csv": "5.5.0",
+    "csv": "5.5.3",
     "csv-parse": "4.15.4",
     "csv-stringify": "5.6.2",
     "globrex": "0.1.2",
