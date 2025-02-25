@@ -44,36 +44,36 @@ const isFullURL = (path: string) => {
 sade('lighthouse-parade <url> [dataDirectory]', true)
   .version(version)
   .example(
-    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2'
+    'https://cloudfour.com --exclude-path-glob "/thinks/*" --max-crawl-depth 2',
   )
   .describe(
-    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM'
+    'Crawls the site at the provided URL, recording the lighthouse scores for each URL found. The lighthouse data will be stored in the provided directory, which defaults to ./data/YYYY-MM-DDTTZ_HH_MM',
   )
   .option(
     '--ignore-robots',
     "Crawl pages even if they are listed in the site's robots.txt",
-    false
+    false,
   )
   .option(
     '--crawler-user-agent',
-    'Pass a user agent string to be used by the crawler (not by Lighthouse)'
+    'Pass a user agent string to be used by the crawler (not by Lighthouse)',
   )
   .option(
     '--lighthouse-concurrency',
     'Control the maximum number of ligthhouse reports to run concurrently',
-    os.cpus().length - 1
+    os.cpus().length - 1,
   )
   .option(
     '--max-crawl-depth',
-    'Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.'
+    'Control the maximum depth of crawled links. 1 means only the entry page will be used. 2 means the entry page and any page linked directly from the entry page will be used.',
   )
   .option(
     '--include-path-glob',
-    'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
+    'Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   )
   .option(
     '--exclude-path-glob',
-    'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.'
+    'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   )
   .action(
     (
@@ -81,9 +81,9 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       dataDirPath = path.join(
         process.cwd(),
         'lighthouse-parade-data',
-        usefulDirName()
+        usefulDirName(),
       ),
-      opts
+      opts,
     ) => {
       // We are attempting to parse the URL here, so that if the user passes an invalid URL,
       // the prorgam will exit here instead of continuing (which would lead to a more confusing error)
@@ -105,7 +105,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       }
 
       const includePathGlob: unknown[] = toArray(
-        opts['include-path-glob'] as unknown
+        opts['include-path-glob'] as unknown,
       ).filter((glob) => glob !== undefined);
 
       if (includePathGlob.some((glob) => typeof glob !== 'string')) {
@@ -117,7 +117,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       }
 
       const excludePathGlob: unknown[] = toArray(
-        opts['exclude-path-glob'] as unknown
+        opts['exclude-path-glob'] as unknown,
       ).filter((glob) => glob !== undefined);
 
       if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
@@ -157,10 +157,10 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         const statusIcon = error
           ? symbols.error
           : state === State.Pending
-          ? ' '
-          : state === State.ReportInProgress
-          ? frame
-          : symbols.success;
+            ? ' '
+            : state === State.ReportInProgress
+              ? frame
+              : symbols.success;
         let output = `${statusIcon} ${url}`;
         if (error) {
           output += `\n  ${kleur.gray(error.toString())}`;
@@ -181,7 +181,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         });
         const numPendingToDisplay = Math.min(
           Math.max(process.stdout.rows - currentUrls.length - 3, 1),
-          pendingUrls.length
+          pendingUrls.length,
         );
         const numHiddenUrls =
           numPendingToDisplay === pendingUrls.length
@@ -189,12 +189,12 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
             : kleur.dim(
                 `\n...And ${
                   pendingUrls.length - numPendingToDisplay
-                } more pending`
+                } more pending`,
               );
         logUpdate(
           currentUrls.join('') +
             pendingUrls.slice(0, numPendingToDisplay).join('') +
-            numHiddenUrls
+            numHiddenUrls,
         );
       };
 
@@ -264,6 +264,6 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
         console.log('DONE!');
       });
-    }
+    },
   )
   .parse(process.argv);
