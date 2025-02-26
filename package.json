@@ -30,7 +30,7 @@
     "kleur": "4.1.5",
     "lighthouse": "9.6.8",
     "log-update": "4.0.0",
-    "sade": "1.7.4",
+    "sade": "1.8.1",
     "sanitize-filename": "1.6.3",
     "simplecrawler": "1.1.9"
   },
@@ -43,7 +43,7 @@
     "@cloudfour/eslint-config": "24.0.0",
     "@types/globrex": "0.1.4",
     "@types/node": "22.13.5",
-    "@types/sade": "1.7.2",
+    "@types/sade": "1.8.0",
     "@types/simplecrawler": "1.1.5",
     "eslint": "9.14.0",
     "prettier": "3.5.2",
