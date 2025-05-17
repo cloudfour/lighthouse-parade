@@ -42,7 +42,7 @@
     "@changesets/cli": "2.29.4",
     "@cloudfour/eslint-config": "24.0.0",
     "@types/globrex": "0.1.4",
-    "@types/node": "22.15.17",
+    "@types/node": "22.15.18",
     "@types/sade": "1.8.0",
     "@types/simplecrawler": "1.1.5",
     "eslint": "9.14.0",
