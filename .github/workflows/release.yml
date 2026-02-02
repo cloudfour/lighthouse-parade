@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js 22.x
         uses: actions/setup-node@master
         with:
-          node-version: 22.21.1
+          node-version: 22.22.0
 
       - name: Install Dependencies
         run: npm ci
