@@ -1,5 +1,11 @@
 # lighthouse-parade
 
+## 3.0.0
+
+### Major Changes
+
+- [#160](https://github.com/cloudfour/lighthouse-parade/pull/160) [`8a909a2`](https://github.com/cloudfour/lighthouse-parade/commit/8a909a290c731b9508cc41c91ce0e9c889b6e102) Thanks [@spaceninja](https://github.com/spaceninja)! - Drop support for node 14 & 16, add support for node 20 & 22
+
 ## 2.1.0
 
 ### Minor Changes
