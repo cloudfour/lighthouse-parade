@@ -31,7 +31,7 @@
     "lighthouse": "9.6.8",
     "log-update": "6.1.0",
     "sade": "1.8.1",
-    "sanitize-filename": "1.6.3",
+    "sanitize-filename": "1.6.4",
     "simplecrawler": "1.1.9"
   },
   "engines": {
