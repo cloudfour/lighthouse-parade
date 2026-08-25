@@ -5,7 +5,12 @@ import { createEmitter } from '../src/emitter.js';
 import type { LighthouseEvents } from '../src/lighthouse.js';
 import { scan } from '../src/scan-task.js';
 
-const nextTick = () => new Promise((resolve) => process.nextTick(resolve));
+// Deliberately process.nextTick rather than queueMicrotask. The emitter
+// dispatches handlers via Promise.resolve().then(), so this helper has to
+// yield past that microtask queue rather than joining the back of it.
+const nextTick = async () =>
+  // eslint-disable-next-line unicorn/prefer-queue-microtask -- see above
+  new Promise((resolve) => process.nextTick(resolve));
 
 test('Displays useful error if no pages are found while crawling', async () => {
   const { fakeCrawler, emit: scanEmit } = createFakeCrawler();
@@ -68,9 +73,10 @@ test('Fires correct lighthouse events as pages are found', async () => {
     excludePathGlob: [],
     dataDirectory: 'foo',
     lighthouseConcurrency: 1,
-    lighthouse: (url) => {
-      if (url !== 'https://google.com/hello')
+    lighthouse(url) {
+      if (url !== 'https://google.com/hello') {
         throw new Error(`Create a mock to handle ${url}`);
+      }
       return googlePageLighthouse;
     },
     crawler: fakeCrawler,

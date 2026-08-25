@@ -63,7 +63,7 @@ describe('lighthouse-parade CLI', () => {
   it('starts with a shebang so it can run as a binary', () => {
     const built = fs.readFileSync(cliPath, 'utf8');
 
-    expect(built.split('\n')[0]).toBe('#!/usr/bin/env node');
+    expect(built.split('\n', 1)[0]).toBe('#!/usr/bin/env node');
   });
 
   it('prints usage when asked for help', async () => {

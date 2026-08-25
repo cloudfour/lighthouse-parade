@@ -12,7 +12,9 @@ describe('reportToRow', () => {
   it('converts rows to columns', () => {
     const row = reportToRow(fileContents);
 
-    if (!Array.isArray(row)) throw new Error('expected an array');
+    if (!Array.isArray(row)) {
+      throw new TypeError('expected an array');
+    }
 
     expect(row[0]).toBe('https://lombardstreettattoo.com/');
     expect(row[1]).toBe('https://lombardstreettattoo.com/');
@@ -29,7 +31,9 @@ describe('reportToRowHeaders', () => {
   const headers = reportToRowHeaders(fileContents);
 
   it('is long list of metrics', () => {
-    if (!Array.isArray(headers)) throw new Error('expected an array');
+    if (!Array.isArray(headers)) {
+      throw new TypeError('expected an array');
+    }
     expect(headers[0]).toBe('Requested URL');
     expect(headers[1]).toBe('Final URL');
     expect(headers[2]).toBe(

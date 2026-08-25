@@ -1,12 +1,10 @@
-/* eslint-disable import/no-duplicates */
 import fs from 'node:fs';
 
-import type { CrawlOptions } from './crawl.js';
-import { crawl as defaultCrawler } from './crawl.js';
+import { type CrawlOptions, crawl as defaultCrawler } from './crawl.js';
 import { createEmitter } from './emitter.js';
 import { runLighthouseReport } from './lighthouse.js';
 
-interface ScanOptions extends CrawlOptions {
+type ScanOptions = {
   /** Where to store the newly-generated reports */
   dataDirectory: string;
   /**
@@ -16,7 +14,7 @@ interface ScanOptions extends CrawlOptions {
   crawler?: typeof defaultCrawler;
   lighthouse?: typeof runLighthouseReport;
   lighthouseConcurrency: number;
-}
+} & CrawlOptions;
 
 type ScanEvents = {
   warning: (message: string | Error) => void;

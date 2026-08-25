@@ -7,7 +7,7 @@ import type { QueueItem } from 'simplecrawler/queue.js';
 import { createEmitter } from './emitter.js';
 import { isContentTypeHtml } from './utilities.js';
 
-export interface CrawlOptions {
+export type CrawlOptions = {
   /** Whether to crawl pages even if they are listed in the site's robots.txt */
   ignoreRobotsTxt: boolean;
   userAgent?: string;
@@ -17,7 +17,7 @@ export interface CrawlOptions {
   includePathGlob: string[];
   /** Any path that matches these globs will not be crawled. */
   excludePathGlob: string[];
-}
+};
 
 export type CrawlerEvents = {
   urlFound: (
@@ -33,9 +33,13 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   const { on, emit, promise } = createEmitter<CrawlerEvents>();
 
   const crawler = new Crawler(siteUrl);
-  if (opts.userAgent) crawler.userAgent = opts.userAgent;
+  if (opts.userAgent) {
+    crawler.userAgent = opts.userAgent;
+  }
   crawler.respectRobotsTxt = !opts.ignoreRobotsTxt;
-  if (opts.maxCrawlDepth !== undefined) crawler.maxDepth = opts.maxCrawlDepth;
+  if (opts.maxCrawlDepth !== undefined) {
+    crawler.maxDepth = opts.maxCrawlDepth;
+  }
 
   const initialPath = new URL(siteUrl).pathname;
 
@@ -58,9 +62,13 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   crawler.on('fetchcomplete', (queueItem, responseBuffer, response) => {
     const url = queueItem.url;
     const contentType = response.headers['content-type'];
-    if (!isContentTypeHtml(contentType)) return;
+    if (!isContentTypeHtml(contentType)) {
+      return;
+    }
     const statusCode = response.statusCode;
-    if (!contentType || !statusCode) return;
+    if (!contentType || !statusCode) {
+      return;
+    }
     emit('urlFound', url, contentType, responseBuffer.length, statusCode);
   });
 
@@ -90,7 +98,7 @@ export const createUrlFilter = (
     return (
       (pathIncludeRegexes.length === 0 ||
         pathIncludeRegexes.some((regex) => regex.test(withoutTrailingSlash))) &&
-      !pathExcludeRegexes.some((regex) => regex.test(withoutTrailingSlash))
+      pathExcludeRegexes.every((regex) => !regex.test(withoutTrailingSlash))
     );
   };
 };

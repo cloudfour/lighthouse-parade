@@ -10,8 +10,9 @@ export const reportToRowHeaders = (csvFileContents: string) => {
       relax: true, // https://csv.js.org/parse/options/
     },
   );
-  if (!singleReportRows || singleReportRows.length === 0)
+  if (!singleReportRows || singleReportRows.length === 0) {
     throw new Error('Unable to find report headers');
+  }
   const headers = [
     'Requested URL',
     'Final URL',
@@ -45,7 +46,7 @@ export const reportToRow = (csvFileContents: string) => {
   return csvRow;
 };
 
-interface LighthouseCSVReportRow {
+type LighthouseCSVReportRow = {
   requestedUrl: string;
   finalUrl: string;
   category: string;
@@ -53,7 +54,7 @@ interface LighthouseCSVReportRow {
   title: string;
   type: string;
   score: string;
-}
+};
 
 type CSVReportRow = [
   requestedUrl: string,

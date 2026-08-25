@@ -31,10 +31,14 @@ describe('usefulDirName', () => {
 });
 
 test('makeFileNameFromUrl works as expected', () => {
+  // These URLs are test data, not requests. The scheme has to stay http so the
+  // expected filenames keep their `http--` prefix, which is the thing under test.
+  /* eslint-disable unicorn/prefer-https -- see above */
   expect(makeFileNameFromUrl('http://example.com/foo', 'csv')).toBe(
     'http--example_com-foo.csv',
   );
   expect(makeFileNameFromUrl('http://example.com/bar/', 'html')).toBe(
     'http--example_com-bar-.html',
   );
+  /* eslint-enable unicorn/prefer-https -- re-enable for the rest of the file */
 });
