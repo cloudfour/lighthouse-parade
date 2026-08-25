@@ -36,6 +36,12 @@ describe('reportToRowHeaders', () => {
       'Performance: Overall Performance Category Score (numeric)',
     );
     expect(headers[3]).toBe('Performance: First Contentful Paint (numeric)');
-    expect(headers).toHaveLength(59); // @TODO This will break
+  });
+
+  // The full column list is derived from whatever audits Lighthouse emits, so it
+  // moves whenever Lighthouse is upgraded. A snapshot makes that shift show up as
+  // a reviewable diff of audit names rather than as a changed count.
+  it('matches the known Lighthouse column list', () => {
+    expect(headers).toMatchSnapshot();
   });
 });
