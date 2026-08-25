@@ -1,24 +1,24 @@
 # lighthouse-parade
 
-## 2.1.0
+## 2.1.0 - 2022-06-09
 
 ### Minor Changes
 
 - [#110](https://github.com/cloudfour/lighthouse-parade/pull/110) [`38bfdf2`](https://github.com/cloudfour/lighthouse-parade/commit/38bfdf271dfc1a9d92b773b22810b52680570108) Thanks [@calebeby](https://github.com/calebeby)! - Add support for node 18
 
-## 2.0.2
+## 2.0.2 - 2022-05-24
 
 ### Patch Changes
 
 - [#103](https://github.com/cloudfour/lighthouse-parade/pull/103) [`ac23bdb`](https://github.com/cloudfour/lighthouse-parade/commit/ac23bdb8ee02a11b88f0d7c313d3cd6e3eae6c9f) Thanks [@calebeby](https://github.com/calebeby)! - Fix crawling when --include-path-glob is not passed
 
-## 2.0.1
+## 2.0.1 - 2022-04-14
 
 ### Patch Changes
 
 - [#99](https://github.com/cloudfour/lighthouse-parade/pull/99) [`fe12bc2`](https://github.com/cloudfour/lighthouse-parade/commit/fe12bc21f59e21663d35cf606df8d90bfdf715ba) Thanks [@calebeby](https://github.com/calebeby)! - Force the initial path to be included in the crawling regardless of include/exclude flags
 
-## 2.0.0
+## 2.0.0 - 2022-03-22
 
 ### Major Changes
 
@@ -28,7 +28,7 @@
 
   The most significant change is that Lighthouse has been updated from `^6.4.0` to `^9.5.0`. For most people, the changes will be non-breaking, but throughout the versions the [scores have been changed](https://github.com/GoogleChrome/lighthouse/releases)
 
-## 1.1.0
+## 1.1.0 - 2021-01-15
 
 ### Minor Changes
 
@@ -38,19 +38,19 @@
   - `--include-path-glob`: Specify a glob (in quotes) for paths to match. Links to non-matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to allow multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
   - `--exclude-path-glob`: Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.
 
-## 1.0.0
+## 1.0.0 - 2020-12-09
 
 ### Major Changes
 
 - [`aae5305`](https://github.com/cloudfour/lighthouse-parade/commit/aae530573b7c2bdf1bc365cc37dc968f03183baa) [#60](https://github.com/cloudfour/lighthouse-parade/pull/60) Thanks [@calebeby](https://github.com/calebeby)! - First major release
 
-## 0.4.0
+## 0.4.0 - 2020-12-07
 
 ### Minor Changes
 
 - [`150057a`](https://github.com/cloudfour/lighthouse-parade/commit/150057a85f0dedd6aabbe00924e0ecf56713d694) [#53](https://github.com/cloudfour/lighthouse-parade/pull/53) Thanks [@calebeby](https://github.com/calebeby)! - Run lighthouse instances concurrently, and change CLI output
 
-## 0.3.0
+## 0.3.0 - 2020-10-28
 
 ### Minor Changes
 
