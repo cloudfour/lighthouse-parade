@@ -36,7 +36,6 @@
     "accessibility"
   ],
   "dependencies": {
-    "csv": "6.6.3",
     "csv-parse": "7.0.2",
     "csv-stringify": "6.8.3",
     "globrex": "0.1.2",
