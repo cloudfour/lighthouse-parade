@@ -10,7 +10,11 @@ import sade from 'sade';
 
 import { aggregateCSVReports } from './aggregate.js';
 import { scan } from './scan-task.js';
-import { makeFileNameFromUrl, usefulDirName } from './utilities.js';
+import {
+  countPendingToDisplay,
+  makeFileNameFromUrl,
+  usefulDirName,
+} from './utilities.js';
 
 const require = createRequire(import.meta.url);
 
@@ -92,7 +96,6 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       new URL(url);
       const ignoreRobotsTxt: boolean = opts['ignore-robots'];
       const reportsDirPath = path.join(dataDirPath, 'reports');
-      fs.mkdirSync(reportsDirPath, { recursive: true });
 
       const userAgent: unknown = opts['crawler-user-agent'];
       if (userAgent !== undefined && typeof userAgent !== 'string') {
@@ -130,6 +133,10 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
       }
 
       const lighthouseConcurrency = opts['lighthouse-concurrency'];
+
+      // Created only once every argument has been validated, so a rejected flag
+      // doesn't leave an empty timestamped directory behind.
+      fs.mkdirSync(reportsDirPath, { recursive: true });
 
       const scanner = scan(url, {
         ignoreRobotsTxt,
@@ -184,8 +191,9 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
             currentUrls.push(line);
           }
         });
-        const numPendingToDisplay = Math.min(
-          Math.max(process.stdout.rows - currentUrls.length - 3, 1),
+        const numPendingToDisplay = countPendingToDisplay(
+          process.stdout.rows,
+          currentUrls.length,
           pendingUrls.length,
         );
         const numHiddenUrls =

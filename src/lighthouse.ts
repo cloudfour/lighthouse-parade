@@ -47,14 +47,23 @@ export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
       '--max-wait-for-load=45000',
     ]);
 
+    // Without an encoding these streams emit Buffers, and concatenating those
+    // onto a string decodes each chunk independently. A multi-byte character
+    // straddling a chunk boundary is then decoded as two invalid sequences and
+    // lost, which mangles page titles containing accents, em dashes or curly
+    // quotes. Setting the encoding makes Node hold partial characters back
+    // until the rest of their bytes arrive.
+    lighthouseProcess.stdout.setEncoding('utf8');
+    lighthouseProcess.stderr.setEncoding('utf8');
+
     let stdout = '';
     let stderr = '';
 
-    lighthouseProcess.stdout.on('data', (d) => {
+    lighthouseProcess.stdout.on('data', (d: string) => {
       stdout += d;
     });
 
-    lighthouseProcess.stderr.on('data', (d) => {
+    lighthouseProcess.stderr.on('data', (d: string) => {
       if (/runtime error encountered/i.test(d)) {
         stderr += d;
       }

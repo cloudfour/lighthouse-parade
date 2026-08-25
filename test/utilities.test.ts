@@ -2,6 +2,7 @@ import tk from 'timekeeper';
 import { describe, expect, it, test } from 'vitest';
 
 import {
+  countPendingToDisplay,
   isContentTypeHtml,
   makeFileNameFromUrl,
   usefulDirName,
@@ -41,4 +42,31 @@ test('makeFileNameFromUrl works as expected', () => {
     'http--example_com-bar-.html',
   );
   /* eslint-enable unicorn/prefer-https -- re-enable for the rest of the file */
+});
+
+describe('countPendingToDisplay', () => {
+  it('falls back to a usable height when stdout is not a TTY', () => {
+    // Process.stdout.rows is undefined whenever output is piped or redirected.
+    // Passing that through produced NaN, which hid every pending URL and
+    // printed "...And NaN more pending".
+    expect(countPendingToDisplay(undefined, 1, 5)).toBe(5);
+  });
+
+  it('never returns NaN for any terminal height', () => {
+    for (const rows of [undefined, 0, 1, 24, 200]) {
+      expect(countPendingToDisplay(rows, 3, 10)).not.toBeNaN();
+    }
+  });
+
+  it('shows every pending URL when they all fit', () => {
+    expect(countPendingToDisplay(40, 2, 5)).toBe(5);
+  });
+
+  it('truncates the list to the space available', () => {
+    expect(countPendingToDisplay(10, 2, 20)).toBe(5);
+  });
+
+  it('always leaves room for at least one pending URL', () => {
+    expect(countPendingToDisplay(5, 40, 20)).toBe(1);
+  });
 });
