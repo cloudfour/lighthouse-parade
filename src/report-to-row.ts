@@ -1,16 +1,17 @@
-import csvParse from 'csv-parse/lib/sync.js';
+import { parse as csvParse } from 'csv-parse/sync';
 
 export const reportToRowHeaders = (csvFileContents: string) => {
-  const singleReportRows: LighthouseCSVReportRow[] | undefined = csvParse(
-    csvFileContents,
-    {
-      columns: true,
-      skip_empty_lines: true,
-      ltrim: true,
-      relax: true, // https://csv.js.org/parse/options/
-    },
-  );
-  if (!singleReportRows || singleReportRows.length === 0) {
+  const singleReportRows: LighthouseCSVReportRow[] = csvParse(csvFileContents, {
+    columns: true,
+    skip_empty_lines: true,
+    ltrim: true,
+    // Version 5 of csv-parse split `relax` into `relax_quotes` and
+    // `relax_column_count`. This is the direct rename — it tolerates malformed
+    // quoting, which is what half-baked Lighthouse reports tend to produce.
+    // https://csv.js.org/parse/options/
+    relax_quotes: true,
+  });
+  if (singleReportRows.length === 0) {
     throw new Error('Unable to find report headers');
   }
   const headers = [
@@ -24,17 +25,14 @@ export const reportToRowHeaders = (csvFileContents: string) => {
 };
 
 export const reportToRow = (csvFileContents: string) => {
-  const reportRows: LighthouseCSVReportRow[] | undefined = csvParse(
-    csvFileContents,
-    {
-      // https://csv.js.org/parse/options/
-      columns: true,
-      skip_empty_lines: true,
-      ltrim: true,
-    },
-  );
+  const reportRows: LighthouseCSVReportRow[] = csvParse(csvFileContents, {
+    // https://csv.js.org/parse/options/
+    columns: true,
+    skip_empty_lines: true,
+    ltrim: true,
+  });
   // Sometimes reports come out half-baked...
-  if (!reportRows || reportRows.length === 0) {
+  if (reportRows.length === 0) {
     return false;
   }
 

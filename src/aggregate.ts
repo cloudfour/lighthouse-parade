@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import csvStringify from 'csv-stringify/lib/sync.js';
+import { stringify as csvStringify } from 'csv-stringify/sync';
 
 import { reportToRow, reportToRowHeaders } from './report-to-row.js';
 
