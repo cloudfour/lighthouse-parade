@@ -5,6 +5,30 @@
     {
       "matchDepTypes": ["peerDependencies", "engines"],
       "rangeStrategy": "replace"
+    },
+    {
+      "description": "ESLint and the shared config pin each other's plugins, so bumping either one alone produces a PR that crashes inside a lint rule. Keep them in a single PR.",
+      "groupName": "eslint",
+      "matchPackageNames": [
+        "eslint",
+        "@cloudfour/eslint-config",
+        "typescript-eslint"
+      ]
+    },
+    {
+      "description": "csv-parse and csv-stringify move their export paths together, and both are imported from the same modules here.",
+      "groupName": "csv",
+      "matchPackageNames": ["csv", "csv-parse", "csv-stringify"]
+    },
+    {
+      "description": "@types/node should track the oldest supported Node version from engines, not the newest, so that APIs unavailable on the floor fail to type-check. Raise this when the engines floor rises above Node 22.",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<23"
+    },
+    {
+      "description": "typescript-eslint declares typescript '>=4.8.4 <6.1.0', so TypeScript 7 breaks linting. Remove this once typescript-eslint supports the TS 7 compiler.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
     }
   ]
 }
