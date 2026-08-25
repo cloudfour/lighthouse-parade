@@ -4,7 +4,10 @@ import { createRequire } from 'node:module';
 import { createEmitter } from './emitter.js';
 
 const require = createRequire(import.meta.url);
-const lighthouseCli = require.resolve('lighthouse/lighthouse-cli');
+// Lighthouse 10 renamed its `lighthouse-cli/` directory to `cli/`. There is no
+// `exports` map to go through, so this resolves the entry point directly — the
+// same file Lighthouse lists as its `lighthouse` bin.
+const lighthouseCli = require.resolve('lighthouse/cli/index.js');
 
 let lighthouseLimit = 2;
 let currentLighthouseInstances = 0;
