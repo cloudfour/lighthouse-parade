@@ -55,6 +55,17 @@ describe('lighthouse-parade CLI', () => {
     tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lighthouse-parade-test-'));
   }, 180_000);
 
+  // Npm symlinks node_modules/.bin straight at the built file, so without a
+  // shebang the shell tries to run it and every install method except
+  // `node path/to/cli.js` fails with `import: command not found`. The shebang
+  // was dropped once already, in an unrelated import reorder, and nothing
+  // noticed because no test ran the file as a binary.
+  it('starts with a shebang so it can run as a binary', () => {
+    const built = fs.readFileSync(cliPath, 'utf8');
+
+    expect(built.split('\n')[0]).toBe('#!/usr/bin/env node');
+  });
+
   it('prints usage when asked for help', async () => {
     const { stdout, exitCode } = await runCli(['--help'], tempDir);
 
