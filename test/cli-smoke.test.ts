@@ -1,0 +1,109 @@
+import { execFile } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
+
+import { beforeAll, describe, expect, it } from 'vitest';
+
+const execFileAsync = promisify(execFile);
+
+const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const cliPath = path.join(repoRoot, 'dist', 'src', 'cli.js');
+
+const { version } = JSON.parse(
+  fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'),
+) as { version: string };
+
+/**
+ * Runs the *built* CLI the same way a user would, rather than importing the
+ * source. This is the only test that exercises the published entry point, so it
+ * covers things importing `src/cli.ts` never would: that `tsc` emits a runnable
+ * file, that `bin` points somewhere real, and that the `require('../../package.json')`
+ * hop in cli.ts still resolves from inside `dist/src/`.
+ */
+const runCli = async (args: string[], cwd: string) => {
+  try {
+    const { stdout, stderr } = await execFileAsync('node', [cliPath, ...args], {
+      cwd,
+    });
+    return { stdout, stderr, exitCode: 0 };
+  } catch (error) {
+    const failure = error as { stdout: string; stderr: string; code?: number };
+    return {
+      stdout: failure.stdout,
+      stderr: failure.stderr,
+      exitCode: failure.code ?? 1,
+    };
+  }
+};
+
+/**
+ * Every case below exits during argument parsing, before any crawling starts,
+ * so none of them need network access or Chrome. `cwd` is still pointed at a
+ * temp directory because the CLI creates its data directory before validating
+ * the glob flags.
+ */
+describe('lighthouse-parade CLI', () => {
+  let tempDir: string;
+
+  beforeAll(async () => {
+    // CI only type-checks with `tsc --noEmit`, so nothing else in the suite
+    // would notice if the real build broke.
+    await execFileAsync('npm', ['run', 'build'], { cwd: repoRoot });
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'lighthouse-parade-test-'));
+  }, 180_000);
+
+  it('prints usage when asked for help', async () => {
+    const { stdout, exitCode } = await runCli(['--help'], tempDir);
+
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain('lighthouse-parade <url> [dataDirectory]');
+  });
+
+  it('reports the version from package.json', async () => {
+    const { stdout, exitCode } = await runCli(['--version'], tempDir);
+
+    expect(exitCode).toBe(0);
+    expect(stdout).toContain(version);
+  });
+
+  it('explains what is missing when no URL is given', async () => {
+    const { stderr, exitCode } = await runCli([], tempDir);
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toMatch(/insufficient arguments/i);
+  });
+
+  it('refuses a URL it cannot parse', async () => {
+    const { stderr, exitCode } = await runCli(['not-a-url'], tempDir);
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toMatch(/invalid url/i);
+  });
+
+  it('rejects a full URL passed to --include-path-glob', async () => {
+    const { stderr, exitCode } = await runCli(
+      ['https://example.com', '--include-path-glob', 'https://example.com/foo'],
+      tempDir,
+    );
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toContain(
+      '--include-path-glob must be path(s), not full URL(s)',
+    );
+  });
+
+  it('rejects a full URL passed to --exclude-path-glob', async () => {
+    const { stderr, exitCode } = await runCli(
+      ['https://example.com', '--exclude-path-glob', 'https://example.com/foo'],
+      tempDir,
+    );
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toContain(
+      '--exclude-path-glob must be path(s), not full URL(s)',
+    );
+  });
+});
