@@ -28,7 +28,9 @@ export type LighthouseEvents = {
 };
 
 export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
-  if (maxConcurrency) lighthouseLimit = maxConcurrency;
+  if (maxConcurrency) {
+    lighthouseLimit = maxConcurrency;
+  }
   const { on, emit } = createEmitter<LighthouseEvents>();
   const run = () => {
     emit('begin');
@@ -50,12 +52,14 @@ export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
     });
 
     lighthouseProcess.stderr.on('data', (d) => {
-      if (/runtime error encountered/i.test(d)) stderr += d;
+      if (/runtime error encountered/i.test(d)) {
+        stderr += d;
+      }
     });
 
     lighthouseProcess.on('close', (status) => {
       if (status === 0) {
-        emit('complete', String(stdout).replace(/\r\n/g, '\n'));
+        emit('complete', stdout.replaceAll('\r\n', '\n'));
       } else {
         emit(
           'error',

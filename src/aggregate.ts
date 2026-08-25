@@ -16,17 +16,19 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
   let headers: string[] | null = null;
 
   for (const fileName of files) {
-    if (fileName !== '.DS_Store') {
-      const filePath = path.join(reportsDirPath, fileName);
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      // If headers aren't set yet, do it now
-      headers ||= reportToRowHeaders(fileContents);
-      const newRow = reportToRow(fileContents);
-      if (newRow) {
-        rows.push(newRow);
-      } else {
-        console.log(`Failed to bundle: ${fileName}`);
-      }
+    if (fileName === '.DS_Store') {
+      continue;
+    }
+
+    const filePath = path.join(reportsDirPath, fileName);
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    // If headers aren't set yet, do it now
+    headers ||= reportToRowHeaders(fileContents);
+    const newRow = reportToRow(fileContents);
+    if (newRow) {
+      rows.push(newRow);
+    } else {
+      console.log(`Failed to bundle: ${fileName}`);
     }
   }
 

@@ -26,6 +26,15 @@
   "files": [
     "dist/src/*.js"
   ],
+  "keywords": [
+    "lighthouse",
+    "performance",
+    "crawler",
+    "cli",
+    "web-performance",
+    "audit",
+    "accessibility"
+  ],
   "dependencies": {
     "csv": "6.6.3",
     "csv-parse": "4.16.3",
