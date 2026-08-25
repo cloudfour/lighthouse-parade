@@ -68,4 +68,46 @@ describe('aggregateCSVReports', () => {
     expect(actual.equals(expected)).toBe(true);
     expect(csvParse(actual.toString('utf8'))).toHaveLength(2); // Header plus the one valid report
   });
+
+  it('still aggregates when a malformed report sorts first', async () => {
+    // Headers used to be read from whichever file came first, so this only
+    // worked while the valid reports happened to sort ahead of the broken ones.
+    const dataPath = stageFixture('example3');
+    fs.renameSync(
+      path.join(dataPath, 'reports', 'invalid1.csv'),
+      path.join(dataPath, 'reports', 'aaa-malformed.csv'),
+    );
+
+    await aggregateCSVReports(dataPath);
+
+    const actual = fs.readFileSync(
+      path.join(dataPath, 'aggregatedMobileReport.csv'),
+      'utf8',
+    );
+    expect(csvParse(actual)).toHaveLength(2);
+  });
+
+  // Both of these used to surface as something unhelpful: an empty directory
+  // handed csv-stringify a null header row and threw ERR_STREAM_NULL_VALUES
+  // from deep in Node's stream internals, and an all-malformed directory threw
+  // "Unable to find report headers" from the first file it happened to read.
+  it('explains itself when every report is malformed', async () => {
+    const dataPath = stageFixture('no-valid-reports');
+
+    await expect(aggregateCSVReports(dataPath)).rejects.toThrow(
+      /no reports could be read/i,
+    );
+  });
+
+  it('explains itself when there are no reports at all', async () => {
+    const dataPath = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'lighthouse-parade-empty-'),
+    );
+    tempDirs.push(dataPath);
+    fs.mkdirSync(path.join(dataPath, 'reports'));
+
+    await expect(aggregateCSVReports(dataPath)).rejects.toThrow(
+      /no reports could be read/i,
+    );
+  });
 });

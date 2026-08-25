@@ -106,6 +106,22 @@ describe('lighthouse-parade CLI', () => {
     );
   });
 
+  // Every case here runs through execFile, which is never a TTY — the same
+  // condition a CI log or a redirect to a file creates.
+  it('leaves no data directory behind when an argument is rejected', async () => {
+    const cwd = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'lighthouse-parade-cwd-'),
+    );
+
+    const { exitCode } = await runCli(
+      ['https://example.com', '--include-path-glob', 'https://example.com/foo'],
+      cwd,
+    );
+
+    expect(exitCode).not.toBe(0);
+    expect(fs.readdirSync(cwd)).toEqual([]);
+  });
+
   it('rejects a full URL passed to --exclude-path-glob', async () => {
     const { stderr, exitCode } = await runCli(
       ['https://example.com', '--exclude-path-glob', 'https://example.com/foo'],

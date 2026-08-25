@@ -22,14 +22,23 @@ export const aggregateCSVReports = async (dataDirPath: string) => {
 
     const filePath = path.join(reportsDirPath, fileName);
     const fileContents = fs.readFileSync(filePath, 'utf8');
-    // If headers aren't set yet, do it now
-    headers ||= reportToRowHeaders(fileContents);
     const newRow = reportToRow(fileContents);
-    if (newRow) {
-      rows.push(newRow);
-    } else {
+    if (!newRow) {
       console.log(`Failed to bundle: ${fileName}`);
+      continue;
     }
+
+    // Derived from a report already known to parse. Reading headers from an
+    // arbitrary file would throw on a malformed one, which only happened to be
+    // safe while the valid reports sorted first.
+    headers ??= reportToRowHeaders(fileContents);
+    rows.push(newRow);
+  }
+
+  if (!headers) {
+    throw new Error(
+      `No reports could be read from ${reportsDirPath}. Every Lighthouse run failed, so there is nothing to aggregate — the errors above say why each one failed.`,
+    );
   }
 
   rows.unshift(headers);

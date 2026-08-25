@@ -32,7 +32,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Run tests
-        run: npm run test
+        run: npm run test:coverage
 
   type:
     runs-on: ubuntu-latest
