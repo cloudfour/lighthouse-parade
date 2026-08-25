@@ -16,14 +16,16 @@ describe('reportToRow', () => {
       throw new TypeError('expected an array');
     }
 
-    expect(row[0]).toBe('https://lombardstreettattoo.com/');
-    expect(row[1]).toBe('https://lombardstreettattoo.com/');
-    expect(row[2]).toBe('0.8');
-    expect(row[3]).toBe('1');
-    expect(row[4]).toBe('1');
-    expect(row[5]).toBe('0.98');
-    expect(row[6]).toBe('0.98');
-    expect(row[7]).toBe('0.23');
+    // The first two columns come from the report's metadata section, the third
+    // from its category section, and everything after from its audit section.
+    expect(row[0]).toBe('http://localhost:8099/');
+    expect(row[1]).toBe('http://localhost:8099/');
+    expect(row.slice(2).every((score) => typeof score === 'string')).toBe(true);
+    expect(row).toHaveLength(52);
+  });
+
+  it('returns false for a report with no audits', () => {
+    expect(reportToRow('not a lighthouse report')).toBe(false);
   });
 });
 
@@ -31,15 +33,10 @@ describe('reportToRowHeaders', () => {
   const headers = reportToRowHeaders(fileContents);
 
   it('is long list of metrics', () => {
-    if (!Array.isArray(headers)) {
-      throw new TypeError('expected an array');
-    }
     expect(headers[0]).toBe('Requested URL');
     expect(headers[1]).toBe('Final URL');
-    expect(headers[2]).toBe(
-      'Performance: Overall Performance Category Score (numeric)',
-    );
-    expect(headers[3]).toBe('Performance: First Contentful Paint (numeric)');
+    expect(headers[2]).toBe('performance: Overall Category Score');
+    expect(headers[3]).toBe('performance: first-contentful-paint');
   });
 
   // The full column list is derived from whatever audits Lighthouse emits, so it
@@ -47,5 +44,11 @@ describe('reportToRowHeaders', () => {
   // a reviewable diff of audit names rather than as a changed count.
   it('matches the known Lighthouse column list', () => {
     expect(headers).toMatchSnapshot();
+  });
+
+  it('throws when the input is not a Lighthouse report', () => {
+    expect(() => reportToRowHeaders('not a lighthouse report')).toThrow(
+      /unable to find report headers/i,
+    );
   });
 });
