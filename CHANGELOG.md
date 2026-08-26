@@ -1,5 +1,41 @@
 # lighthouse-parade
 
+## 3.0.0
+
+### Major Changes
+
+- [#304](https://github.com/cloudfour/lighthouse-parade/pull/304) [`1f99599`](https://github.com/cloudfour/lighthouse-parade/commit/1f9959916eb4f3bb6a71be0ce7b22d077095d4a8) Thanks [@renovate](https://github.com/apps/renovate)! - Update Lighthouse from 9.6.8 to 13.4.1.
+
+  **This fixes a tool that no longer worked.** Lighthouse 9.6.8 dates from 2022 and fails against current Chrome with `Runtime error encountered: Waiting for DevTools protocol response has exceeded the allotted time`, so every report in a scan failed.
+
+  **The aggregated report's columns have changed.** Lighthouse 10 restructured its CSV output, so the column headings and the set of audits are both different:
+
+  - Columns are now labelled `performance: first-contentful-paint` — the audit id — rather than `Performance: First Contentful Paint (numeric)`. Lighthouse no longer emits a prose title for each audit.
+  - The overall score column is now `performance: Overall Category Score`.
+  - Audits retired since Lighthouse 9 are gone, including Time to Interactive, First CPU Idle, Estimated Input Latency and First Meaningful Paint. A set of new `*-insight` audits has been added.
+
+  Anything reading the aggregated CSV by column name will need updating.
+
+- [#368](https://github.com/cloudfour/lighthouse-parade/pull/368) [`64e9973`](https://github.com/cloudfour/lighthouse-parade/commit/64e99738083115ead584d88f48bfb81b2cbcc152) Thanks [@spaceninja](https://github.com/spaceninja)! - Updated the supported Node versions. `lighthouse-parade` now requires Node `^22.19.0 || >=24.0.0`.
+
+  Support for Node 14, 16, 18 and 20 has been dropped — all four are past end-of-life. The 22.19 floor is set by Lighthouse 13, the strictest of the upgraded dependencies.
+
+### Patch Changes
+
+- [#378](https://github.com/cloudfour/lighthouse-parade/pull/378) [`d4c73df`](https://github.com/cloudfour/lighthouse-parade/commit/d4c73df48039d51e7420ca32589ad25dbc241158) Thanks [@spaceninja](https://github.com/spaceninja)! - Restore the `#!/usr/bin/env node` shebang on the CLI entry point. Without it, npm symlinks `node_modules/.bin/lighthouse-parade` at a file the shell cannot execute, so `npx lighthouse-parade` and globally installed runs failed with `import: command not found`. Only `node path/to/cli.js` worked.
+
+- [#387](https://github.com/cloudfour/lighthouse-parade/pull/387) [`c8df741`](https://github.com/cloudfour/lighthouse-parade/commit/c8df74195bdc744f0e41e41c379a37cafee1220b) Thanks [@spaceninja](https://github.com/spaceninja)! - Fix three bugs in report handling and output:
+
+  - Lighthouse's output is no longer corrupted when a multi-byte character lands on a stream chunk boundary. Page titles and audit text containing accents, em dashes or curly quotes could previously come through mangled.
+  - A scan where every Lighthouse run fails now explains that no reports could be read, instead of crashing with `ERR_STREAM_NULL_VALUES` from inside Node's stream internals.
+  - The progress display no longer prints `...And NaN more pending` when output is piped or redirected, such as in CI logs.
+
+  Also fixes aggregation depending on filename order: a malformed report sorting before the valid ones would abort the whole run rather than being skipped.
+
+- [#375](https://github.com/cloudfour/lighthouse-parade/pull/375) [`ecaae79`](https://github.com/cloudfour/lighthouse-parade/commit/ecaae79559d160e1f058a9e1600ef56d9f436c48) Thanks [@renovate](https://github.com/apps/renovate)! - Update `csv-parse` to 7.x and `csv-stringify` to 6.x, and drop the unused `csv` umbrella package. Aggregated report output is unchanged — the byte-for-byte fixture comparison passes against the new versions.
+
+- [#330](https://github.com/cloudfour/lighthouse-parade/pull/330) [`b533585`](https://github.com/cloudfour/lighthouse-parade/commit/b5335856824df090551a7db80112c66f344494a2) Thanks [@renovate](https://github.com/apps/renovate)! - Update `log-update` to 8.0.0. This is an internal dependency used for the progress display; there is no change to the command line interface.
+
 ## 2.1.0 - 2022-06-09
 
 ### Minor Changes
