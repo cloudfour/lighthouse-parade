@@ -5,10 +5,19 @@ on:
     branches:
       - main
 
+env:
+  NODE_VERSION: 24.19.0
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    # Required by changesets/action v2 to commit version changes and open the
+    # release PR. Declaring them explicitly also drops every other permission
+    # the default token would otherwise carry.
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v7.0.1
@@ -16,21 +25,28 @@ jobs:
           # Fetch all git history for correct changelog commits
           fetch-depth: 0
 
-      - name: Setup Node.js 24.x
-        uses: actions/setup-node@master
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v7.0.0
         with:
-          node-version: 24.19.0
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          # Writes an .npmrc that reads NODE_AUTH_TOKEN. changesets/action v2
+          # no longer writes one from NPM_TOKEN itself, so without this the
+          # publish step has no credentials.
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Create Release Pull Request or Publish to npm
-        uses: changesets/action@master
+        uses: changesets/action@v2.1.1
         with:
-          publish: npm run release
-          version: npm run version
-          title: 'Publish Next Version'
-          commit: 'Publish Next Version'
+          publish-script: npm run release
+          version-script: npm run version
+          pr-title: 'Publish Next Version'
+          commit-message: 'Publish Next Version'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # v2 removed support for passing a token via GITHUB_TOKEN. The
+          # `github-token` input defaults to the GitHub-provided token, which
+          # is what this workflow used before, so it is left unset.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
