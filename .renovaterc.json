@@ -1,20 +1,7 @@
 {
-  "extends": ["config:recommended", ":automergeMinor", ":pinVersions"],
-  "minimumReleaseAge": "3 days",
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>cloudfour/renovate-config:library"],
   "packageRules": [
-    {
-      "matchDepTypes": ["peerDependencies", "engines"],
-      "rangeStrategy": "replace"
-    },
-    {
-      "description": "ESLint and the shared config pin each other's plugins, so bumping either one alone produces a PR that crashes inside a lint rule. Keep them in a single PR.",
-      "groupName": "eslint",
-      "matchPackageNames": [
-        "eslint",
-        "@cloudfour/eslint-config",
-        "typescript-eslint"
-      ]
-    },
     {
       "description": "csv-parse and csv-stringify move their export paths together, and both are imported from the same modules here.",
       "groupName": "csv",
