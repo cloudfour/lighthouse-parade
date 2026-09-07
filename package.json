@@ -48,7 +48,7 @@
     "simplecrawler": "1.1.9"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "1.0.0",
+    "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.1",
     "@cloudfour/eslint-config": "26.1.0",
     "@types/globrex": "0.1.4",
