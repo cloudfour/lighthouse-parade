@@ -18,6 +18,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # Lets the job mint the OIDC token npm exchanges for short-lived publish
+      # credentials. Without it, npm silently falls back to looking for a token.
+      id-token: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v7.0.1
@@ -30,14 +33,23 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          # Writes an .npmrc that reads NODE_AUTH_TOKEN. changesets/action v2
-          # no longer writes one from NPM_TOKEN itself, so without this the
-          # publish step has no credentials.
+          # Required for trusted publishing, not just for tokens: npm only
+          # attempts the OIDC exchange when an .npmrc points at the registry.
+          # Omitting this makes publishes fail as though unauthenticated.
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: npm ci
 
+      # No npm credentials are passed here. `changeset publish` shells out to
+      # `npm publish`, which detects the OIDC environment and authenticates
+      # itself against the trusted publisher configured on npmjs.com. That
+      # config names this file, so renaming or splitting this workflow means
+      # updating the package settings on npm to match.
+      #
+      # v2 removed support for passing a token via GITHUB_TOKEN. The
+      # `github-token` input defaults to the GitHub-provided token, which is
+      # what this workflow used before, so it is left unset.
       - name: Create Release Pull Request or Publish to npm
         uses: changesets/action@v2.1.1
         with:
@@ -45,8 +57,3 @@ jobs:
           version-script: npm run version
           pr-title: 'Publish Next Version'
           commit-message: 'Publish Next Version'
-        env:
-          # v2 removed support for passing a token via GITHUB_TOKEN. The
-          # `github-token` input defaults to the GitHub-provided token, which
-          # is what this workflow used before, so it is left unset.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
