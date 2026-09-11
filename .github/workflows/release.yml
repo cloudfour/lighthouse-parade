@@ -51,7 +51,7 @@ jobs:
       # `github-token` input defaults to the GitHub-provided token, which is
       # what this workflow used before, so it is left unset.
       - name: Create Release Pull Request or Publish to npm
-        uses: changesets/action@v2.1.1
+        uses: changesets/action@v2.1.2
         with:
           publish-script: npm run release
           version-script: npm run version
