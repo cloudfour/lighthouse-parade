@@ -55,13 +55,13 @@
     "@types/node": "22.20.3",
     "@types/sade": "1.8.0",
     "@types/simplecrawler": "1.1.5",
-    "@vitest/coverage-v8": "5.0.0",
+    "@vitest/coverage-v8": "5.0.1",
     "eslint": "10.10.0",
     "prettier": "3.9.6",
     "timekeeper": "2.3.1",
     "typescript": "6.0.3",
     "vite": "8.3.0",
-    "vitest": "5.0.0"
+    "vitest": "5.0.1"
   },
   "prettier": {
     "singleQuote": true
