@@ -50,7 +50,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.3",
-    "@cloudfour/eslint-config": "26.1.0",
+    "@cloudfour/eslint-config": "28.0.0",
     "@types/globrex": "0.1.4",
     "@types/node": "22.20.4",
     "@types/sade": "1.8.0",
