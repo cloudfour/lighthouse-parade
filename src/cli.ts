@@ -268,15 +268,22 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
         warn(message);
       });
 
-      scanner.promise.then(async () => {
-        clearInterval(intervalId);
+      scanner.promise
+        .then(async () => {
+          clearInterval(intervalId);
 
-        console.log('Aggregating reports...');
+          console.log('Aggregating reports...');
 
-        await aggregateCSVReports(dataDirPath);
+          await aggregateCSVReports(dataDirPath);
 
-        console.log('DONE!');
-      });
+          console.log('DONE!');
+        })
+        .catch((error: unknown) => {
+          clearInterval(intervalId);
+          logUpdate.clear();
+          console.error(error);
+          process.exitCode = 1;
+        });
     },
   )
   .parse(process.argv);

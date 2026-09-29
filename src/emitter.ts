@@ -16,7 +16,7 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
     // Event handlers are executed in a microtask
     // so that if events are fired right before event listeners are added,
     // the new event listeners are fired
-    Promise.resolve().then(() => {
+    queueMicrotask(() => {
       const handlers: Events[keyof Events][] = eventHandlers[eventName] || [];
       for (const handler of handlers) {
         handler(...args);
