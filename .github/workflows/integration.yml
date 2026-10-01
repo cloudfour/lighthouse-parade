@@ -1,0 +1,45 @@
+name: Integration
+
+# Runs Lighthouse for real against a local page. That needs Chrome and takes
+# longer than the unit suite, so rather than running on every PR it runs
+# nightly, on demand, and on PRs that could change how Lighthouse behaves —
+# which is how dependency updates to Lighthouse get checked before merging.
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - package.json
+      - package-lock.json
+      - src/lighthouse.ts
+      - src/report-to-row.ts
+      - test/lighthouse.integration.ts
+      - test/support/fixture-server.ts
+      - vitest.integration.config.js
+      - .github/workflows/integration.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24.19.0
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      # GitHub's Ubuntu runners come with Chrome installed, which Lighthouse
+      # finds on its own.
+      - name: Run integration tests
+        run: npm run test:integration
