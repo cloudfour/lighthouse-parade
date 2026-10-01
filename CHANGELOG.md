@@ -1,5 +1,13 @@
 # lighthouse-parade
 
+## 3.0.1
+
+### Patch Changes
+
+- [#421](https://github.com/cloudfour/lighthouse-parade/pull/421) [`526a204`](https://github.com/cloudfour/lighthouse-parade/commit/526a204e2fa13d3047791303a76c933bfd428a5e) Thanks [@spaceninja](https://github.com/spaceninja)! - Runtime dependencies, including Lighthouse, are now version ranges instead of exact versions. Installing lighthouse-parade picks up the latest compatible release of each, so fixes such as Lighthouse updates for new versions of Chrome reach you without waiting for a lighthouse-parade release. This release includes Lighthouse 13.5.0, up from 13.4.1. Lighthouse updates can add audits and shift scores slightly, so keep that in mind when comparing reports made on different days.
+
+- [#416](https://github.com/cloudfour/lighthouse-parade/pull/416) [`5406d54`](https://github.com/cloudfour/lighthouse-parade/commit/5406d54ffbe24397285086be30fce92f7e5ba71e) Thanks [@spaceninja](https://github.com/spaceninja)! - Warn when a page can't be reached at all, for example a refused connection or a DNS failure. Previously these failed silently, and an unreachable site only produced the generic "No pages were found" message.
+
 ## 3.0.0
 
 ### Major Changes
