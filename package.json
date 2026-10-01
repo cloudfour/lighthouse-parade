@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.js",
     "check-lint": "eslint . && prettier --check .",
     "lint": "eslint --fix . && prettier --write .",
     "type": "tsc --noEmit",
