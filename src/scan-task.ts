@@ -1,12 +1,8 @@
-import fs from 'node:fs';
-
 import { type CrawlOptions, crawl as defaultCrawler } from './crawl.js';
 import { createEmitter } from './emitter.js';
 import { runLighthouseReport } from './lighthouse.js';
 
 type ScanOptions = {
-  /** Where to store the newly-generated reports */
-  dataDirectory: string;
   /**
    * Function to determine whether to run lighthouse on a given URL
    * The intended use case for this is to skip URL's where there are already reports saved from previous runs.
@@ -36,13 +32,11 @@ export const scan = (
   {
     crawler = defaultCrawler,
     lighthouse = runLighthouseReport,
-    dataDirectory,
     lighthouseConcurrency,
     ...opts
   }: ScanOptions,
 ) => {
   const { promise, on, emit } = createEmitter<ScanEvents>();
-  fs.mkdirSync(dataDirectory, { recursive: true });
   /** Used so we can display an error if no pages are found while crawling */
   let hasFoundAnyPages = false;
 

@@ -135,7 +135,6 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
 
     const scanner = scan(siteUrl, {
       ignoreRobotsTxt,
-      dataDirectory: dataDirPath,
       lighthouseConcurrency,
       maxCrawlDepth,
       includePathGlob: includePathGlob as string[],
