@@ -1,7 +1,7 @@
 import http from 'node:http';
 import type { AddressInfo } from 'node:net';
 
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, beforeAll, describe, test } from 'vitest';
 
 import { type CrawlOptions, crawl } from '../src/crawl.js';
 
@@ -135,14 +135,16 @@ describe.concurrent('crawl against a local site', () => {
   });
 });
 
-test('warns when the site cannot be reached', async () => {
+test('warns when the site cannot be reached', async ({ expect }) => {
   // Grab a free port, then close it, so nothing is listening there.
   const closed = http.createServer();
   await new Promise<void>((resolve) => {
     closed.listen(0, '127.0.0.1', resolve);
   });
   const { port } = closed.address() as AddressInfo;
-  await new Promise((resolve) => closed.close(resolve));
+  await new Promise((resolve) => {
+    closed.close(resolve);
+  });
 
   const { urls, warnings } = await runCrawl(`http://127.0.0.1:${port}/`);
   expect(urls).toEqual([]);

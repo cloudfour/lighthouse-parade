@@ -44,6 +44,12 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   const initialPath = new URL(siteUrl).pathname;
 
   crawler.addFetchCondition(
+    // @types/simplecrawler declares fetch conditions as returning void, but
+    // simplecrawler uses the return value of any condition taking fewer than
+    // three arguments to decide whether to fetch the URL. Wrapping this to
+    // satisfy the rule would discard that boolean and stop the crawl at the
+    // entry page.
+    // eslint-disable-next-line @typescript-eslint/strict-void-return -- see above
     createUrlFilter(
       opts.includePathGlob.length > 0
         ? [...opts.includePathGlob, initialPath]
@@ -96,13 +102,13 @@ export const createUrlFilter = (
   excludeGlob: string[],
 ) => {
   const pathIncludeRegexes = includeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
+    (glob) => globrex(glob.replace(/\/$/v, ''), globOpts).regex,
   );
   const pathExcludeRegexes = excludeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
+    (glob) => globrex(glob.replace(/\/$/v, ''), globOpts).regex,
   );
   return ({ path }: { path: string }) => {
-    const withoutTrailingSlash = path.replace(/\/$/, '');
+    const withoutTrailingSlash = path.replace(/\/$/v, '');
     return (
       (pathIncludeRegexes.length === 0 ||
         pathIncludeRegexes.some((regex) => regex.test(withoutTrailingSlash))) &&

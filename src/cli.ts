@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import process from 'node:process';
 
 import * as kleur from 'kleur/colors';
 import logUpdate from 'log-update';
@@ -35,11 +36,11 @@ const symbols = {
 
 const toArray = <T>(input: T) => (Array.isArray(input) ? input : [input]);
 
-/** Returns whether the given path is a full URL (with protocol, domain, etc.) */
-const isFullURL = (path: string) => {
+/** Returns whether the given string is a full URL (with protocol, domain, etc.) */
+const isFullURL = (value: string) => {
   try {
     // eslint-disable-next-line no-new
-    new URL(path);
+    new URL(value);
     return true;
   } catch {}
 
@@ -80,14 +81,14 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     '--exclude-path-glob',
     'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   )
-  .action((url, dataDirArg: string | undefined, opts) => {
+  .action((siteUrl, dataDirArg: string | undefined, opts) => {
     const dataDirPath =
       dataDirArg ??
       path.join(process.cwd(), 'lighthouse-parade-data', usefulDirName());
     // We are attempting to parse the URL here, so that if the user passes an invalid URL,
     // the prorgam will exit here instead of continuing (which would lead to a more confusing error)
     // eslint-disable-next-line no-new
-    new URL(url);
+    new URL(siteUrl);
     const ignoreRobotsTxt: boolean = opts['ignore-robots'];
     const reportsDirPath = path.join(dataDirPath, 'reports');
 
@@ -132,7 +133,7 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     // doesn't leave an empty timestamped directory behind.
     fs.mkdirSync(reportsDirPath, { recursive: true });
 
-    const scanner = scan(url, {
+    const scanner = scan(siteUrl, {
       ignoreRobotsTxt,
       dataDirectory: dataDirPath,
       lighthouseConcurrency,

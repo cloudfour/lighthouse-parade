@@ -18,7 +18,7 @@ type ReportSection = Record<string, string | undefined>[];
 
 const parseSections = (csvFileContents: string) => {
   const sections: ReportSection[] = csvFileContents
-    .split(/\r?\n\s*\n/)
+    .split(/\r?\n\s*\n/v)
     .map((section) => section.trim())
     .filter(Boolean)
     .map((section) =>
