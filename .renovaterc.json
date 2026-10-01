@@ -3,6 +3,11 @@
   "extends": ["local>cloudfour/renovate-config:library"],
   "packageRules": [
     {
+      "description": "Runtime dependencies are ranges, not pins, because users resolve them fresh on every install; our lockfile isn't published. Pinning them would hold users on whatever versions our last release happened to have, including a Lighthouse that no longer works with current Chrome. update-lockfile still opens a PR for each in-range release, so CI tests the same versions users are getting, and those lockfile-only PRs are safe to automerge because they change nothing in the published package. A new major falls outside the range, gets a PR that rewrites it, and isn't automerged; that one ships to users, so it needs a changeset.",
+      "matchDepTypes": ["dependencies"],
+      "rangeStrategy": "update-lockfile"
+    },
+    {
       "description": "csv-parse and csv-stringify move their export paths together, and both are imported from the same modules here.",
       "groupName": "csv",
       "matchPackageNames": ["csv", "csv-parse", "csv-stringify"]
