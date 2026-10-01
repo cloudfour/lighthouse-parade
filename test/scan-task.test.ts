@@ -19,7 +19,6 @@ test('Displays useful error if no pages are found while crawling', async () => {
     ignoreRobotsTxt: false,
     includePathGlob: [],
     excludePathGlob: [],
-    dataDirectory: 'foo',
     lighthouseConcurrency: 1,
     crawler: fakeCrawler,
   });
@@ -72,7 +71,6 @@ test('Fires correct lighthouse events as pages are found', async () => {
     ignoreRobotsTxt: false,
     includePathGlob: [],
     excludePathGlob: [],
-    dataDirectory: 'foo',
     lighthouseConcurrency: 1,
     lighthouse(url) {
       if (url !== 'https://google.com/hello') {
