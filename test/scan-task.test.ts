@@ -41,7 +41,7 @@ test('Displays useful error if no pages are found while crawling', async () => {
   await nextTick();
 
   expect(onInfo).toHaveBeenCalledTimes(1);
-  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/starting/i));
+  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/starting/iv));
   expect(onWarning).toHaveBeenCalledTimes(0);
   expect(onUrlFound).toHaveBeenCalledTimes(0);
   expect(onReportComplete).toHaveBeenCalledTimes(0);
@@ -51,10 +51,10 @@ test('Displays useful error if no pages are found while crawling', async () => {
   await nextTick();
 
   expect(onInfo).toHaveBeenCalledTimes(2);
-  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/complete/i));
+  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/complete/iv));
   expect(onWarning).toHaveBeenCalledTimes(1);
   expect(onWarning).toHaveBeenCalledWith(
-    expect.stringMatching(/no pages were found/i),
+    expect.stringMatching(/no pages were found/iv),
   );
 
   expect(onUrlFound).toHaveBeenCalledTimes(0);
@@ -100,7 +100,7 @@ test('Fires correct lighthouse events as pages are found', async () => {
   await nextTick();
 
   expect(onInfo).toHaveBeenCalledTimes(1);
-  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/starting/i));
+  expect(onInfo).toHaveBeenCalledWith(expect.stringMatching(/starting/iv));
   expect(onWarning).toHaveBeenCalledTimes(0);
   expect(onUrlFound).toHaveBeenCalledTimes(0);
   expect(onReportComplete).toHaveBeenCalledTimes(0);

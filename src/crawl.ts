@@ -102,13 +102,13 @@ export const createUrlFilter = (
   excludeGlob: string[],
 ) => {
   const pathIncludeRegexes = includeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
+    (glob) => globrex(glob.replace(/\/$/v, ''), globOpts).regex,
   );
   const pathExcludeRegexes = excludeGlob.map(
-    (glob) => globrex(glob.replace(/\/$/, ''), globOpts).regex,
+    (glob) => globrex(glob.replace(/\/$/v, ''), globOpts).regex,
   );
   return ({ path }: { path: string }) => {
-    const withoutTrailingSlash = path.replace(/\/$/, '');
+    const withoutTrailingSlash = path.replace(/\/$/v, '');
     return (
       (pathIncludeRegexes.length === 0 ||
         pathIncludeRegexes.some((regex) => regex.test(withoutTrailingSlash))) &&

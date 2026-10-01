@@ -87,14 +87,14 @@ describe('lighthouse-parade CLI', () => {
     const { stderr, exitCode } = await runCli([], tempDir);
 
     expect(exitCode).not.toBe(0);
-    expect(stderr).toMatch(/insufficient arguments/i);
+    expect(stderr).toMatch(/insufficient arguments/iv);
   });
 
   it('refuses a URL it cannot parse', async () => {
     const { stderr, exitCode } = await runCli(['not-a-url'], tempDir);
 
     expect(exitCode).not.toBe(0);
-    expect(stderr).toMatch(/invalid url/i);
+    expect(stderr).toMatch(/invalid url/iv);
   });
 
   it('rejects a full URL passed to --include-path-glob', async () => {

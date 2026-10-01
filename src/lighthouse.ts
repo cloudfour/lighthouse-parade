@@ -64,7 +64,7 @@ export const runLighthouseReport = (url: string, maxConcurrency?: number) => {
     });
 
     lighthouseProcess.stderr.on('data', (d: string) => {
-      if (/runtime error encountered/i.test(d)) {
+      if (/runtime error encountered/iv.test(d)) {
         stderr += d;
       }
     });

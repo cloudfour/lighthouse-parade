@@ -95,7 +95,7 @@ describe('aggregateCSVReports', () => {
     const dataPath = stageFixture('no-valid-reports');
 
     await expect(aggregateCSVReports(dataPath)).rejects.toThrow(
-      /no reports could be read/i,
+      /no reports could be read/iv,
     );
   });
 
@@ -107,7 +107,7 @@ describe('aggregateCSVReports', () => {
     fs.mkdirSync(path.join(dataPath, 'reports'));
 
     await expect(aggregateCSVReports(dataPath)).rejects.toThrow(
-      /no reports could be read/i,
+      /no reports could be read/iv,
     );
   });
 });

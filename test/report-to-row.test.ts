@@ -48,7 +48,7 @@ describe('reportToRowHeaders', () => {
 
   it('throws when the input is not a Lighthouse report', () => {
     expect(() => reportToRowHeaders('not a lighthouse report')).toThrow(
-      /unable to find report headers/i,
+      /unable to find report headers/iv,
     );
   });
 });
