@@ -16,13 +16,13 @@ export const startFixtureServer = async (
   routes: Record<string, FixtureRoute>,
 ) => {
   const server = http.createServer((req, res) => {
-    const route: FixtureRoute | undefined =
-      routes[new URL(req.url ?? '/', 'http://x').pathname];
-    if (route === undefined) {
+    const { pathname } = new URL(req.url ?? '/', 'http://x');
+    if (!Object.hasOwn(routes, pathname)) {
       res.writeHead(404, { 'content-type': 'text/plain' });
       res.end('Not found');
       return;
     }
+    const route = routes[pathname];
     res.writeHead(route.status ?? 200, { 'content-type': route.contentType });
     res.end(route.body);
   });
