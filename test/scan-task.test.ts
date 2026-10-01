@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 import { expect, test, vi } from 'vitest';
 
 import { createFakeCrawler } from '../src/crawl.mock.js';
@@ -9,7 +11,6 @@ import { scan } from '../src/scan-task.js';
 // dispatches handlers via Promise.resolve().then(), so this helper has to
 // yield past that microtask queue rather than joining the back of it.
 const nextTick = async () =>
-  // eslint-disable-next-line unicorn/prefer-queue-microtask -- see above
   new Promise((resolve) => process.nextTick(resolve));
 
 test('Displays useful error if no pages are found while crawling', async () => {

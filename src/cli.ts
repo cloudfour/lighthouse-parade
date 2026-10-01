@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import process from 'node:process';
 
 import * as kleur from 'kleur/colors';
 import logUpdate from 'log-update';
