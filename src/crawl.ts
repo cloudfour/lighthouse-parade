@@ -77,6 +77,14 @@ export const crawl = (siteUrl: string, opts: CrawlOptions) => {
   crawler.on('fetcherror', emitWarning);
   crawler.on('fetch404', emitWarning);
   crawler.on('fetch410', emitWarning);
+  // Failures with no HTTP response at all, like a refused connection or a DNS
+  // miss. Without this, an unreachable site produced no warnings, only the
+  // generic "no pages were found" message.
+  crawler.on('fetchclienterror', (queueItem, error) => {
+    const reason =
+      (error as NodeJS.ErrnoException | undefined)?.code ?? 'request failed';
+    emit('warning', `Error fetching (${reason}): ${queueItem.url}`);
+  });
 
   crawler.start();
 
