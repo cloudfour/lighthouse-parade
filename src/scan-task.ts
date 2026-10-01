@@ -16,7 +16,7 @@ type ScanOptions = {
   lighthouseConcurrency: number;
 } & CrawlOptions;
 
-type ScanEvents = {
+export type ScanEvents = {
   warning: (message: string | Error) => void;
   info: (message: string) => void;
   reportBegin: (url: string) => void;

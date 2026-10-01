@@ -7,6 +7,9 @@ import { promisify } from 'node:util';
 
 import { beforeAll, describe, expect, it } from 'vitest';
 
+// Node's execFile returns its ChildProcess as well as calling back, which this
+// rule reads as a value leaking from a void callback. promisify ignores it.
+// eslint-disable-next-line @typescript-eslint/strict-void-return -- see above
 const execFileAsync = promisify(execFile);
 
 const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');

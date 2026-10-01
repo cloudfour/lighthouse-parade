@@ -5,7 +5,7 @@ import { expect, test, vi } from 'vitest';
 import { createFakeCrawler } from '../src/crawl.mock.js';
 import { createEmitter } from '../src/emitter.js';
 import type { LighthouseEvents } from '../src/lighthouse.js';
-import { scan } from '../src/scan-task.js';
+import { type ScanEvents, scan } from '../src/scan-task.js';
 
 // Deliberately process.nextTick rather than queueMicrotask. The emitter
 // dispatches handlers via Promise.resolve().then(), so this helper has to
@@ -24,17 +24,17 @@ test('Displays useful error if no pages are found while crawling', async () => {
     crawler: fakeCrawler,
   });
 
-  const onWarning = vi.fn();
+  const onWarning = vi.fn<ScanEvents['warning']>();
   emitter.on('warning', onWarning);
-  const onInfo = vi.fn();
+  const onInfo = vi.fn<ScanEvents['info']>();
   emitter.on('info', onInfo);
-  const onUrlFound = vi.fn();
+  const onUrlFound = vi.fn<ScanEvents['urlFound']>();
   emitter.on('urlFound', onUrlFound);
-  const onReportComplete = vi.fn();
+  const onReportComplete = vi.fn<ScanEvents['reportComplete']>();
   emitter.on('reportComplete', onReportComplete);
-  const onReportFail = vi.fn();
+  const onReportFail = vi.fn<ScanEvents['reportFail']>();
   emitter.on('reportFail', onReportFail);
-  const onReportBegin = vi.fn();
+  const onReportBegin = vi.fn<ScanEvents['reportBegin']>();
   emitter.on('reportBegin', onReportBegin);
 
   // Wait for next event loop tick to run assertions, because event handlers are executed in microtasks
@@ -83,17 +83,17 @@ test('Fires correct lighthouse events as pages are found', async () => {
     crawler: fakeCrawler,
   });
 
-  const onWarning = vi.fn();
+  const onWarning = vi.fn<ScanEvents['warning']>();
   emitter.on('warning', onWarning);
-  const onInfo = vi.fn();
+  const onInfo = vi.fn<ScanEvents['info']>();
   emitter.on('info', onInfo);
-  const onUrlFound = vi.fn();
+  const onUrlFound = vi.fn<ScanEvents['urlFound']>();
   emitter.on('urlFound', onUrlFound);
-  const onReportComplete = vi.fn();
+  const onReportComplete = vi.fn<ScanEvents['reportComplete']>();
   emitter.on('reportComplete', onReportComplete);
-  const onReportFail = vi.fn();
+  const onReportFail = vi.fn<ScanEvents['reportFail']>();
   emitter.on('reportFail', onReportFail);
-  const onReportBegin = vi.fn();
+  const onReportBegin = vi.fn<ScanEvents['reportBegin']>();
   emitter.on('reportBegin', onReportBegin);
 
   // Wait for next event loop tick to run assertions, because event handlers are executed in microtasks

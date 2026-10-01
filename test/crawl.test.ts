@@ -142,7 +142,9 @@ test('warns when the site cannot be reached', async ({ expect }) => {
     closed.listen(0, '127.0.0.1', resolve);
   });
   const { port } = closed.address() as AddressInfo;
-  await new Promise((resolve) => closed.close(resolve));
+  await new Promise((resolve) => {
+    closed.close(resolve);
+  });
 
   const { urls, warnings } = await runCrawl(`http://127.0.0.1:${port}/`);
   expect(urls).toEqual([]);
