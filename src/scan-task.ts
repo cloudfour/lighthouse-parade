@@ -91,6 +91,6 @@ export const scan = (
 
       emit('resolve');
     })
-    .catch((error) => emit('reject', error));
+    .catch((error: unknown) => emit('reject', error));
   return { promise, on };
 };

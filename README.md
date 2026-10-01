@@ -22,7 +22,7 @@ It is also easy to graph data in this format. The following example is a histogr
 
 (Check to make sure you are using Node 18+)
 
-```
+```sh
 $ npx lighthouse-parade <url> [dataDirectory] [options]
 ```
 
@@ -32,7 +32,7 @@ Runs a crawler on the provided URL. Discovers all URLs and runs a lighthouse rep
 
 ### Options
 
-```
+```text
 --ignore-robots             Crawl pages even if they are listed in the site's robots.txt  (default false)
 --crawler-user-agent        Pass a user agent string to be used by the crawler (not by Lighthouse)
 --lighthouse-concurrency    Control the maximum number of ligthhouse reports to run concurrently  (default number of CPU cores minus one)
