@@ -17,6 +17,16 @@ const config = [
     },
   },
   {
+    // This rule exists because Node's built-in test runner executes every file
+    // under a `test/` directory, so importing a helper from there would run it
+    // twice. Vitest only collects `*.test.ts`, which makes shared helpers in
+    // test/support safe to import.
+    files: ['test/**'],
+    rules: {
+      'node-test/no-import-test-files': 'off',
+    },
+  },
+  {
     /*
      * Rules that arrived with @cloudfour/eslint-config 26 and flag existing
      * code. Every one of these is a style or strictness preference rather than
