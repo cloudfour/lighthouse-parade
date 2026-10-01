@@ -80,210 +80,203 @@ sade('lighthouse-parade <url> [dataDirectory]', true)
     '--exclude-path-glob',
     'Specify a glob (in quotes) for paths to exclude. Links to matched paths will not be crawled. The entry page will be crawled regardless of this flag. This flag can be specified multiple times to exclude multiple paths. `*` matches one url segment, `**` matches multiple segments. Trailing slashes are ignored.',
   )
-  .action(
-    (
-      url,
-      dataDirPath = path.join(
-        process.cwd(),
-        'lighthouse-parade-data',
-        usefulDirName(),
-      ),
-      opts,
-    ) => {
-      // We are attempting to parse the URL here, so that if the user passes an invalid URL,
-      // the prorgam will exit here instead of continuing (which would lead to a more confusing error)
-      // eslint-disable-next-line no-new
-      new URL(url);
-      const ignoreRobotsTxt: boolean = opts['ignore-robots'];
-      const reportsDirPath = path.join(dataDirPath, 'reports');
+  .action((url, dataDirArg: string | undefined, opts) => {
+    const dataDirPath =
+      dataDirArg ??
+      path.join(process.cwd(), 'lighthouse-parade-data', usefulDirName());
+    // We are attempting to parse the URL here, so that if the user passes an invalid URL,
+    // the prorgam will exit here instead of continuing (which would lead to a more confusing error)
+    // eslint-disable-next-line no-new
+    new URL(url);
+    const ignoreRobotsTxt: boolean = opts['ignore-robots'];
+    const reportsDirPath = path.join(dataDirPath, 'reports');
 
-      const userAgent: unknown = opts['crawler-user-agent'];
-      if (userAgent !== undefined && typeof userAgent !== 'string') {
-        throw new Error('--crawler-user-agent must be a string');
+    const userAgent: unknown = opts['crawler-user-agent'];
+    if (userAgent !== undefined && typeof userAgent !== 'string') {
+      throw new Error('--crawler-user-agent must be a string');
+    }
+
+    const maxCrawlDepth: unknown = opts['max-crawl-depth'];
+
+    if (maxCrawlDepth !== undefined && typeof maxCrawlDepth !== 'number') {
+      throw new Error('--max-crawl-depth must be a number');
+    }
+
+    const includePathGlob: unknown[] = toArray(
+      opts['include-path-glob'] as unknown,
+    ).filter((glob) => glob !== undefined);
+
+    if (includePathGlob.some((glob) => typeof glob !== 'string')) {
+      throw new Error('--include-path-glob must be string(s)');
+    }
+
+    if ((includePathGlob as string[]).some(isFullURL)) {
+      throw new Error('--include-path-glob must be path(s), not full URL(s)');
+    }
+
+    const excludePathGlob: unknown[] = toArray(
+      opts['exclude-path-glob'] as unknown,
+    ).filter((glob) => glob !== undefined);
+
+    if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
+      throw new Error('--exclude-path-glob must be string(s)');
+    }
+
+    if ((excludePathGlob as string[]).some(isFullURL)) {
+      throw new Error('--exclude-path-glob must be path(s), not full URL(s)');
+    }
+
+    const lighthouseConcurrency = opts['lighthouse-concurrency'];
+
+    // Created only once every argument has been validated, so a rejected flag
+    // doesn't leave an empty timestamped directory behind.
+    fs.mkdirSync(reportsDirPath, { recursive: true });
+
+    const scanner = scan(url, {
+      ignoreRobotsTxt,
+      dataDirectory: dataDirPath,
+      lighthouseConcurrency,
+      maxCrawlDepth,
+      includePathGlob: includePathGlob as string[],
+      excludePathGlob: excludePathGlob as string[],
+    });
+
+    const enum State {
+      Pending,
+      ReportInProgress,
+      ReportComplete,
+    }
+    const urlStates = new Map<
+      string,
+      { state: State; error?: Error | string }
+    >();
+
+    const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    let i = 0;
+
+    const printLine = (url: string, state: State, error?: Error | string) => {
+      const frame = kleur.blue(frames[i]);
+      const statusIcon = error
+        ? symbols.error
+        : state === State.Pending
+          ? ' '
+          : state === State.ReportInProgress
+            ? frame
+            : symbols.success;
+      let output = `${statusIcon} ${url}`;
+      if (error) {
+        output += `\n  ${kleur.gray(error.toString())}`;
       }
 
-      const maxCrawlDepth: unknown = opts['max-crawl-depth'];
+      return output;
+    };
 
-      if (maxCrawlDepth !== undefined && typeof maxCrawlDepth !== 'number') {
-        throw new Error('--max-crawl-depth must be a number');
-      }
-
-      const includePathGlob: unknown[] = toArray(
-        opts['include-path-glob'] as unknown,
-      ).filter((glob) => glob !== undefined);
-
-      if (includePathGlob.some((glob) => typeof glob !== 'string')) {
-        throw new Error('--include-path-glob must be string(s)');
-      }
-
-      if ((includePathGlob as string[]).some(isFullURL)) {
-        throw new Error('--include-path-glob must be path(s), not full URL(s)');
-      }
-
-      const excludePathGlob: unknown[] = toArray(
-        opts['exclude-path-glob'] as unknown,
-      ).filter((glob) => glob !== undefined);
-
-      if (excludePathGlob.some((glob) => typeof glob !== 'string')) {
-        throw new Error('--exclude-path-glob must be string(s)');
-      }
-
-      if ((excludePathGlob as string[]).some(isFullURL)) {
-        throw new Error('--exclude-path-glob must be path(s), not full URL(s)');
-      }
-
-      const lighthouseConcurrency = opts['lighthouse-concurrency'];
-
-      // Created only once every argument has been validated, so a rejected flag
-      // doesn't leave an empty timestamped directory behind.
-      fs.mkdirSync(reportsDirPath, { recursive: true });
-
-      const scanner = scan(url, {
-        ignoreRobotsTxt,
-        dataDirectory: dataDirPath,
-        lighthouseConcurrency,
-        maxCrawlDepth,
-        includePathGlob: includePathGlob as string[],
-        excludePathGlob: excludePathGlob as string[],
-      });
-
-      const enum State {
-        Pending,
-        ReportInProgress,
-        ReportComplete,
-      }
-      const urlStates = new Map<
-        string,
-        { state: State; error?: Error | string }
-      >();
-
-      const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-      let i = 0;
-
-      const printLine = (url: string, state: State, error?: Error | string) => {
-        const frame = kleur.blue(frames[i]);
-        const statusIcon = error
-          ? symbols.error
-          : state === State.Pending
-            ? ' '
-            : state === State.ReportInProgress
-              ? frame
-              : symbols.success;
-        let output = `${statusIcon} ${url}`;
-        if (error) {
-          output += `\n  ${kleur.gray(error.toString())}`;
+    const render = () => {
+      const pendingUrls: string[] = [];
+      const currentUrls: string[] = [];
+      urlStates.forEach(({ state, error }, url) => {
+        if (state === State.ReportComplete) {
+          return;
         }
+        const line = `${printLine(url, state, error)}\n`;
+        if (state === State.Pending) {
+          pendingUrls.push(line);
+        } else {
+          currentUrls.push(line);
+        }
+      });
+      const numPendingToDisplay = countPendingToDisplay(
+        process.stdout.rows,
+        currentUrls.length,
+        pendingUrls.length,
+      );
+      const numHiddenUrls =
+        numPendingToDisplay === pendingUrls.length
+          ? ''
+          : kleur.dim(
+              `\n...And ${
+                pendingUrls.length - numPendingToDisplay
+              } more pending`,
+            );
+      logUpdate(
+        currentUrls.join('') +
+          pendingUrls.slice(0, numPendingToDisplay).join('') +
+          numHiddenUrls,
+      );
+    };
 
-        return output;
-      };
+    const intervalId = setInterval(() => {
+      i = (i + 1) % frames.length;
+      render();
+    }, 80);
 
-      const render = () => {
-        const pendingUrls: string[] = [];
-        const currentUrls: string[] = [];
-        urlStates.forEach(({ state, error }, url) => {
-          if (state === State.ReportComplete) {
-            return;
-          }
-          const line = `${printLine(url, state, error)}\n`;
-          if (state === State.Pending) {
-            pendingUrls.push(line);
-          } else {
-            currentUrls.push(line);
-          }
-        });
-        const numPendingToDisplay = countPendingToDisplay(
-          process.stdout.rows,
-          currentUrls.length,
-          pendingUrls.length,
-        );
-        const numHiddenUrls =
-          numPendingToDisplay === pendingUrls.length
-            ? ''
-            : kleur.dim(
-                `\n...And ${
-                  pendingUrls.length - numPendingToDisplay
-                } more pending`,
-              );
-        logUpdate(
-          currentUrls.join('') +
-            pendingUrls.slice(0, numPendingToDisplay).join('') +
-            numHiddenUrls,
-        );
-      };
+    /**
+     * Allows you to run a console.log that will output _above_ the persistent logUpdate log
+     * Pass a callback where you run your console.log or console.error
+     */
+    const printAboveLogUpdate = (cb: () => void) => {
+      logUpdate.clear();
+      cb();
+      render();
+    };
 
-      const intervalId = setInterval(() => {
-        i = (i + 1) % frames.length;
-        render();
-      }, 80);
+    const log = (...messages: any[]) =>
+      printAboveLogUpdate(() => console.log(...messages));
+    const warn = (...messages: any[]) =>
+      printAboveLogUpdate(() => console.log(...messages));
 
-      /**
-       * Allows you to run a console.log that will output _above_ the persistent logUpdate log
-       * Pass a callback where you run your console.log or console.error
-       */
-      const printAboveLogUpdate = (cb: () => void) => {
+    const urlsFile = path.join(dataDirPath, 'urls.csv');
+    fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
+    const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
+
+    scanner.on('urlFound', (url, contentType, bytes, statusCode) => {
+      urlStates.set(url, { state: State.Pending });
+      const csvLine = [
+        JSON.stringify(url),
+        contentType,
+        bytes,
+        statusCode,
+      ].join(',');
+      urlsStream.write(`${csvLine}\n`);
+    });
+    scanner.on('reportBegin', (url) => {
+      urlStates.set(url, { state: State.ReportInProgress });
+    });
+    scanner.on('reportFail', (url, error) => {
+      urlStates.set(url, { state: State.ReportComplete, error });
+      log(printLine(url, State.ReportComplete, error));
+    });
+    scanner.on('reportComplete', (url, reportData) => {
+      urlStates.set(url, { state: State.ReportComplete });
+      log(printLine(url, State.ReportComplete));
+      const reportFileName = makeFileNameFromUrl(url, 'csv');
+
+      fs.writeFileSync(path.join(reportsDirPath, reportFileName), reportData);
+    });
+
+    scanner.on('info', (message) => {
+      log(message);
+    });
+
+    scanner.on('warning', (message) => {
+      warn(message);
+    });
+
+    scanner.promise
+      .then(async () => {
+        clearInterval(intervalId);
+
+        console.log('Aggregating reports...');
+
+        await aggregateCSVReports(dataDirPath);
+
+        console.log('DONE!');
+      })
+      .catch((error: unknown) => {
+        clearInterval(intervalId);
         logUpdate.clear();
-        cb();
-        render();
-      };
-
-      const log = (...messages: any[]) =>
-        printAboveLogUpdate(() => console.log(...messages));
-      const warn = (...messages: any[]) =>
-        printAboveLogUpdate(() => console.log(...messages));
-
-      const urlsFile = path.join(dataDirPath, 'urls.csv');
-      fs.writeFileSync(urlsFile, 'URL,content_type,bytes,response\n');
-      const urlsStream = fs.createWriteStream(urlsFile, { flags: 'a' });
-
-      scanner.on('urlFound', (url, contentType, bytes, statusCode) => {
-        urlStates.set(url, { state: State.Pending });
-        const csvLine = [
-          JSON.stringify(url),
-          contentType,
-          bytes,
-          statusCode,
-        ].join(',');
-        urlsStream.write(`${csvLine}\n`);
+        console.error(error);
+        process.exitCode = 1;
       });
-      scanner.on('reportBegin', (url) => {
-        urlStates.set(url, { state: State.ReportInProgress });
-      });
-      scanner.on('reportFail', (url, error) => {
-        urlStates.set(url, { state: State.ReportComplete, error });
-        log(printLine(url, State.ReportComplete, error));
-      });
-      scanner.on('reportComplete', (url, reportData) => {
-        urlStates.set(url, { state: State.ReportComplete });
-        log(printLine(url, State.ReportComplete));
-        const reportFileName = makeFileNameFromUrl(url, 'csv');
-
-        fs.writeFileSync(path.join(reportsDirPath, reportFileName), reportData);
-      });
-
-      scanner.on('info', (message) => {
-        log(message);
-      });
-
-      scanner.on('warning', (message) => {
-        warn(message);
-      });
-
-      scanner.promise
-        .then(async () => {
-          clearInterval(intervalId);
-
-          console.log('Aggregating reports...');
-
-          await aggregateCSVReports(dataDirPath);
-
-          console.log('DONE!');
-        })
-        .catch((error: unknown) => {
-          clearInterval(intervalId);
-          logUpdate.clear();
-          console.error(error);
-          process.exitCode = 1;
-        });
-    },
-  )
+  })
   .parse(process.argv);

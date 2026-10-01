@@ -1,8 +1,11 @@
 export type EventMap = Record<string, (...args: any[]) => void>;
 
 export const createEmitter = <Events extends EventMap, Resolve = never>() => {
-  let savedResolve: (value: Resolve) => void;
-  let savedReject: (value: unknown) => void;
+  const {
+    promise,
+    resolve: savedResolve,
+    reject: savedReject,
+  } = Promise.withResolvers<Resolve>();
 
   const emit: Emit = (eventName: string, ...args: unknown[]) => {
     if (eventName === 'resolve') {
@@ -17,7 +20,7 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
     // so that if events are fired right before event listeners are added,
     // the new event listeners are fired
     queueMicrotask(() => {
-      const handlers: Events[keyof Events][] = eventHandlers[eventName] || [];
+      const handlers: Events[keyof Events][] = eventHandlers[eventName] ?? [];
       for (const handler of handlers) {
         handler(...args);
       }
@@ -29,10 +32,6 @@ export const createEmitter = <Events extends EventMap, Resolve = never>() => {
     return emitter; // Allow chaining
   };
 
-  const promise = new Promise<Resolve>((resolve, reject) => {
-    savedResolve = resolve;
-    savedReject = reject;
-  });
   const eventHandlers: { [E in keyof Events]?: Events[E][] } = {};
   type Emit = {
     <E extends keyof Events>(
