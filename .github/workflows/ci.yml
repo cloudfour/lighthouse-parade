@@ -10,9 +10,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: 24.19.0
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -37,10 +34,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
-      - name: Use Node.js ${{ env.NODE_VERSION }}
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: .nvmrc
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
@@ -52,10 +49,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
-      - name: Use Node.js ${{ env.NODE_VERSION }}
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: .nvmrc
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
@@ -67,10 +64,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
-      - name: Use Node.js ${{ env.NODE_VERSION }}
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: .nvmrc
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
