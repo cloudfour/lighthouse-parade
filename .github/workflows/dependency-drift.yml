@@ -1,0 +1,24 @@
+name: Dependency drift
+
+# Keeps an issue open while the default branch has dependency changes that
+# aren't in the version published on npm. See
+# https://github.com/cloudfour/.github#dependency-drift-check
+
+on:
+  # A merged Renovate PR or a manual edit changes package.json.
+  push:
+    branches: [main]
+    paths: [package.json]
+  # Publishing doesn't push anything, so a daily run is what notices a
+  # release and closes the issue.
+  schedule:
+    - cron: '17 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    uses: cloudfour/.github/.github/workflows/dependency-drift.yml@main
