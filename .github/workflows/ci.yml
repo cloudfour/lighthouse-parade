@@ -6,6 +6,12 @@ on:
     branches:
       - main
 
+# These jobs only check out code and run npm, so reading the repository is all
+# the GITHUB_TOKEN needs. Without this it inherits the repository default, which
+# can be write access.
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
