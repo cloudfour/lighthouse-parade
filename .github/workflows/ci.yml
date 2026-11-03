@@ -38,25 +38,10 @@ jobs:
   # range we test. It reads them from package.json rather than listing them
   # here, so Renovate doesn't update them and changing `engines` is the only
   # edit needed. See CONTRIBUTING.md.
+  # The job itself is shared in cloudfour/.github, so a fix there reaches
+  # every repository that uses it.
   oldest-node-versions:
-    runs-on: ubuntu-latest
-    outputs:
-      versions: ${{ steps.read.outputs.versions }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7.0.1
-      - name: Read engines.node
-        id: read
-        run: |
-          versions="$(node --print '
-            JSON.stringify(require("./package.json").engines.node.split("||").map((part) => {
-              const match = /^(?:\^|~|>=)?\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\s|$)/.exec(part.trim());
-              if (!match) throw new Error(`Can not find the oldest version in "${part.trim()}"`);
-              return [match[1], match[2] ?? 0, match[3] ?? 0].join(".");
-            }))
-          ')"
-          echo "Oldest supported Node versions: $versions"
-          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+    uses: cloudfour/.github/.github/workflows/oldest-node-versions.yml@main
 
   test-oldest-node:
     name: test (Node ${{ matrix.node-version }})
