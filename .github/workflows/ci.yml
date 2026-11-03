@@ -6,6 +6,12 @@ on:
     branches:
       - main
 
+# These jobs only check out code and run npm, so reading the repository is all
+# the GITHUB_TOKEN needs. Without this it inherits the repository default, which
+# can be write access.
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -13,9 +19,53 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test:coverage
+
+  # `test` runs the Node version in .nvmrc, which Renovate keeps current. This
+  # finds the oldest version each part of `engines.node` allows, for example
+  # 22.19.0 and 24.0.0 from `^22.19.0 || >=24.0.0`, so the range we publish is a
+  # range we test. It reads them from package.json rather than listing them
+  # here, so Renovate doesn't update them and changing `engines` is the only
+  # edit needed. See CONTRIBUTING.md.
+  oldest-node-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.read.outputs.versions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+      - name: Read engines.node
+        id: read
+        run: |
+          versions="$(node --print '
+            JSON.stringify(require("./package.json").engines.node.split("||").map((part) => {
+              const match = /^(?:\^|~|>=)?\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\s|$)/.exec(part.trim());
+              if (!match) throw new Error(`Can not find the oldest version in "${part.trim()}"`);
+              return [match[1], match[2] ?? 0, match[3] ?? 0].join(".");
+            }))
+          ')"
+          echo "Oldest supported Node versions: $versions"
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
+
+  test-oldest-node:
+    name: test (Node ${{ matrix.node-version }})
+    needs: oldest-node-versions
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: ${{ fromJSON(needs.oldest-node-versions.outputs.versions) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -27,7 +77,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Run tests
-        run: npm run test:coverage
+        run: npm test
 
   type:
     runs-on: ubuntu-latest
