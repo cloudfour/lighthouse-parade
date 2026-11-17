@@ -52,7 +52,7 @@
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.3",
     "@cloudfour/eslint-config": "29.0.1",
-    "@types/globrex": "0.1.4",
+    "@types/globrex": "0.1.5",
     "@types/node": "22.20.5",
     "@types/sade": "1.8.0",
     "@types/simplecrawler": "1.1.5",
